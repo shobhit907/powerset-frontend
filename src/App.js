@@ -1,23 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [data, setData] = useState([]);
+  const callAPI = async () => {
+    await axios.get('https://powerset-backend.herokuapp.com/testapp/').then(res => {
+      setData([...data, res.data]);
+    });
+    console.log(data);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div>
+        Data's length : {data.length}
+        <ul>
+          {data.map((value,index)=>{
+              return <li key={index}>{JSON.stringify(value)}</li>
+          })}
+        </ul>
+      </div>
+      <button onClick={callAPI}>
+        Call Test API!!
+      </button>
     </div>
   );
 }

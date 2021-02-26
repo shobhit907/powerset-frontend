@@ -5,7 +5,6 @@ import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 const axios = require('axios')
 const qs = require('querystring')
-//let output="cfdv"
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -24,25 +23,28 @@ export default function Login() {
         }
         const config = {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'form-data',
+            
           }
         }
-        axios.post('https://railway-reservation-project.herokuapp.com/api/v1/users/login', qs.stringify(requestBody), config)
+
+        axios.post('https://www.powerset-backend.herokuapp.com/token/login/', qs.stringify(requestBody), config)
         .then(function (response) {
           
             console.log(response);
-            if(response.status==400){
+            if(response.status==401){
               console.log("Invalid Email/Password");
             }
-            let token=response.data.token;
+            let token="Token "+response.data.auth_token;
             let user_type=response.data.user_type;
             if(user_type=='admin'){
-              console.log("Logged in as Admin");
-              history.push('/add-train',{params:token});
+              console.log("Logged in as Coordinator");
+              localStorage.setItem('token',token);
+              
             }
             else {
-              console.log("Logged in as Ticket Booker");
-              history.push('/trains',{params:token});
+              console.log("Logged in as Student");
+              localStorage.setItem('token',token);
             }
             
         

@@ -9,11 +9,11 @@ export default function SignUp() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [name, setName] = useState("");
-    const [card_no, setCardNo] = useState("");
     const [address, setAddress] = useState("");
+    const [mobile_no, setMobileNo] = useState("");
     const history = useHistory();
     function validateForm() {
-        if(email.length > 0 && password.length > 0 && name.length>0 && card_no.length==16){
+        if(email.length > 0 && password.length > 0 && name.length>0){
             return true;
         }
         else return false;
@@ -24,22 +24,26 @@ export default function SignUp() {
         const requestBody = {
           email: email,
           password: password,
-          credit_card: card_no,
-          address: address
+          name: name,
+          address: address,
+          mobile_no:mobile_no
         }
         const config = {
           headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Content-Type": "form-data"
           }
         }
-        axios.post('https://railway-reservation-project.herokuapp.com/api/v1/users/create', qs.stringify(requestBody), config)
+        axios.post('https://www.powerset-backend.herokuapp.com/auth/users/', qs.stringify(requestBody), config)
         .then(function (response) {
           
             console.log(response);
-            if(response.status==400){
+            if(response.status==500){
               console.log("Server Error");
             }
+            else{
+            alert("Account Created, Verify Email by clicking on link sent to your email id and then login");
             history.push('/sign-in');
+            }
         })
         .catch(err =>{
           console.log(err);
@@ -83,16 +87,7 @@ export default function SignUp() {
                 onChange={(e) => setPassword(e.target.value)}
             />
             </Form.Group>
-            <Form.Group size="lg" controlId="card-no">
-            <Form.Label>Card No</Form.Label>
-            <Form.Control
-                autoFocus
-                type="card-no"
-                value={card_no}
-                onChange={(e) => setCardNo(e.target.value)}
-            />
-            </Form.Group>
-
+            
             <Form.Group size="lg" controlId="address">
             <Form.Label>Address</Form.Label>
             <Form.Control
@@ -102,12 +97,22 @@ export default function SignUp() {
                 onChange={(e) => setAddress(e.target.value)}
             />
             </Form.Group>
+
+            <Form.Group size="lg" controlId="address">
+            <Form.Label>Mobile No</Form.Label>
+            <Form.Control
+                autoFocus
+                type="mob_no"
+                value={mobile_no}
+                onChange={(e) => setMobileNo(e.target.value)}
+            />
+            </Form.Group>
             <Button block size="lg" type="submit" disabled={!validateForm()} className="btn btn-primary btn-block">
             Sign Up
             </Button>
                 
             <p className="forgot-password text-right">
-                Already registered <a href="#">sign in?</a>
+                Already registered <a href="/sign-in">sign in?</a>
             </p>
             </Form>
             </div>

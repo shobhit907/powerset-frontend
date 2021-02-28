@@ -13,7 +13,7 @@ code {
   overflow: "hidden"; 
 }
 body {
-  background:#5cdb95 !important;
+  background:#dce1e3 !important;
   min-height: 100vh;
   display: flex;
   font-weight: 400;
@@ -30,10 +30,10 @@ body, html, .App, #root, .body-wrapper {
 }
 
 .navbar-light {
-  background: rgba(76, 175, 80, 0.3);
+  background: #ffffff;
   
-  /*box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
-  display: flex;*/
+  box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
+  display: flex;
 }
 
 .nav-link {
@@ -48,11 +48,11 @@ body, html, .App, #root, .body-wrapper {
 }
 
 .body-inner {
-  max-width: 1000px;
-  max-height: 1000px;
+  width:80%;
+  height: 100%;
   overflow-y:auto;
   margin: auto;
-  background: #edf5e1;
+  background: #ffffff;
   box-shadow: 0px 14px 80px rgba(34, 35, 58, 0.2);
   padding: 40px 55px 45px 55px;
   border-radius: 15px;

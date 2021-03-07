@@ -11,7 +11,8 @@ export default function ConfirmEmail(){
     let uid=pathArray[3];
     let token=pathArray[4];
     let data=new FormData();
-    const [output,setOutput]=useState("There was some problem while verifying your account, please try again");
+    // const [output,setOutput]=useState("There was some problem while verifying your account, please try again");
+    const [output,setOutput]=useState("Your Email has been confirmed, now you can sign in");
     data.set('uid',uid);
     data.set('token',token);
     axios({

@@ -144,7 +144,7 @@ export default function Form1() {
           <MenuItem value={"Software"}>Software</MenuItem>
           <MenuItem value={"Core"}>Core Engineering</MenuItem>
           <MenuItem value={"Non Core"}>Non Core</MenuItem>
-          <MenuItem value={"Teaching"}>Teaching</MenuItem>
+          <MenuItem value={"Consulting"}>Consulting</MenuItem>
         </Select>
         </Grid>
 

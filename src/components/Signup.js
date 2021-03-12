@@ -93,6 +93,7 @@ export default function SignUp() {
             console.log(err.response.data);
             console.log(err.response.status);
             console.log(err.response.headers);
+            alert("Either details are not right or account already exists");
           }        }
         );
       }

@@ -85,7 +85,7 @@ function EnhancedTableHead(props) {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all desserts' }}
+            inputProps={{ 'aria-label': 'select all jobs' }}
           />
         </TableCell>
         {headCells.map((headCell) => (
@@ -93,11 +93,11 @@ function EnhancedTableHead(props) {
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'default'}
-            sortDirection={orderBy === headCell.id ? order : false}
+            sortDirection={orderBy===headCell.id ?order:false}
           >
             <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
+              active={orderBy===headCell.id}
+              direction={orderBy===headCell.id?order:'asc'}
               onClick={createSortHandler(headCell.id)}
             >
               {headCell.label}

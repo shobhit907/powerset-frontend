@@ -60,20 +60,63 @@ export default function CreateJob(){
     const [domain,setDomain]=useState("");
     const [description,setDescription]=useState("");
     const [minCgpa,setMinCgpa]=useState(0.0);
-    const [minCtc,setMinCtc]=useState(0);
-    const [maxCtc,setMaxCtc]=useState(0);
+    const [maxBacklogs,setMaxBacklogs]=useState(0);
+    const [minCtc,setMinCtc]=useState(0.0);
+    const [maxCtc,setMaxCtc]=useState(0.0);
     const [lastDate,setLastDate]=useState(new Date());
+    const [startDate,setStartDate]=useState(new Date());
     const [eligibleBatches,setEligibleBatches]=useState({firstYear:false,secondYear:false,thirdYear:false,fourthYear:false});
     const [eligibleBranches,setEligibleBranches]=useState({cs:false,elec:false,mech:false,chem:false,civil:false,met:false});
+    const [eligibleGenders,setEligibleGenders]=useState("");
+    const [salaryBreakup,setSalaryBreakup]=useState("");
+    const [additionalInfo, setAdditionalInfo]=useState("");
     const classes = useStyles();
-
+    let token=localStorage.getItem('token');
     const handleBatch = (event) => {
       setEligibleBatches({ ...eligibleBatches, [event.target.name]: event.target.checked });
     };
     const handleBranch = (event) => {
       setEligibleBranches({ ...eligibleBranches, [event.target.name]: event.target.checked });
     };
-
+    const handleSubmit=()=>{
+      
+      axios({
+        method: 'post',
+        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+    
+        },
+        data :{
+          'company':'Flipkart',
+          'placement':'Intern',
+          'title':job_title,
+          'domain':domain,
+          'min_cgpa':minCgpa,
+          'description':description,
+          'min_ctc':minCtc,
+          'max_ctc':maxCtc,
+          'start_date':'2020-07-15',
+          'end_date':'2020-07-15',
+          'max_backlogs':maxBacklogs,
+          'branches_eligible':'CSE',
+          'salary_breakup':salaryBreakup,
+          'gender_allowed':eligibleGenders,
+          'extra_data':additionalInfo,
+        },
+        
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (err) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      });
+      
+    }
     return(
     <React.Fragment>
       <CssBaseline />
@@ -83,7 +126,7 @@ export default function CreateJob(){
           <Typography component="h1" variant="h4" align="center">
             Enter Job Details
           </Typography>
-          <Grid container spacing={3} alignContent="center">
+          <Grid container spacing={4} alignContent="center">
           <Grid item xs={12} sm={6}>
           <TextField
             
@@ -103,6 +146,7 @@ export default function CreateJob(){
           inputProps={{ 'aria-label': 'Without label' }}
           value={domain}
           onChange={(e) => setDomain(e.target.value)}
+          fullWidth
         >
         <MenuItem value={""}>Select.. </MenuItem>
           <MenuItem value={"software"}>Software/IT</MenuItem>
@@ -156,6 +200,29 @@ export default function CreateJob(){
             label="Minimum CGPA"
             value={minCgpa}
             onChange={(e) => setMinCgpa(e.target.value)}
+          />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+          <TextField
+            
+            id="maxBacklogs"
+            name="maxBacklogs"
+            label="Max Backlogs Allowed"
+            value={maxBacklogs}
+            onChange={(e) => setMaxBacklogs(e.target.value)}
+          />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+          <TextField
+          id="StartDate"
+          label="Application Start Date"
+          type="date"
+          defaultValue="2021-10-10"
+          InputLabelProps={{
+          shrink: true,
+          }}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
           />
           </Grid>
 
@@ -226,8 +293,60 @@ export default function CreateJob(){
       />
       </FormGroup>
         </Grid>
+        
+        <Grid item xs={12} sm={6} alignContent="center">
+        <InputLabel id="demo-simple-select-label">Select Eligible Genders</InputLabel>
+      <Select
+        labelId="demo-simple-select-label"
+        id="demo-simple-select"
+        inputProps={{ 'aria-label': 'Without label' }}
+        fullWidth
+        value={eligibleGenders}
+        onChange={(e) => setEligibleGenders(e.target.value)}
+      >
+      <MenuItem value={""}>Select.. </MenuItem>
+        <MenuItem value={"M"}>Male Only</MenuItem>
+        <MenuItem value={"F"}>Female Only</MenuItem>
+        <MenuItem value={"B"}>Both Allowed</MenuItem>
+        
+      </Select>
+        </Grid>
 
+        <Grid item xs={12} sm={6}>
+          <TextField
+            
+            id="salary breakup"
+            name="salary_breakuo"
+            label="Add Salary Breakup information"
+            fullWidth
+            multiline
+            rows={4}
+            value={salaryBreakup}
+            onChange={(e) => setSalaryBreakup(e.target.value)}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={6}>
+          <TextField
+            
+            id="additional_info"
+            name="additional_info"
+            label="Add Additional information, or link to google form you want students to fill"
+            fullWidth
+            multiline
+            rows={4}
+            value={additionalInfo}
+            onChange={(e) => setAdditionalInfo(e.target.value)}
+          />
+        </Grid>
+        <Grid xs={12} justifyContent="flex-end">
+        <Button color="primary" variant="contained" onClick={handleSubmit}>
+        Submit
+        </Button>
+        </Grid>
           </Grid>
+          
+          
         </Paper>
         </main>
     </React.Fragment>

@@ -61,6 +61,7 @@ export default function Login() {
         let data = new FormData();
         data.set('email', email);
         data.set('password', password);
+        let token="";
         axios({
           method: 'post',
           url: 'https://powerset-backend.herokuapp.com/auth/token/login/',
@@ -72,10 +73,27 @@ export default function Login() {
         })
         .then(function (response) {
           console.log(JSON.stringify(response.data));
-          let token="Token "+response.data.auth_token;
+          token="Token "+response.data.auth_token;
           console.log("Logged in");
+          console.log(token);
           localStorage.setItem('token',token);
-          history.push('/edit-details');
+          const headers = {
+            'Authorization': token,
+            
+        };
+          axios.get('https://powerset-backend.herokuapp.com/students/me/',{headers})
+        .then(response => {
+          console.log(response);
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.response) {
+            console.log(err.response.data);
+            console.log(err.response.status);
+            console.log(err.response.headers);
+          }
+        })
+        history.push('/edit-details');
         })
         .catch(function (err) {
           console.log(err);
@@ -87,7 +105,9 @@ export default function Login() {
           }
         }
         );
-          
+        
+
+      
       }
     
     

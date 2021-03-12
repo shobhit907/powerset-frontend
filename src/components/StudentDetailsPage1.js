@@ -6,6 +6,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';  
+import Button from '@material-ui/core/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom";
@@ -22,12 +23,77 @@ export default function Form1() {
     const [fathers_name,setFathersName]=useState("");
     const [mothers_name,setMothersName]=useState("");
     const [category,setCategory]=useState("");
-    const [technical_skills,setTechnicalSkills]=useState("");
     const [entry_no,setEntryNo]=useState("");
+    const [introduction,setIntroduction]=useState("");
+    const [technical_skills,setTechnicalSkills]=useState("");
     const [volunteer_experience,setVolunteerExperience]=useState("");
     const [career_plans,setCareerPlans]=useState("");
-    const [introduction,setIntroduction]=useState("");
+    let token=localStorage.getItem('token');
+    console.log(token);
+    const handleStudentCreate=()=>{
+      let data=new FormData();
+      data.set('branch',branch);
+      data.set('degree',degree);
+      data.set('mother_name',mothers_name);
+      data.set('father_name',fathers_name);
+      data.set('entry_number',entry_no);
+      data.set('preferred_profile',profile);
+      data.set('institute',institute);
+      data.set('category','GEN');
+      axios({
+        method: 'post',
+        url: 'https://powerset-backend.herokuapp.com/students/',
+        headers:{
+          'Content-Type': 'multipart/form-data',
+          'Authorization':token,
+        },
+        data : data,
+        
+      })
+      .then(function (response) {
+        console.log(response);
+        localStorage.setItem('id',response.data.id);
+      })
+      .catch(function (err) {
+        console.log(err.response.data);
+          console.log(err.response.status);
+          console.log(err.response.headers);
+      });
+      
+    }
+    const getData = ()=>{
+      
+      const headers={
+        'Authorization':token,
+      }
+      axios.get('https://powerset-backend.herokuapp.com/students/me/',{headers})
+        .then(response => {
+          console.log(response);
+          
+          setBranch(response.data.branch);
+          console.log(response.data.branch);
+          setDegree(response.data.degree);
+          setMothersName(response.data.mother_name);
+          setFathersName(response.data.father_name);
+          setEntryNo(response.data.entry_number);
+          setProfile(response.data.preferred_profile);
+          setInstitute(response.data.institute.name);
+          localStorage.setItem('id',response.data.id);
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.response) {
+            console.log(err.response.data);
+            console.log(err.response.status);
+            console.log(err.response.headers);
+            
+          }
+        })
+    }
 
+    React.useEffect(()=>{
+      getData();
+  },[]);
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
@@ -147,7 +213,60 @@ export default function Form1() {
           <MenuItem value={"Consulting"}>Consulting</MenuItem>
         </Select>
         </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            
+            id="intro"
+            name="intro"
+            label="Tell us about yourself"
+            fullWidth
+            multiline
+            rows={3}  
+            value={introduction}
+            onChange={(e) => setIntroduction(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            
+            id="plans"
+            name="plans"
+            label="Tell us your career plans"
+            fullWidth
+            multiline
+            rows={3}
+            value={career_plans}
+            onChange={(e) => setCareerPlans(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            id="tech_skills"
+            name="tech_skills"
+            label="List your Technical Skills"
+            fullWidth
+            multiline
+            rows={3}
+            value={technical_skills}
+            onChange={(e) => setTechnicalSkills(e.target.value)}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+        <TextField
+        id="volunteer"
+        label="Enter your Volunteer Experience"
+        multiline
+        rows={3}
+        fullWidth
+        value={volunteer_experience}
+        onChange={(e) => setVolunteerExperience(e.target.value)}
+        />
+        </Grid>
+        
 
+        <Button variant="contained" color="primary" onClick={handleStudentCreate}>
+        Save and Create Entry
+        </Button>
       </Grid>
     </React.Fragment>
   );

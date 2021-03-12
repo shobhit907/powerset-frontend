@@ -79,32 +79,49 @@ export default function CreateJob(){
       setEligibleBranches({ ...eligibleBranches, [event.target.name]: event.target.checked });
     };
     const handleSubmit=()=>{
-      
+      let data=new FormData();
+      data.set('company','flipkart');
+      data.set('placement','intern');
+      data.set('title',job_title);
+      data.set('domain',domain);
+      data.set('min_cgpa',minCgpa);
+      data.set('description',description);
+      data.set('min_ctc',minCtc);
+      data.set('max_ctc',maxCtc);
+      data.set('start_date',startDate);
+      data.set('end_date',lastDate);
+      data.set('max_backlogs',maxBacklogs);
+      data.set('branches_eligible','CSE');
+      data.set('salary_breakup',salaryBreakup);
+      data.set('gender_allowed',eligibleGenders);
+      data.set('extra_data',additionalInfo);
+      console.log(token);
       axios({
         method: 'post',
         url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
         headers:{
-          'Content-Type':'application/json',
+          'Content-Type':'multipart/form-data',
           'Authorization':token,
     
         },
-        data :{
-          'company':'Flipkart',
-          'placement':'Intern',
-          'title':job_title,
-          'domain':domain,
-          'min_cgpa':minCgpa,
-          'description':description,
-          'min_ctc':minCtc,
-          'max_ctc':maxCtc,
-          'start_date':'2020-07-15',
-          'end_date':'2020-07-15',
-          'max_backlogs':maxBacklogs,
-          'branches_eligible':'CSE',
-          'salary_breakup':salaryBreakup,
-          'gender_allowed':eligibleGenders,
-          'extra_data':additionalInfo,
-        },
+        data:data,
+        // data :{
+        //   'company':'Flipkart',
+        //   'placement':'Intern',
+        //   'title':job_title,
+        //   'domain':domain,
+        //   'min_cgpa':minCgpa,
+        //   'description':description,
+        //   'min_ctc':minCtc,
+        //   'max_ctc':maxCtc,
+        //   'start_date':'2020-07-15',
+        //   'end_date':'2020-07-15',
+        //   'max_backlogs':maxBacklogs,
+        //   'branches_eligible':'CSE',
+        //   'salary_breakup':salaryBreakup,
+        //   'gender_allowed':eligibleGenders,
+        //   'extra_data':additionalInfo,
+        // },
         
       })
       .then(function (response) {
@@ -216,8 +233,8 @@ export default function CreateJob(){
           <TextField
           id="StartDate"
           label="Application Start Date"
-          type="date"
-          defaultValue="2021-10-10"
+          // type="date"
+          // defaultValue="2021-10-10"
           InputLabelProps={{
           shrink: true,
           }}
@@ -230,8 +247,8 @@ export default function CreateJob(){
         <TextField
         id="LastDate"
         label="Last Date to Apply"
-        type="date"
-        defaultValue="2021-10-10"
+        // type="date"
+        // defaultValue="2021-10-10"
         InputLabelProps={{
         shrink: true,
         }}

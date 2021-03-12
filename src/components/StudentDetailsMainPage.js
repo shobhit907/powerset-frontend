@@ -12,6 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import Form1 from './StudentDetailsPage1';
 import Form2 from "./StudentDetailsPage2";
 import Form3 from "./StudentDetailsPage3";
+import Form4 from "./StudentDetailsPage4";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -60,6 +61,8 @@ function getStepContent(step) {
       return <Form2 />;
     case 2:
       return <Form3 />;
+    case 3:
+      return <Form4 />
     default:
       throw new Error('Unknown step');
   }

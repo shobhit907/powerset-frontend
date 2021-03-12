@@ -20,22 +20,25 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
+import { Button } from '@material-ui/core';
+const axios = require('axios')
+//let rows=[];
 
 
-function createData(company, job_title, min_ctc, max_ctc, last_date) {
-  return {company, job_title, min_ctc, max_ctc, last_date};
-}
+// function createData(company, job_title, min_ctc, max_ctc, last_date) {
+//   return {company, job_title, min_ctc, max_ctc, last_date};
+// }
 
-const rows = [
-  createData('DE Shaw', 'Software Engineer', 3100000, 3500000, "26/04/2021"),
-  createData('Nutanix', 'Software Engineer', 2900000, 3000000, "28/04/2021"),
-  createData('Flipkart', 'Software Engineer', 2650000, 2700000, "30/05/2021"),
-  createData('Microsoft', 'Software Engineer', 4100000, 4300000, "26/04/2021"),
-  createData('Goldman Sachs', 'Analyst', 2100000, 250000, "26/04/2021"),
-  createData('Sprinlr', 'Product Engineer', 3000000, 3000000, "26/04/2021"),
-  createData('Amazon', 'Software Engineer', 3100000, 3200000, "26/04/2021"),
+// const rows = [
+//   createData('DE Shaw', 'Software Engineer', 3100000, 3500000, "26/04/2021"),
+//   createData('Nutanix', 'Software Engineer', 2900000, 3000000, "28/04/2021"),
+//   createData('Flipkart', 'Software Engineer', 2650000, 2700000, "30/05/2021"),
+//   createData('Microsoft', 'Software Engineer', 4100000, 4300000, "26/04/2021"),
+//   createData('Goldman Sachs', 'Analyst', 2100000, 250000, "26/04/2021"),
+//   createData('Sprinlr', 'Product Engineer', 3000000, 3000000, "26/04/2021"),
+//   createData('Amazon', 'Software Engineer', 3100000, 3200000, "26/04/2021"),
   
-];
+// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -166,9 +169,7 @@ const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Tooltip title="Apply">
-          <IconButton aria-label="apply">
-            <DeleteIcon />
-          </IconButton>
+          <Button variant="contained" color="secondary">Apply</Button>
         </Tooltip>
       ) : (
         <Tooltip title="Filter list">
@@ -237,6 +238,55 @@ export default function JobsTable() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [rows,setRows]=React.useState([]);
+
+  const getData=()=>{
+    let token=localStorage.getItem('token');
+    let id=localStorage.getItem('id');
+    console.log("Hello");
+    const headers={
+      'Authorization':token,
+    }
+    
+      axios({
+        method: 'get',
+        
+        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+        },
+      })
+      .then(function (response) {
+        console.log(response);
+          console.log(response.data.length);
+          var curr_rows=[]
+          for(var i=0;i<response.data.length;i++){
+            var obj=new Object();
+            obj.company=response.data[i].company.name;
+            obj.job_title=response.data[i].title;
+            obj.min_ctc=response.data[i].min_ctc;
+            obj.max_ctc=response.data[i].max_ctc;
+            obj.last_date=response.data[i].end_date;
+            curr_rows=[...curr_rows,obj];
+          }
+          setRows(curr_rows);
+          console.log(curr_rows);
+          
+        
+  
+      })
+      .catch(function (err) {
+        //console.log(err.response.data);
+        // console.log(err.response.status);
+        // console.log(err.response.headers);
+        console.log(err);
+      });
+  }
+  
+  React.useEffect(()=>{
+    getData();
+},[]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -325,6 +375,7 @@ export default function JobsTable() {
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.company}
+                      //{console.log(row.company)}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">

@@ -85,7 +85,7 @@ export default function SignUp() {
         .then(function (response) {
           console.log(JSON.stringify(response.data));
           alert("Account Created Successfully");
-          history.push("/sign-in");
+          history.push("/login");
         })
         .catch(function (err) {
           console.log(err);

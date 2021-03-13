@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import NavBar from "./NavBar";
 
 const axios = require('axios')
 const qs = require('querystring')
@@ -136,6 +137,7 @@ export default function CreateJob(){
     }
     return(
     <React.Fragment>
+      <NavBar></NavBar>
       <CssBaseline />
 
       <main className={classes.layout}>

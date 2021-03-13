@@ -51,7 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const steps = ['Page 1', 'Page 2', 'Page 3'];
+const steps = ['Page 1', 'Page 2', 'Page 3', 'Page 4'];
 
 function getStepContent(step) {
   switch (step) {
@@ -100,10 +100,10 @@ export default function MainPage() {
             {activeStep === steps.length ? (
               <React.Fragment>
                 <Typography variant="h5" gutterBottom>
-                  Thank you for your order.
+                  Thank you for filling your details.
                 </Typography>
                 <Typography variant="subtitle1">
-                  Your Details have been submitted. Now you can apply for job listings.
+                  Your Details have been submitted. You can now apply to job listings.
                 </Typography>
               </React.Fragment>
             ) : (

@@ -80,8 +80,8 @@ export default function CreateJob(){
     };
     const handleSubmit=()=>{
       let data=new FormData();
-      data.set('company','flipkart');
-      data.set('placement','intern');
+      data.set('company','Flipkart');
+      data.set('placement','Intern');
       data.set('title',job_title);
       data.set('domain',domain);
       data.set('min_cgpa',minCgpa);

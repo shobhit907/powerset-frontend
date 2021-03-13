@@ -8,6 +8,8 @@ import ConfirmEmail from "./components/ConfirmEmail"
 import CreateJob from './components/CreateJob';
 import JobsList from "./components/JobsList";
 import PrivateRoute from "./components/PrivateRoute";
+import StudentDashBoard from "./components/StudentDashboard";
+
 function App() {
 
   return (
@@ -16,13 +18,13 @@ function App() {
       <div className="App" style={{ overflow: "scroll", scrollbars: "hidden" }}>
 
         <Switch>
-          <Route path="/navbar"></Route>
           <Route path="/login" component={Login} />
           <Route path="/register" component={SignUp} />
-          <PrivateRoute exact path="/" component={MainPage} />
+          <PrivateRoute exact path="/" component={StudentDashBoard} />
+          <PrivateRoute path="/profile" component={MainPage} />
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
-          <PrivateRoute path="/apply" component={JobsList} />
+          <PrivateRoute path="/job-profiles" component={JobsList} />
         </Switch>
       </div>
 

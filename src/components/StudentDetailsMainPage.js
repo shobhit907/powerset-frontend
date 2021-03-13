@@ -13,6 +13,7 @@ import Form1 from './StudentDetailsPage1';
 import Form2 from "./StudentDetailsPage2";
 import Form3 from "./StudentDetailsPage3";
 import Form4 from "./StudentDetailsPage4";
+import NavBar from "./NavBar";
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -82,6 +83,7 @@ export default function MainPage() {
 
   return (
     <React.Fragment>
+      <NavBar></NavBar>
       <CssBaseline />
       
       <main className={classes.layout}>

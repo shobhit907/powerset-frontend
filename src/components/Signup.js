@@ -157,12 +157,12 @@ export default function SignUp() {
                 onChange={(e) => setMobileNo(e.target.value)}
             />
             </Form.Group>
-            <Button block size="lg" type="submit" disabled={!validateForm()} className="btn btn-primary btn-block">
+            <Button block size="lg" type="submit" disabled={!validateForm()} color="primary">
             Sign Up
             </Button>
                 
             <p className="forgot-password text-right">
-                Already registered <a href="/sign-in">sign in?</a>
+                Already registered <a href="/login">Sign in?</a>
             </p>
             </Form>
             </div>

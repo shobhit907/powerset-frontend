@@ -16,7 +16,7 @@ html{
   overflow: hidden;
 }
 body {
-  background:#dce1e3 !important;
+  /* background:#dce1e3 !important; */
   min-height: 100vh;
   display: flex;
   font-weight: 400;
@@ -45,7 +45,7 @@ body, html, .App, #root, .body-wrapper {
 .nav-link {
   color: #05386b !important;
   
-  }
+  } 
 .body-wrapper {
   display: flex;
   justify-content: center;

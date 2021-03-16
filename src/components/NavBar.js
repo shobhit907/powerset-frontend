@@ -24,7 +24,7 @@ const NavBar = () => {
 					<Navbar
 						logo={logo}
 						helpCallback={() => {
-							alert("I need help... and coffee...");
+							alert("Contact powerset.dep1@gmail.com for any issues");
 						}}
 						menuItems={[
 							{

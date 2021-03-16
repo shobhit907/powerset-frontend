@@ -1,18 +1,12 @@
 import React, { Component, Fragment, useState } from "react";
-import Form from "react-bootstrap/Form";
-import { Button } from "reactstrap";
 import { useHistory } from "react-router-dom";
-
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faAngleLeft, faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
+import { faFacebookF, faGithub, faTwitter } from "@fortawesome/free-brands-svg-icons";
+import { Col, Row, Form, Card, Button, FormCheck, Container, InputGroup } from '@themesberg/react-bootstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import BgImage from "../assets/signin.svg";
 const axios = require('axios')
 const qs = require('querystring')
 
@@ -23,37 +17,7 @@ export default function Login() {
   function validateForm() {
     return email.length > 0 && password.length > 0;
   }
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      height: '100vh',
-    },
-    image: {
-      backgroundImage: 'url(https://app.joinsuperset.com/images/login_abstract_1.png)',
-      backgroundRepeat: 'no-repeat',
-      backgroundColor:
-        theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-    },
-    paper: {
-      margin: theme.spacing(8, 4),
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-    avatar: {
-      margin: theme.spacing(1),
-      backgroundColor: theme.palette.secondary.main,
-    },
-    form: {
-      width: '100%',
-      marginTop: theme.spacing(1),
-    },
-    submit: {
-      margin: theme.spacing(3, 0, 2),
-    },
-  }));
-  const classes = useStyles();
+
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -93,7 +57,7 @@ export default function Login() {
               console.log(err.response.headers);
             }
           })
-        history.push('/');
+        history.push('/profile');
       })
       .catch(function (err) {
         console.log(err);
@@ -112,69 +76,74 @@ export default function Login() {
 
 
   return (
-    <Grid container component="main" className={classes.root}>
-      <CssBaseline />
-      <Grid item xs={false} sm={4} md={7} className={classes.image} />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
-        <div className={classes.paper}>
+    <main>
+      <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
+        <Container>
 
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <form className={classes.form} noValidate>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-            />
+          <Row className="justify-content-center form-bg-image" style={{ backgroundImage: `url(${BgImage})` }}>
+            <Col xs={12} className="d-flex align-items-center justify-content-center">
+              <div className="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
+                <div className="text-center text-md-center mb-4 mt-md-0">
+                  <h3 className="mb-0">Sign in to Powerset</h3>
+                </div>
+                <Form className="mt-4" onSubmit={handleSubmit}>
+                  <Form.Group id="email" className="mb-4">
+                    <Form.Label>Email</Form.Label>
+                    <InputGroup>
+                      <InputGroup.Text>
+                        <FontAwesomeIcon icon={faEnvelope} />
+                      </InputGroup.Text>
+                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                    </InputGroup>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Group id="password" className="mb-4">
+                      <Form.Label>Password</Form.Label>
+                      <InputGroup>
+                        <InputGroup.Text>
+                          <FontAwesomeIcon icon={faUnlockAlt} />
+                        </InputGroup.Text>
+                        <Form.Control required type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                      </InputGroup>
+                    </Form.Group>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
 
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleSubmit}
-              disabled={!validateForm}
-            >
-              Sign In
-            </Button>
-            <Grid container>
+                      <Card.Link className="small text-end">Forgot Password?</Card.Link>
+                    </div>
+                  </Form.Group>
+                  <Button variant="primary" type="submit" className="w-100">
+                    Sign in
+                  </Button>
+                </Form>
 
-              <Grid item>
-                <Link to="/register" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-            <Box mt={5}>
-
-            </Box>
-          </form>
-        </div>
-      </Grid>
-    </Grid>
+                <div className="mt-3 mb-4 text-center">
+                  <span className="fw-normal">Or login with</span>
+                </div>
+                <div className="d-flex justify-content-center my-4">
+                  <Button variant="outline-light" className="btn-icon-only btn-pill text-facebook me-2">
+                    <FontAwesomeIcon icon={faFacebookF} />
+                  </Button>
+                  <Button variant="outline-light" className="btn-icon-only btn-pill text-twitter me-2">
+                    <FontAwesomeIcon icon={faTwitter} />
+                  </Button>
+                  <Button variant="outline-light" className="btn-icon-only btn-pil text-dark">
+                    <FontAwesomeIcon icon={faGithub} />
+                  </Button>
+                </div>
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                  <span className="fw-normal">
+                    Not registered?
+                    <Card.Link as={Link} to={'/register'} className="fw-bold">
+                      {` Create account `}
+                    </Card.Link>
+                  </span>
+                </div>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    </main>
   );
 
 }

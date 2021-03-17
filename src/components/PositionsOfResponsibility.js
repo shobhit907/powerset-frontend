@@ -11,11 +11,10 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { useLocation } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { formatMs } from '@material-ui/core';
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
-export default function Form() {
+export default function PositionOfResponsibility() {
     const [dummy,setDummy]=useState(0);
     const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06",end_date: "2020-05-07",description:"VFDDFV",domain:"abc" }]);
     const [noOfProjects,setNoOfProjects]=useState(1);
@@ -27,9 +26,7 @@ export default function Form() {
     const [noOfPor,setNoOfPor]=useState(1);
     const [courses, setCourses] = useState([{ code:"",title: "",grade_secured:""}]);
     const [noOfCourses,setNoOfCourses]=useState(1);
-    const [semesters,setSemesters]=useState([{ sgpa:0.0,backlogs: 0,grade_sheet:[]}]);
-    const [noOfSemesters,setNoOfSemesters]=useState(1);
-
+    const [errorText,setErrorText]=useState("");
    // const [id,setId]=useState(0);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
@@ -39,10 +36,10 @@ export default function Form() {
         'Authorization':token,
       }
       
+        
         axios({
           method: 'get',
-          
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/semesters/',
+          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/positions-of-responsibilities/',
           headers:{
             'Content-Type':'application/json',
             'Authorization':token,
@@ -51,18 +48,20 @@ export default function Form() {
         .then(function (response) {
           console.log(response);
             console.log(response.data.length);
-            var curr_semester=[];
+            var curr_por=[];
             
             for(var i=0;i<response.data.length;i++){
               var obj=new Object();
-              //console.log(response.data[i].job_title);
-              obj.sgpa=response.data[i].sgpa;
-              obj.backlogs=response.data[i].number_of_backlogs;
-              curr_semester=[...curr_semester,obj];
+              console.log(response.data[i].job_title);
+              obj.title=response.data[i].title;
+              obj.from_date=response.data[i].from_date;
+              obj.to_date=response.data[i].to_date;
+              obj.organization_name=response.data[i].organization_name;
+              curr_por=[...curr_por,obj];
             }
-            console.log(curr_semester);
-            if(curr_semester.length!=0)
-              setSemesters(curr_semester);
+            console.log(curr_por);
+            if(curr_por.length!=0)
+              setPor(curr_por);
           
 
         })
@@ -71,8 +70,7 @@ export default function Form() {
           console.log(err.response.status);
           console.log(err.response.headers);
         });
-        
-        
+     
     }
 
     React.useEffect(()=>{
@@ -81,28 +79,44 @@ export default function Form() {
     
     
     const handleSave=()=>{
+      setErrorText("");
+      var lettersAndSpaces=new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
       
-      for(var i=1;i<=noOfSemesters;i++){
-        let data=new FormData();
-        data.set('number',i);
-        data.set('sgpa',semesters[i-1].sgpa);
-        data.set('number_of_backlogs',semesters[i-1].backlogs);
-        data.set('file',semesters[i-1].grade_sheet);
+      var dobRegex=new RegExp("\d{4}-\d{2}-\d{2}$");
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      for(var i=0;i<por.length;i++){
+        if(!lettersAndSpaces.test(por[i].title)){
+          setErrorText("POR "+String(i+1)+": Title must only Conatin Letters and Numbers");
+          return;
+        }
+        if(!regEx.test(por[i].from_date) && por[i].from_date!=""){
+          setErrorText("POR "+String(i+1)+": From Date Must follow yyyy-mm-dd format");
+          return;
+        }
+        if(!regEx.test(por[i].to_date) && por[i].to_date!=""){
+          setErrorText("POR "+String(i+1)+": End Date Must follow yyyy-mm-dd format");
+          return;
+        }
+        if(por[i].from_date>por[i].to_date){
+          setErrorText("POR "+String(i+1)+": To Date must be after From Date");
+          return;
+        }
+        if(por[i].description.length<30 || por[i].description.length>500){
+          setErrorText("POR "+String(i+1)+": Description must be between 30 and 500 characters");
+          return;
+        }
+      }
       
-
-      //console.log(id);
-      let myurl='https://powerset-backend.herokuapp.com/students/'+String(id)+'/semesters/';
-      //console.log(myurl);
       axios({
         method: 'post',
         
-        url: myurl,
+        url: 'https://powerset-backend.herokuapp.com/students/'+String(id)+'/positions-of-responsibilities/',
         headers:{
-          'Content-Type':'multipart/form-data',
+          'Content-Type':'application/json',
           'Authorization':token,
 
         },
-        data : data,
+        data : por,
         
       })
       .then(function (response) {
@@ -113,9 +127,6 @@ export default function Form() {
         console.log(err.response.status);
         console.log(err.response.headers);
       });
-
-    }
-      
     }
 
     const handleInputChange = (e, index,field) => {
@@ -147,11 +158,6 @@ export default function Form() {
                 list5[index][name] = value;
                 setCourses(list5);
                 break;
-            case 6:
-                const list6 = [...semesters];
-                list6[index][name] = value;
-                setSemesters(list6);
-                break;
         }
         
       };
@@ -176,10 +182,6 @@ export default function Form() {
             case 5:
                 setCourses([...courses, { code:"",title: "",grade_secured:""}]);
                 setNoOfCourses(noOfCourses+1);
-                break;
-            case 6:
-                setSemesters([...semesters, { sgpa:"",backlogs: "",grade_sheet:""}]);
-                setNoOfSemesters(noOfSemesters+1);
                 break;
         }
     
@@ -218,12 +220,6 @@ export default function Form() {
                 setCourses(list5);
                 setNoOfCourses(noOfCourses-1);
                 break;
-              case 6:
-                const list6 = [...semesters];
-                list6.splice(index, 1);
-                setSemesters(list6);
-                setNoOfSemesters(noOfSemesters-1);
-                break;
         }
     
     };
@@ -232,67 +228,68 @@ export default function Form() {
   return (
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Enter Semester Details
+        Positions of Responsibility
       </Typography>
       
-      {semesters.map((x,i)=>{
+      {por.map((x,i)=>{
         return(
           
       <Grid container spacing={3}>
       
-        <Grid item xs={6} >
-        <Typography variant="h6" gutterBottom>
-        Semester {i+1}:
-      </Typography>
-      </Grid>
-      <Grid item xs={6}>
-      <Grid container justify="flex-end">
-      
-        {semesters.length !== 1 && <Button
-          color="primary"
-          onClick={() => handleRemoveClick(i,6)}>Remove Entry</Button>}
-          
-        </Grid>
-        </Grid>
-      <Grid item xs={4} >
+        <Grid item xs={12} sm={6}>
           <TextField
             
-            id="sgpa"
-            name="sgpa"
-            label="SGPA"
-            value={x.sgpa}
-            onChange={(e) => handleInputChange(e,i,6)}
+            id="title"
+            name="title"
+            label="Title"
+            value={x.title}
+            onChange={(e) => handleInputChange(e,i,4)}
           />
           </Grid>
+        <Grid item xs={12} sm={6}>
+
+        {por.length !== 1 && <Button
+          color="primary"
+          onClick={() => handleRemoveClick(i,4)}>Remove POR</Button>}
+          </Grid>
         
-          <Grid item xs={4}>
+        <Grid item xs={12} sm={6}>
           <TextField
             
-            id="backlogs"
-            name="backlogs"
-            label="No of Backlogs"
-            value={x.backlogs}
-            onChange={(e) => handleInputChange(e,i,6)}
+            id="from_date"
+            name="from_date"
+            label="From Date"
+            value={x.from_date}
+            onChange={(e) => handleInputChange(e,i,4)}
           />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={12} sm={6}>
           <TextField
-            
-            id="grade_sheet"
-            name="grade_sheet"
-            //label="Upload Grade Sheet"
-            type="file"
-            value={x.grade_sheet}
-            onChange={(e) => handleInputChange(e,i,6)}
+            id="to_date"
+            name="to_date"
+            label="To Date"
+            value={x.to_date}
+            onChange={(e) => handleInputChange(e,i,4)}
           />
         </Grid>
-      
-        {semesters.length - 1 === i && <Button color="primary" onClick={()=>handleAddClick(6)} className="btn ">Add Next Semester</Button>}
+        <Grid item xs={12}>
+        <TextField
+        id="organization_name"
+        label="Name of Club / Organisation"
+        name="organization_name"
+        fullWidth
+        value={x.organization_name}
+        onChange={(e) => handleInputChange(e,i,4)}
+        />
+        </Grid>
+        {por.length - 1 === i && <Button color="primary" onClick={()=>handleAddClick(4)} >Add POR</Button>}
 
       </Grid>
           )
       })}
-
+      <Grid item sm={12}>
+        <p style={{color:"red"}}> {errorText}</p>
+        </Grid>
       <Button variant="contained" color="primary" onClick={handleSave}>
       Save
       </Button>

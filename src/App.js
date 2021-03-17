@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './bootstrap.min.css';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import SignUp from "./components/Signup";
 import MainPage from "./components/StudentDetailsMainPage"
@@ -9,7 +9,8 @@ import CreateJob from './components/CreateJob';
 import JobsList from "./components/JobsList";
 import PrivateRoute from "./components/PrivateRoute";
 import StudentDashBoard from "./components/StudentDashboard";
-
+import ProfilePage from "./components/ProfilePage";
+import TestApp from "./components/TestApp";
 function App() {
 
   return (
@@ -20,8 +21,10 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/register" component={SignUp} />
+          <Route path="/testapp" component={TestApp} />
           <PrivateRoute exact path="/" component={StudentDashBoard} />
           <PrivateRoute path="/profile" component={MainPage} />
+          <PrivateRoute path="/my-profile" component={ProfilePage} />
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
           <PrivateRoute path="/job-profiles" component={JobsList} />

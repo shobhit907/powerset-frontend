@@ -18,7 +18,7 @@ const NavBar = () => {
 	const history = useHistory();
 
 	return (
-		<Container style={{ margin: 0, padding: 0 }} fluid={true}>
+		<Container style={{ margin: 0, padding: 0 ,position:'fixed',zindex:200}} fluid={true}>
 			<Row style={{ margin: 0, padding: 0 }}>
 				<Col style={{ margin: 0, padding: 0 }} xs="12">
 					<Navbar

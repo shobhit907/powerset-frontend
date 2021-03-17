@@ -95,7 +95,7 @@ export default function Form1() {
       getData();
   },[]);
   return (
-    <React.Fragment>
+    <div id="form1"><React.Fragment>
       <Typography variant="h6" gutterBottom>
         Enter your Details
       </Typography>
@@ -269,5 +269,6 @@ export default function Form1() {
         </Button>
       </Grid>
     </React.Fragment>
+    </div>
   );
 }

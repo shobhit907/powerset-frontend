@@ -318,6 +318,7 @@ export default function Form3() {
 
 
   return (
+    <div id="form3">
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
         Enter your Work Experience
@@ -527,5 +528,6 @@ export default function Form3() {
       Save
       </Button>
     </React.Fragment>
+    </div>
   );
 }

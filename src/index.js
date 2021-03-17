@@ -4,14 +4,14 @@ import "./index.css";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 // core styles
-import "./scss/volt.scss";
+// import "./scss/volt.scss";
 
 // vendor styles
 import "@fortawesome/fontawesome-free/css/all.css";
 import "react-datetime/css/react-datetime.css";
-
+import 'font-awesome/css/font-awesome.min.css';
 //import * as serviceWorker from "./serviceWorker";
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 ReactDOM.render(<App />, document.getElementById("root"));
 ReactDOM.render(

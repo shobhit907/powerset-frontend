@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState } from "react";
+import React, { Component, Fragment,useState } from "react";
 import { useHistory } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faEnvelope, faUnlockAlt } from "@fortawesome/free-solid-svg-icons";
@@ -11,75 +11,75 @@ const axios = require('axios')
 const qs = require('querystring')
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const history = useHistory();
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
-  }
-
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    console.log(email, password);
-    let data = new FormData();
-    data.set('email', email);
-    data.set('password', password);
-    let token = "";
-    axios({
-      method: 'post',
-      url: 'https://powerset-backend.herokuapp.com/auth/token/login/',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      data: data,
-
-    })
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-        token = "Token " + response.data.auth_token;
-        console.log("Logged in");
-        console.log(token);
-        localStorage.setItem('token', token);
-        const headers = {
-          'Authorization': token,
-
-        };
-        axios.get('https://powerset-backend.herokuapp.com/students/me/', { headers })
-          .then(response => {
-            console.log(response);
-          })
-          .catch(err => {
-            console.log(err)
-            if (err.response) {
-              console.log(err.response.data);
-              console.log(err.response.status);
-              console.log(err.response.headers);
-            }
-          })
-        history.push('/profile');
-      })
-      .catch(function (err) {
-        console.log(err);
-        alert("Wrong Email or Password");
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        }
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const history = useHistory();
+    function validateForm() {
+        return email.length > 0 && password.length > 0;
       }
-      );
+      
 
+      function handleSubmit(event) {
+        event.preventDefault();
+        console.log(email,password);
+        let data = new FormData();
+        data.set('email', email);
+        data.set('password', password);
+        let token="";
+        axios({
+          method: 'post',
+          url: 'https://powerset-backend.herokuapp.com/auth/token/login/',
+          headers:{
+            'Content-Type': 'multipart/form-data',
+          },
+          data : data,
+          
+        })
+        .then(function (response) {
+          console.log(JSON.stringify(response.data));
+          token="Token "+response.data.auth_token;
+          console.log("Logged in");
+          console.log(token);
+          localStorage.setItem('token',token);
+          const headers = {
+            'Authorization': token,
+            
+        };
+          axios.get('https://powerset-backend.herokuapp.com/students/me/',{headers})
+        .then(response => {
+          console.log(response);
+        })
+        .catch(err => {
+          console.log(err)
+          if (err.response) {
+            console.log(err.response.data);
+            console.log(err.response.status);
+            console.log(err.response.headers);
+          }
+        })
+        history.push('/');
+        })
+        .catch(function (err) {
+          console.log(err);
+          alert("Wrong Email or Password");
+          if (err.response) {
+            console.log(err.response.data);
+            console.log(err.response.status);
+            console.log(err.response.headers);
+          }
+        }
+        );
+        
 
-
-  }
-
-
-  return (
-    <main>
+      
+      }
+    
+    
+        return (
+          <main>
       <section className="d-flex align-items-center my-5 mt-lg-6 mb-lg-5">
         <Container>
-
+          
           <Row className="justify-content-center form-bg-image" style={{ backgroundImage: `url(${BgImage})` }}>
             <Col xs={12} className="d-flex align-items-center justify-content-center">
               <div className="bg-white shadow-soft border rounded border-light p-4 p-lg-5 w-100 fmxw-500">
@@ -93,7 +93,7 @@ export default function Login() {
                       <InputGroup.Text>
                         <FontAwesomeIcon icon={faEnvelope} />
                       </InputGroup.Text>
-                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                      <Form.Control autoFocus required type="email" placeholder="example@company.com" value={email} onChange={(e)=>setEmail(e.target.value)} />
                     </InputGroup>
                   </Form.Group>
                   <Form.Group>
@@ -103,11 +103,11 @@ export default function Login() {
                         <InputGroup.Text>
                           <FontAwesomeIcon icon={faUnlockAlt} />
                         </InputGroup.Text>
-                        <Form.Control required type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                        <Form.Control required type="password" placeholder="Password"  value={password} onChange={(e)=>setPassword(e.target.value)}/>
                       </InputGroup>
                     </Form.Group>
                     <div className="d-flex justify-content-between align-items-center mb-4">
-
+                      
                       <Card.Link className="small text-end">Forgot Password?</Card.Link>
                     </div>
                   </Form.Group>
@@ -144,6 +144,6 @@ export default function Login() {
         </Container>
       </section>
     </main>
-  );
-
+        );
+    
 }

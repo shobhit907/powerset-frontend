@@ -14,7 +14,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
-export default function Form1() {
+export default function StudentGeneralDetails() {
     const [DOB, onChangeDOB] = useState(new Date());
     const [institute,setInstitute]=useState("");
     const [branch,setBranch]=useState("");
@@ -28,9 +28,42 @@ export default function Form1() {
     const [technical_skills,setTechnicalSkills]=useState("");
     const [volunteer_experience,setVolunteerExperience]=useState("");
     const [career_plans,setCareerPlans]=useState("");
+    const [errorText,setErrorText]=useState("");
     let token=localStorage.getItem('token');
     console.log(token);
     const handleStudentCreate=()=>{
+      var dobRegex=new RegExp("^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$");
+      setErrorText("");
+      var lettersAndSpaces=new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
+
+      if(!lettersAndSpaces.test(fathers_name)){
+        setErrorText("Fathers Name must only contain letters and spaces");
+        return;
+      }
+      if(!lettersAndSpaces.test(mothers_name)){
+        setErrorText("Mothers Name must only contain letters and spaces");
+        return;
+      }
+      if(introduction.length<30 || introduction.length>500){
+        setErrorText("Introduction should be between 30 and 300 characters");
+        return;
+      }
+      if(technical_skills.length<30 || technical_skills.length>500){
+        setErrorText("Technical Skills should be between 30 and 300 characters");
+        return;
+      }
+      if(volunteer_experience.length<30 || volunteer_experience.length>500){
+        setErrorText("Volunteer Experience should be between 30 and 300 characters");
+        return;
+      }
+      if(career_plans.length<30 || career_plans.length>500){
+        setErrorText("Career Plans should be between 30 and 300 characters");
+        return;
+      }
+      if(!dobRegex.test(DOB)){
+        setErrorText("Date of Birth has invalid format");
+        return;
+      }
       let data=new FormData();
       data.set('branch',branch);
       data.set('degree',degree);
@@ -262,8 +295,9 @@ export default function Form1() {
         onChange={(e) => setVolunteerExperience(e.target.value)}
         />
         </Grid>
-        
-
+        <Grid item sm={12}>
+        <p style={{color:"red"}}> {errorText}</p>
+        </Grid>
         <Button variant="contained" color="primary" onClick={handleStudentCreate}>
         Save and Create Entry
         </Button>

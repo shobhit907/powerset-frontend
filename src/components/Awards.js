@@ -14,7 +14,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 const axios = require('axios')
 const qs = require('querystring')
 const moment = require('moment')
-export default function Form3() {
+export default function Awards() {
   const [dummy, setDummy] = useState(0);
   const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06", end_date: "2020-05-07", description: "VFDDFV", domain: "abc" }]);
   const [noOfProjects, setNoOfProjects] = useState(1);
@@ -26,6 +26,7 @@ export default function Form3() {
   const [noOfPor, setNoOfPor] = useState(1);
   const [courses, setCourses] = useState([{ code: "", title: "", grade: "" }]);
   const [noOfCourses, setNoOfCourses] = useState(1);
+  const [errorText, setErrorText] = useState("");
   // const [id,setId]=useState(0);
   let token = localStorage.getItem('token');
   let id = localStorage.getItem('id');
@@ -34,45 +35,6 @@ export default function Form3() {
     const headers = {
       'Authorization': token,
     }
-
-    axios({
-      method: 'get',
-
-      url: 'https://powerset-backend.herokuapp.com/students/' + String(id) + '/projects/',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-
-      },
-
-
-    })
-      .then(function (response) {
-        console.log(response);
-        console.log(response.data.length);
-        var curr_proj = [];
-
-        for (var i = 0; i < response.data.length; i++) {
-          var obj = new Object();
-          console.log(response.data[i].title);
-          obj.title = response.data[i].title;
-          obj.start_date = response.data[i].start_date;
-          obj.end_date = response.data[i].end_date;
-          obj.description = response.data[i].description;
-          obj.domain = response.data[i].domain;
-          curr_proj = [...curr_proj, obj];
-        }
-        console.log(curr_proj);
-        if (curr_proj.length != 0)
-          setProjects(curr_proj);
-
-
-      })
-      .catch(function (err) {
-        // console.log(err.response.data);
-        // console.log(err.response.status);
-        // console.log(err.response.headers);
-      });
 
 
     axios({
@@ -124,29 +86,34 @@ export default function Form3() {
 
   const handleSave = () => {
 
+
+    setErrorText("");
+    var lettersAndSpaces = new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
+
+    var dobRegex = new RegExp("\d{4}-\d{2}-\d{2}$");
+    var regEx = /^\d{4}-\d{2}-\d{2}$/;
+    for (var i = 0; i < awards.length; i++) {
+      if (!lettersAndSpaces.test(awards[i].title)) {
+        setErrorText("Award " + String(i + 1) + ": Title must only Conatin Letters and Numbers");
+        return;
+      }
+      if (!lettersAndSpaces.test(awards[i].issuer)) {
+        setErrorText("Award " + String(i + 1) + ": Issuer must only Conatin Letters and Numbers");
+        return;
+      }
+      if (!regEx.test(awards[i].issue_date) && awards[i].start_date != "") {
+        setErrorText("Award " + String(i + 1) + ": Issue Date Must follow yyyy-mm-dd format");
+        return;
+      }
+
+      if (awards[i].description.length < 30 || awards[i].description.length > 500) {
+        setErrorText("Award " + String(i + 1) + ": Description must be between 30 and 500 characters");
+        return;
+      }
+    }
     //console.log(id);
     let myurl = 'https://powerset-backend.herokuapp.com/students/' + String(id) + '/projects/';
     //console.log(myurl);
-    axios({
-      method: 'post',
-
-      url: myurl,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-
-      },
-      data: projects,
-
-    })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (err) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
-      });
 
     axios({
       method: 'post',
@@ -267,68 +234,11 @@ export default function Form3() {
 
 
   return (
-    <div id="form2"><React.Fragment>
+    <div id="form2">
+      <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Enter your Details
+        Awards
       </Typography>
-
-      {projects.map((x, i) => {
-        return (
-
-          <Grid container spacing={3}>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-
-                id="title"
-                name="title"
-                label="Project Title"
-                value={x.title}
-                onChange={(e) => handleInputChange(e, i, 1)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              {projects.length !== 1 && <Button
-                color="primary"
-                onClick={() => handleRemoveClick(i, 1)}>Remove Project</Button>}
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-
-                id="start_date"
-                name="start_date"
-                label="Satrt Date"
-                value={x.start_date}
-                onChange={(e) => handleInputChange(e, i, 1)}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="end_date"
-                name="end_date"
-                label="End Date"
-                value={x.end_date}
-                onChange={(e) => handleInputChange(e, i, 1)}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="description"
-                label="Describe the project"
-                name="description"
-                multiline
-                rows={4}
-                fullWidth
-                value={x.description}
-                onChange={(e) => handleInputChange(e, i, 1)}
-              />
-            </Grid>
-            {projects.length - 1 === i && <Button color="primary" onClick={() => handleAddClick(1)} className="btn ">Add Project</Button>}
-
-          </Grid>
-        )
-      })}
 
 
       {awards.map((x, i) => {
@@ -351,45 +261,13 @@ export default function Form3() {
                 color="primary"
                 onClick={() => handleRemoveClick(i, 2)}>Remove Award</Button>}
             </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <TextField
-
-                id="start_date"
-                name="issue_date"
-                label="Issue Date"
-                value={x.issue_date}
-                onChange={(e) => handleInputChange(e, i, 2)}
-              />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                id="end_date"
-                name="issuer"
-                label="Issuer"
-                value={x.issuer}
-                onChange={(e) => handleInputChange(e, i, 2)}
-              />
+        );}}
+            <Grid item sm={12}>
+              <p style={{ color: "red" }}> {errorText}</p>
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                id="description"
-                label="Describe the Award"
-                name="description"
-                multiline
-                rows={4}
-                fullWidth
-                value={x.description}
-                onChange={(e) => handleInputChange(e, i, 2)}
-              />
-            </Grid>
-            {awards.length - 1 === i && <Button color="primary" onClick={() => handleAddClick(2)} >Add Award</Button>}
-
-          </Grid>
-        )
-      })}
-      <Button variant="contained" color="primary" onClick={handleSave}>
-        Save
+            <Button variant="contained" color="primary" onClick={handleSave}>
+              Save
       </Button>
     </React.Fragment>
     </div>

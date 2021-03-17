@@ -14,7 +14,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
-export default function Form3() {
+export default function Courses() {
     const [dummy,setDummy]=useState(0);
     const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06",end_date: "2020-05-07",description:"VFDDFV",domain:"abc" }]);
     const [noOfProjects,setNoOfProjects]=useState(1);
@@ -26,6 +26,7 @@ export default function Form3() {
     const [noOfPor,setNoOfPor]=useState(1);
     const [courses, setCourses] = useState([{ code:"",title: "",grade_secured:""}]);
     const [noOfCourses,setNoOfCourses]=useState(1);
+    const [errorText,setErrorText]=useState("");
    // const [id,setId]=useState(0);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
@@ -35,79 +36,6 @@ export default function Form3() {
         'Authorization':token,
       }
       
-        axios({
-          method: 'get',
-          
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/',
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization':token,
-          },
-        })
-        .then(function (response) {
-          console.log(response);
-            console.log(response.data.length);
-            var curr_work_ex=[];
-            
-            for(var i=0;i<response.data.length;i++){
-              var obj=new Object();
-              console.log(response.data[i].job_title);
-              obj.job_title=response.data[i].job_title;
-              obj.start_date=response.data[i].start_date;
-              obj.end_date=response.data[i].end_date;
-              obj.description=response.data[i].description;
-              obj.company=response.data[i].company;
-              obj.location=response.data[i].location;
-              obj.compensation=response.data[i].compensation;
-              curr_work_ex=[...curr_work_ex,obj];
-            }
-            console.log(curr_work_ex);
-            if(curr_work_ex.length!=0)
-              setWorkExperience(curr_work_ex);
-          
-
-        })
-        .catch(function (err) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        });
-        
-        axios({
-          method: 'get',
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/positions-of-responsibilities/',
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization':token,
-          },
-        })
-        .then(function (response) {
-          console.log(response);
-            console.log(response.data.length);
-            var curr_por=[];
-            
-            for(var i=0;i<response.data.length;i++){
-              var obj=new Object();
-              console.log(response.data[i].job_title);
-              obj.title=response.data[i].title;
-              obj.from_date=response.data[i].from_date;
-              obj.to_date=response.data[i].to_date;
-              obj.organization_name=response.data[i].organization_name;
-              curr_por=[...curr_por,obj];
-            }
-            console.log(curr_por);
-            if(curr_por.length!=0)
-              setPor(curr_por);
-          
-
-        })
-        .catch(function (err) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        });
-        
-  
         axios({
           method: 'get',
           
@@ -141,9 +69,6 @@ export default function Form3() {
           console.log(err.response.status);
           console.log(err.response.headers);
         });
-        
-  
-      
      
     }
 
@@ -153,52 +78,25 @@ export default function Form3() {
     
     
     const handleSave=()=>{
-
-      //console.log(id);
-      let myurl='https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/';
-      //console.log(myurl);
-      axios({
-        method: 'post',
-        
-        url: myurl,
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':token,
-
-        },
-        data : work_experience,
-        
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (err) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
-      });
-
-      axios({
-        method: 'post',
-        
-        url: 'https://powerset-backend.herokuapp.com/students/'+String(id)+'/positions-of-responsibilities/',
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':token,
-
-        },
-        data : por,
-        
-      })
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (err) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
-      });
-
+        setErrorText("");
+      var lettersAndSpaces=new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
+      var dobRegex=new RegExp("\d{4}-\d{2}-\d{2}$");
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      var decimalOrFloat=/^[+-]?\d+(\.\d+)?$/;
+      for(var i=0;i<courses.length;i++){
+        if(!lettersAndSpaces.test(courses[i].title)){
+          setErrorText("Course "+String(i+1)+": Title must only Contain Letters and Numbers");
+          return;
+        }
+        if(!lettersAndSpaces.test(courses[i].code) && courses[i].code.length>8){
+          setErrorText("Course "+String(i+1)+": Code must be only letters and numbers and length < 8");
+          return;
+        }
+        if(!decimalOrFloat.test(courses[i].grade_secured)){
+            setErrorText("Course "+String(i+1)+": Grade Secured must be decimal or float");
+            return;
+        }
+      }
       axios({
         method: 'post',
         
@@ -318,164 +216,10 @@ export default function Form3() {
 
 
   return (
-    <div id="form3">
     <React.Fragment>
       <Typography variant="h6" gutterBottom>
-        Enter your Work Experience
-      </Typography>
-      
-      {work_experience.map((x,i)=>{
-        return(
-          
-      <Grid container spacing={3}>
-      
-        <Grid item xs={12} sm={6}>
-          <TextField
-            
-            id="title"
-            name="job_title"
-            label="Job Title"
-            value={x.job_title}
-            onChange={(e) => handleInputChange(e,i,3)}
-          />
-          </Grid>
-        <Grid item xs={12} sm={6}>
-        {work_experience.length !== 1 && <Button
-          color="primary"
-          onClick={() => handleRemoveClick(i,3)}>Remove Work Experience</Button>}
-          </Grid>
-          <Grid item xs={12} sm={6}>
-          <TextField
-            
-            id="company"
-            name="company"
-            label="Company Name"
-            value={x.company}
-            onChange={(e) => handleInputChange(e,i,3)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            
-            id="location"
-            name="location"
-            label="Location"
-            value={x.location}
-            onChange={(e) => handleInputChange(e,i,3)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            
-            id="start_date"
-            name="start_date"
-            label="Start Date"
-            value={x.start_date}
-            onChange={(e) => handleInputChange(e,i,3)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id="end_date"
-            name="end_date"
-            label="End Date"
-            value={x.end_date}
-            onChange={(e) => handleInputChange(e,i,3)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id="compensation"
-            name="compensation"
-            label="Compensation"
-            value={x.compensation}
-            onChange={(e) => handleInputChange(e,i,3)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-        <TextField
-        id="description"
-        label="Describe the Work"
-        name="description"
-        multiline
-        rows={4}
-        fullWidth
-        value={x.description}
-        onChange={(e) => handleInputChange(e,i,3)}
-        />
-        </Grid>
-        {work_experience.length - 1 === i && <Button color="primary" onClick={()=>handleAddClick(3)} className="btn ">Add Work Experience</Button>}
-
-      </Grid>
-          )
-      })}
-
-
-      <Typography variant="h6" gutterBottom>
-        Enter your Positions of Responsibility
-      </Typography>
-
-      {por.map((x,i)=>{
-        return(
-          
-      <Grid container spacing={3}>
-      
-        <Grid item xs={12} sm={6}>
-          <TextField
-            
-            id="title"
-            name="title"
-            label="Title"
-            value={x.title}
-            onChange={(e) => handleInputChange(e,i,4)}
-          />
-          </Grid>
-        <Grid item xs={12} sm={6}>
-
-        {por.length !== 1 && <Button
-          color="primary"
-          onClick={() => handleRemoveClick(i,4)}>Remove POR</Button>}
-          </Grid>
-        
-        <Grid item xs={12} sm={6}>
-          <TextField
-            
-            id="from_date"
-            name="from_date"
-            label="From Date"
-            value={x.from_date}
-            onChange={(e) => handleInputChange(e,i,4)}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            id="to_date"
-            name="to_date"
-            label="To Date"
-            value={x.to_date}
-            onChange={(e) => handleInputChange(e,i,4)}
-          />
-        </Grid>
-        <Grid item xs={12}>
-        <TextField
-        id="organization_name"
-        label="Name of Club / Organisation"
-        name="organization_name"
-        fullWidth
-        value={x.organization_name}
-        onChange={(e) => handleInputChange(e,i,4)}
-        />
-        </Grid>
-        {por.length - 1 === i && <Button color="primary" onClick={()=>handleAddClick(4)} >Add POR</Button>}
-
-      </Grid>
-          )
-      })}
-
-      <Typography variant="h6" gutterBottom>
-      Enter your Courses
-    </Typography>
-
+      Courses
+      </Typography> 
     {courses.map((x,i)=>{
       return(
         
@@ -524,10 +268,12 @@ export default function Form3() {
     </Grid>
         )
     })}
+    <Grid item sm={12}>
+        <p style={{color:"red"}}> {errorText}</p>
+        </Grid>
       <Button variant="contained" color="primary" onClick={handleSave}>
       Save
       </Button>
     </React.Fragment>
-    </div>
   );
 }

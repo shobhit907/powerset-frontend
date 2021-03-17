@@ -14,30 +14,92 @@ import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { formatMs } from '@material-ui/core';
 const axios = require('axios')
 const qs = require('querystring')
-const moment = require('moment')
-export default function Form() {
-  const [dummy, setDummy] = useState(0);
-  const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06", end_date: "2020-05-07", description: "VFDDFV", domain: "abc" }]);
-  const [noOfProjects, setNoOfProjects] = useState(1);
-  const [awards, setAwards] = useState([{ title: "", description: "", issuer: "", issue_date: "" }]);
-  const [noOfAwards, setNoOfAwards] = useState(1);
-  const [work_experience, setWorkExperience] = useState([{ job_title: "", company: "", location: "", start_date: "", end_date: "", description: "", compensation: 0 }]);
-  const [noOfWorkExperience, setNoOfWorkExperience] = useState(1);
-  const [por, setPor] = useState([{ title: "", from_date: "", to_date: "", organization_name: "" }]);
-  const [noOfPor, setNoOfPor] = useState(1);
-  const [courses, setCourses] = useState([{ code: "", title: "", grade_secured: "" }]);
-  const [noOfCourses, setNoOfCourses] = useState(1);
-  const [semesters, setSemesters] = useState([{ sgpa: 0.0, backlogs: 0, grade_sheet: [] }]);
-  const [noOfSemesters, setNoOfSemesters] = useState(1);
+const moment=require('moment')
+export default function Semesters() {
+    const [dummy,setDummy]=useState(0);
+    const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06",end_date: "2020-05-07",description:"VFDDFV",domain:"abc" }]);
+    const [noOfProjects,setNoOfProjects]=useState(1);
+    const [awards, setAwards] = useState([{ title: "", description: "",issuer: "",issue_date:"" }]);
+    const [noOfAwards,setNoOfAwards]=useState(1);
+    const [work_experience, setWorkExperience] = useState([{ job_title: "",company:"",location:"", start_date: "",end_date: "",description:"",compensation:0 }]);
+    const [noOfWorkExperience,setNoOfWorkExperience]=useState(1);
+    const [por, setPor] = useState([{ title: "", from_date: "",to_date: "",organization_name:""}]);
+    const [noOfPor,setNoOfPor]=useState(1);
+    const [courses, setCourses] = useState([{ code:"",title: "",grade_secured:""}]);
+    const [noOfCourses,setNoOfCourses]=useState(1);
+    const [semesters,setSemesters]=useState([{ sgpa:0.0,backlogs: 0,grade_sheet:[]}]);
+    const [noOfSemesters,setNoOfSemesters]=useState(1);
+    const [errorText,setErrorText]=useState("");
+
+   // const [id,setId]=useState(0);
+    let token=localStorage.getItem('token');
+    let id=localStorage.getItem('id');
+    const getData =  ()=>{
+      
+      const headers={
+        'Authorization':token,
+      }
+      
+        axios({
+          method: 'get',
+          
+          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/semesters/',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':token,
+          },
+        })
+        .then(function (response) {
+          console.log(response);
+            console.log(response.data.length);
+            var curr_semester=[];
+            
+            for(var i=0;i<response.data.length;i++){
+              var obj=new Object();
+              //console.log(response.data[i].job_title);
+              obj.sgpa=response.data[i].sgpa;
+              obj.backlogs=response.data[i].number_of_backlogs;
+              curr_semester=[...curr_semester,obj];
+            }
+            console.log(curr_semester);
+            if(curr_semester.length!=0)
+              setSemesters(curr_semester);
+          
 
   // const [id,setId]=useState(0);
   let token = localStorage.getItem('token');
   let id = localStorage.getItem('id');
   const getData = () => {
 
-    const headers = {
-      'Authorization': token,
-    }
+    React.useEffect(()=>{
+      getData();
+  },[]);
+    
+    
+    const handleSave=()=>{
+      setErrorText("");
+      var lettersAndSpaces=new RegExp("^[a-zA-Z]+(\s[a-zA-Z]+)?$");
+      var dobRegex=new RegExp("\d{4}-\d{2}-\d{2}$");
+      var regEx = /^\d{4}-\d{2}-\d{2}$/;
+      var decimalOrFloat=/^[+-]?\d+(\.\d+)?$/;
+      var reg = /^\d+$/;
+      for(var i=0;i<semesters.length;i++){
+        if(!decimalOrFloat.test(semesters[i].sgpa)){
+          setErrorText("Semester "+String(i+1)+": SGPA must be decimal or float");
+          return;
+        }
+        if(!reg.test(semesters[i].backlogs)){
+          setErrorText("Semester "+String(i+1)+": Backlogs Secured must be a number");
+          return;
+        }
+      }
+      for(var i=1;i<=noOfSemesters;i++){
+        let data=new FormData();
+        data.set('number',i);
+        data.set('sgpa',semesters[i-1].sgpa);
+        data.set('number_of_backlogs',semesters[i-1].backlogs);
+        data.set('file',semesters[i-1].grade_sheet);
+      
 
     axios({
       method: 'get',
@@ -292,10 +354,12 @@ export default function Form() {
 
             </Grid>
           )
-        })}
-
-        <Button variant="contained" color="primary" onClick={handleSave}>
-          Save
+      })}
+      <Grid item sm={12}>
+        <p style={{color:"red"}}> {errorText}</p>
+        </Grid>
+      <Button variant="contained" color="primary" onClick={handleSave}>
+      Save
       </Button>
       </React.Fragment>
     </div>

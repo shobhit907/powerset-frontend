@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "react-sidebar";
-import NavBar from "./NavBar";
+import NavBar from "../navbar/NavBar";
 import styled from "styled-components";
 import { Container, Row, Col } from "reactstrap";
 import StudentGeneralDetails from "./StudentGeneralDetails";

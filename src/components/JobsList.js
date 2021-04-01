@@ -21,7 +21,7 @@ import TableRow from "@material-ui/core/TableRow";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import { Button } from "@material-ui/core";
-import NavBar from "./NavBar";
+import NavBar from "./navbar/NavBar";
 const axios = require("axios");
 //let rows=[];
 

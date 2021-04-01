@@ -3,13 +3,12 @@ import './bootstrap.min.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import SignUp from "./components/Signup";
-import MainPage from "./components/StudentDetailsMainPage"
 import ConfirmEmail from "./components/ConfirmEmail"
 import CreateJob from './components/CreateJob';
 import JobsList from "./components/JobsList";
 import PrivateRoute from "./components/PrivateRoute";
 import StudentDashBoard from "./components/StudentDashboard";
-import ProfilePage from "./components/ProfilePage";
+import ProfilePage from "./components/student-profile/ProfilePage";
 function App() {
 
   return (

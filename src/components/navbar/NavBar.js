@@ -1,7 +1,7 @@
 import React, { Component, useState } from "react";
 import { Redirect } from "react-router-dom";
 import Navbar from "reactjs-navbar";
-import logo from "../images/powerset-logo.jpeg";
+import logo from "../../images/powerset-logo.jpeg";
 import { Container, Row, Col } from "reactstrap";
 import { useHistory } from "react-router-dom";
 import {

@@ -216,10 +216,11 @@ export default function Courses() {
 
 
   return (
+    <div id="courses">
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+      <h1>
       Courses
-      </Typography> 
+      </h1> 
     {courses.map((x,i)=>{
       return(
         
@@ -275,5 +276,6 @@ export default function Courses() {
       Save
       </Button>
     </React.Fragment>
+    </div>
   );
 }

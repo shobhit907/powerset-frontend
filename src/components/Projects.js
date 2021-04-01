@@ -233,10 +233,9 @@ export default function Projects() {
 
 
   return (
+    <div id="projects">
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Enter your Details
-      </Typography>
+      <h1>Projects</h1>
       
       {projects.map((x,i)=>{
         return(
@@ -304,5 +303,6 @@ export default function Projects() {
       Save
       </Button>
     </React.Fragment>
+    </div>
   );
 }

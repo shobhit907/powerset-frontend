@@ -128,10 +128,8 @@ export default function StudentGeneralDetails() {
       getData();
   },[]);
   return (
-    <div id="form1"><React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Enter your Details
-      </Typography>
+    <div id="student-general-details"><React.Fragment>
+      <h1>About You</h1>
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6}>
           <TextField

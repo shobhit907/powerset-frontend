@@ -244,11 +244,9 @@ export default function WorkExperience() {
 
 
   return (
-    <div id="form3">
+    <div id="work-experience">
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
-        Enter your Work Experience
-      </Typography>
+      <h1>Internships & Work Experience</h1>
       
       {work_experience.map((x,i)=>{
         return(

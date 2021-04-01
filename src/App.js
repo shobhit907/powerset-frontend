@@ -23,7 +23,7 @@ function App() {
           <Route path="/register" component={SignUp} />
           <Route path="/testapp" component={TestApp} />
           <PrivateRoute exact path="/" component={StudentDashBoard} />
-          <PrivateRoute path="/profile" component={MainPage} />
+          <PrivateRoute path="/profile" component={TestApp} />
           <PrivateRoute path="/my-profile" component={ProfilePage} />
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />

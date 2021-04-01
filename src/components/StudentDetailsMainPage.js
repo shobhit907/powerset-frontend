@@ -9,22 +9,14 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-<<<<<<< HEAD
-import Form1 from './StudentDetailsPage1';
-import Form2 from "./StudentDetailsPage2";
-import Form3 from "./StudentDetailsPage3";
-import Form4 from "./StudentDetailsPage4";
-import NavBar from "./NavBar";
-=======
 import StudentGeneralDetails from './StudentGeneralDetails';
 import Projects from './Projects';
 import Awards from './Awards';
 import WorkExperience from './WorkExperience';
-import PositionOfResponsibility from './PositionsOfResponsibility'
+import PositionOfResponsibility from './PositionsOfResponsibility';
 import Courses from './Courses';
 import Semesters from './Semesters'
->>>>>>> Rohit
-
+import NavBar from "./NavBar";
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: 'relative',

@@ -226,10 +226,11 @@ export default function PositionOfResponsibility() {
 
 
   return (
+    <div id="positions-of-responsibility">
     <React.Fragment>
-      <Typography variant="h6" gutterBottom>
+      <h1>
         Positions of Responsibility
-      </Typography>
+      </h1>
       
       {por.map((x,i)=>{
         return(
@@ -294,5 +295,6 @@ export default function PositionOfResponsibility() {
       Save
       </Button>
     </React.Fragment>
+    </div>
   );
 }

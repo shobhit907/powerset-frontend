@@ -40,22 +40,22 @@ const NavBar = () => {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav">
             <li class="nav-item active">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="/">
                 Home <span class="sr-only">(current)</span>
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="/job-profiles">
                 Job Profiles
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="/profile">
                 My Profile
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="/interviews">
                 Interviews
               </a>
             </li>
@@ -64,7 +64,11 @@ const NavBar = () => {
           <button
             class="btn btn-outline-danger my-2 my-sm-0"
             type="submit"
-            style={{ float: "inline-end" }}
+            style={{ float: 'right' }}
+            onClick={()=>{
+              localStorage.removeItem('token');
+              history.push('/login');
+            }}
           >
             Log out
           </button>

@@ -10,7 +10,6 @@ import JobsList from "./components/JobsList";
 import PrivateRoute from "./components/PrivateRoute";
 import StudentDashBoard from "./components/StudentDashboard";
 import ProfilePage from "./components/ProfilePage";
-import TestApp from "./components/TestApp";
 function App() {
 
   return (
@@ -21,10 +20,9 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/register" component={SignUp} />
-          <Route path="/testapp" component={TestApp} />
+          {/* <Route path="/testapp" component={ProfilePage} /> */}
           <PrivateRoute exact path="/" component={StudentDashBoard} />
-          <PrivateRoute path="/profile" component={TestApp} />
-          <PrivateRoute path="/my-profile" component={ProfilePage} />
+          <PrivateRoute path="/profile" component={ProfilePage} />
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
           <PrivateRoute path="/job-profiles" component={JobsList} />

@@ -1,16 +1,9 @@
 import React, { Component, Fragment,useState } from 'react';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';  
-import Checkbox from '@material-ui/core/Checkbox';
-import { useLocation } from "react-router-dom";
-import { useHistory } from "react-router-dom";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Checkbox, useCheckboxState } from 'pretty-checkbox-react';
+
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
@@ -27,9 +20,35 @@ export default function WorkExperience() {
     const [courses, setCourses] = useState([{ code:"",title: "",grade_secured:""}]);
     const [noOfCourses,setNoOfCourses]=useState(1);
     const [errorText,setErrorText]=useState("");
+    const onVerifiedChange=async()=>{
+      const headers={
+        'Authorization':token,
+      }
+      // alert("Work experience is_verified changing to "+(!is_verified.state).toString());
+      axios({
+        method: 'put',
+          
+          url:'http://localhost:8000/students/'+String(id)+'/work-experiences/verify/',
+          headers:{
+            'Content-Type':'application/json',
+            'Authorization':token,
+          },
+          data : {
+            is_verified:!is_verified.state
+          },
+      }).then((response)=>{
+        alert(response.data);
+      }).catch((err)=>{
+        alert("Error in verifying");
+      })
+    };
+
+    const is_verified=useCheckboxState({onChange:onVerifiedChange});
    // const [id,setId]=useState(0);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
+
+    
     const getData =  ()=>{
       
       const headers={
@@ -39,7 +58,7 @@ export default function WorkExperience() {
         axios({
           method: 'get',
           
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/',
+          url:'http://localhost:8000/students/'+String(id)+'/work-experiences/',
           headers:{
             'Content-Type':'application/json',
             'Authorization':token,
@@ -63,9 +82,11 @@ export default function WorkExperience() {
               curr_work_ex=[...curr_work_ex,obj];
             }
             console.log(curr_work_ex);
-            if(curr_work_ex.length!=0)
+            if(curr_work_ex.length!=0){
               setWorkExperience(curr_work_ex);
-          
+              is_verified.setState(response.data[0].is_verified);
+            }
+            
 
         })
         .catch(function (err) {
@@ -109,14 +130,14 @@ export default function WorkExperience() {
           setErrorText("Work Experience "+String(i+1)+": End Date Must follow yyyy-mm-dd format");
           return;
         }
-        if(work_experience[i].start_date>work_experience[i].end_date){
-          setErrorText("Work Experience "+String(i+1)+": End Date must be after Start Date");
-          return;
-        }
-        if(work_experience[i].description.length<30 || work_experience[i].description.length>500){
-          setErrorText("Work Experience "+String(i+1)+": Description must be between 30 and 500 characters");
-          return;
-        }
+        // if(work_experience[i].start_date>work_experience[i].end_date){
+        //   setErrorText("Work Experience "+String(i+1)+": End Date must be after Start Date");
+        //   return;
+        // }
+        // if(work_experience[i].description.length<30 || work_experience[i].description.length>500){
+        //   setErrorText("Work Experience "+String(i+1)+": Description must be between 30 and 500 characters");
+        //   return;
+        // }
         if(!decimalOrFloat.test(work_experience[i].compensation)){
             setErrorText("Work Experience "+String(i+1)+": Compensation must be decimal or float");
             return;
@@ -246,8 +267,8 @@ export default function WorkExperience() {
   return (
     <div id="work-experience">
     <React.Fragment>
-      <h1>Internships & Work Experience</h1>
-      
+      <h1 style={{display:"inline"}}> 
+      Internships & Work Experience <Checkbox {...is_verified} style={{display:"inline"}}></Checkbox></h1>
       {work_experience.map((x,i)=>{
         return(
           

@@ -28,7 +28,7 @@ export default function WorkExperience() {
       axios({
         method: 'put',
           
-          url:'http://localhost:8000/students/'+String(id)+'/work-experiences/verify/',
+          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/verify/',
           headers:{
             'Content-Type':'application/json',
             'Authorization':token,
@@ -37,7 +37,11 @@ export default function WorkExperience() {
             is_verified:!is_verified.state
           },
       }).then((response)=>{
-        alert(response.data);
+        if(is_verified.state){
+          alert("Unverified")
+        }else{
+          alert("Verified")
+        }
       }).catch((err)=>{
         alert("Error in verifying");
       })
@@ -58,7 +62,7 @@ export default function WorkExperience() {
         axios({
           method: 'get',
           
-          url:'http://localhost:8000/students/'+String(id)+'/work-experiences/',
+          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/',
           headers:{
             'Content-Type':'application/json',
             'Authorization':token,

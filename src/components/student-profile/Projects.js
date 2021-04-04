@@ -101,14 +101,14 @@ export default function Projects() {
           setErrorText("Project "+String(i+1)+": End Date Must follow yyyy-mm-dd format");
           return;
         }
-        if(projects[i].start_date>projects[i].end_date){
-          setErrorText("Project "+String(i+1)+": End Date must be after Start Date");
-          return;
-        }
-        if(projects[i].description.length<30 || projects[i].description.length>500){
-          setErrorText("Project "+String(i+1)+": Description must be between 30 and 500 characters");
-          return;
-        }
+        // if(projects[i].start_date>projects[i].end_date){
+        //   setErrorText("Project "+String(i+1)+": End Date must be after Start Date");
+        //   return;
+        // }
+        // if(projects[i].description.length<30 || projects[i].description.length>500){
+        //   setErrorText("Project "+String(i+1)+": Description must be between 30 and 500 characters");
+        //   return;
+        // }
       }
       //console.log(id);
       let myurl='https://powerset-backend.herokuapp.com/students/'+String(id)+'/projects/';

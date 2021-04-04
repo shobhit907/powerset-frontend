@@ -103,7 +103,7 @@ export default function Semesters() {
     getData();
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async() => {
     setErrorText("");
     var lettersAndSpaces = new RegExp("^[a-zA-Z]+(s[a-zA-Z]+)?$");
     var dobRegex = new RegExp("d{4}-d{2}-d{2}$");
@@ -124,14 +124,17 @@ export default function Semesters() {
         return;
       }
     }
-    for (var i = 1; i <= noOfSemesters; i++) {
+    i=1;
+    semesters.forEach(async (semester) => {
+      console.log("Request for semester : "+i.toString());
       let data = new FormData();
       data.set("number", i);
       data.set("sgpa", semesters[i - 1].sgpa);
       data.set("number_of_backlogs", semesters[i - 1].backlogs);
-      data.set("file", semesters[i - 1].grade_sheet);
+      data.set("grade_sheet", semesters[i - 1].grade_sheet);
 
       //console.log(id);
+      //
       let myurl =
         "https://powerset-backend.herokuapp.com/students/" +
         String(id) +
@@ -155,7 +158,9 @@ export default function Semesters() {
           console.log(err.response.status);
           console.log(err.response.headers);
         });
-    }
+        console.log("Request for semester : "+i.toString()+" done");
+        i+=1;
+    });
   };
 
   const handleInputChange = (e, index, field) => {
@@ -189,7 +194,12 @@ export default function Semesters() {
         break;
       case 6:
         const list6 = [...semesters];
-        list6[index][name] = value;
+        if(name=='grade_sheet'){
+          list6[index][name]=e.target.files[0];
+        }else{
+          list6[index][name] = value;
+        }
+        console.log(list6);
         setSemesters(list6);
         break;
     }
@@ -340,7 +350,6 @@ export default function Semesters() {
                 name="grade_sheet"
                 //label="Upload Grade Sheet"
                 type="file"
-                value={x.grade_sheet}
                 onChange={(e) => handleInputChange(e, i, 6)}
               />
             </Grid>

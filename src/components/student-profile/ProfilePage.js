@@ -62,7 +62,7 @@ class ProfilePage extends React.Component {
             <br></br><br></br>
             <WorkExperience></WorkExperience>
             <br></br><br></br>
-            <Projects></Projects>
+            <Projects isCoordinator={true}></Projects>
             <br></br><br></br>
             <Courses></Courses>
             <br></br><br></br>

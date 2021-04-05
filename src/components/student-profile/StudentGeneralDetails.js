@@ -31,6 +31,17 @@ export default function StudentGeneralDetails(props) {
   const [volunteer_experience, setVolunteerExperience] = useState("");
   const [career_plans, setCareerPlans] = useState("");
   const [errorText, setErrorText] = useState("");
+  const [student_id, set_student_id] = useState();
+  React.useEffect(()=>{
+    if(props.student_id){
+      set_student_id(props.student_id);
+    }
+    if(student_id==-1){
+      set_student_id(localStorage.getItem('id'));
+    }
+  
+  },[]);
+  
   let token = localStorage.getItem("token");
   console.log(token);
 
@@ -95,6 +106,7 @@ export default function StudentGeneralDetails(props) {
       .then(function (response) {
         console.log(response);
         localStorage.setItem("id", response.data.id);
+        set_student_id(response.data.id);
       })
       .catch(function (err) {
         console.log(err.response.data);
@@ -106,8 +118,16 @@ export default function StudentGeneralDetails(props) {
     const headers = {
       Authorization: token,
     };
+    var request_url="";
+    if(student_id && student_id!==-1){
+      request_url = "https://powerset-backend.herokuapp.com/students/"+student_id.toString()+"/";
+      
+    }else{
+      request_url = "https://powerset-backend.herokuapp.com/students/me/";
+    }
+    
     axios
-      .get("https://powerset-backend.herokuapp.com/students/me/", { headers })
+      .get(request_url, { headers })
       .then((response) => {
         console.log(response);
 
@@ -156,7 +176,7 @@ export default function StudentGeneralDetails(props) {
 
   return (
     <div id="student-general-details">
-      <React.Fragment>
+      {student_id!=-1 && (<React.Fragment>
         <Grid container spacing={1}>
           <Grid item xs={6} sm={4}>
             <h1>About You</h1>
@@ -381,7 +401,7 @@ export default function StudentGeneralDetails(props) {
             Save and Create Entry
           </Button>
         </Grid>
-      </React.Fragment>
+      </React.Fragment>)}
     </div>
   );
 }

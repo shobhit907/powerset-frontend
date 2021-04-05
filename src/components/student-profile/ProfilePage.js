@@ -13,8 +13,7 @@ import Awards from "./Awards";
 
 import "./ProfilePage.css";
 
-class ProfilePage extends React.Component {
-  render() {
+export default function ProfilePage(props) {
     return (
       <Container >
           <NavBar></NavBar>
@@ -58,19 +57,19 @@ class ProfilePage extends React.Component {
           </nav>
           <div class="contents">
             
-            <StudentGeneralDetails isCoordinator={true}></StudentGeneralDetails>
+            <StudentGeneralDetails {...props}></StudentGeneralDetails>
             <br></br><br></br>
-            <WorkExperience isCoordinator={true}></WorkExperience>
+            <WorkExperience {...props}></WorkExperience>
             <br></br><br></br>
-            <Projects isCoordinator={false}></Projects>
+            <Projects {...props}></Projects>
             <br></br><br></br>
-            <Courses></Courses>
+            <Courses {...props}></Courses>
             <br></br><br></br>
-            <Semesters></Semesters>
+            <Semesters {...props}></Semesters>
             <br></br><br></br>
-            <PositionOfResponsibility></PositionOfResponsibility>
+            <PositionOfResponsibility {...props}></PositionOfResponsibility>
             <br></br><br></br>
-            <Awards></Awards>
+            <Awards {...props}></Awards>
             <br></br><br></br>
           </div>
         </div>
@@ -87,7 +86,5 @@ class ProfilePage extends React.Component {
         </footer>
       </Container>
     );
-  }
 }
 
-export default ProfilePage;

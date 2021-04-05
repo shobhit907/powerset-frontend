@@ -11,6 +11,10 @@ import StudentDashBoard from "./components/student-profile/StudentDashboard";
 import ProfilePage from "./components/student-profile/ProfilePage";
 import TestApp from './components/TestApp';
 import JobsAppliedByStudent from './components/student-profile/JobsAppliedByStudent';
+import AppliedStudentsTable from './components/AppliedStudentsList';
+import ViewStudent from "./components/ViewStudent";
+import JobsListCoordinator from "./components/JobsListCoordinator";
+import StudentsListForCoordinator from "./components/StudentsListForCoordinator";
 function App() {
 
   return (
@@ -23,14 +27,14 @@ function App() {
           <Route path="/register" component={SignUp} />
           <Route path="/testapp" component={TestApp} />
           <PrivateRoute exact path="/" component={StudentDashBoard} />
-          <PrivateRoute path="/profile" component={ProfilePage} />
+          <PrivateRoute path="/profile" component={ProfilePage} student_id={-1} />
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
           <PrivateRoute path="/job-profiles" component={JobsList} />
-          {/* <PrivateRoute path="/coordinator/applicants/" component={AppliedStudentsTable}/>
+          <PrivateRoute path="/applicants/" component={AppliedStudentsTable}/>
+          <PrivateRoute path="/student/" component={ViewStudent}></PrivateRoute>
           <PrivateRoute path="/coordinator/students/" component={StudentsListForCoordinator}/>
-          <PrivateRoute path="/coordinator/jobs-list/" component={JobsListCoordinator}/> */}
-          <PrivateRoute path="/jobs-applied/" component={JobsAppliedByStudent}/>
+          <PrivateRoute path="/coordinator/jobs-list/" component={JobsListCoordinator}/>
         </Switch>
       </div>
 

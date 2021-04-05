@@ -2,12 +2,14 @@ import React, { Component, Fragment,useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import { Checkbox, useCheckboxState } from 'pretty-checkbox-react';
+
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
 
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
-export default function WorkExperience() {
+export default function WorkExperience(props) {
     const [dummy,setDummy]=useState(0);
     const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06",end_date: "2020-05-07",description:"VFDDFV",domain:"abc" }]);
     const [noOfProjects,setNoOfProjects]=useState(1);
@@ -20,36 +22,38 @@ export default function WorkExperience() {
     const [courses, setCourses] = useState([{ code:"",title: "",grade_secured:""}]);
     const [noOfCourses,setNoOfCourses]=useState(1);
     const [errorText,setErrorText]=useState("");
-    const onVerifiedChange=async()=>{
-      const headers={
-        'Authorization':token,
-      }
-      // alert("Work experience is_verified changing to "+(!is_verified.state).toString());
-      axios({
-        method: 'put',
-          
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/verify/',
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization':token,
-          },
-          data : {
-            is_verified:!is_verified.state
-          },
-      }).then((response)=>{
-        if(is_verified.state){
-          alert("Unverified")
-        }else{
-          alert("Verified")
-        }
-      }).catch((err)=>{
-        alert("Error in verifying");
-      })
-    };
 
-    const is_verified=useCheckboxState({onChange:onVerifiedChange});
-   // const [id,setId]=useState(0);
-    let token=localStorage.getItem('token');
+    const options = ["Verified", "Unverified", "Rejected"];
+  const defaultOption = options[1];
+
+    // const onVerifiedChange=async()=>{
+    //   const headers={
+    //     'Authorization':token,
+    //   }
+    //   // alert("Work experience is_verified changing to "+(!is_verified.state).toString());
+    //   axios({
+    //     method: 'put',
+          
+    //       url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/verify/',
+    //       headers:{
+    //         'Content-Type':'application/json',
+    //         'Authorization':token,
+    //       },
+    //       data : {
+    //         is_verified:!is_verified.state
+    //       },
+    //   }).then((response)=>{
+    //     if(is_verified.state){
+    //       alert("Unverified")
+    //     }else{
+    //       alert("Verified")
+    //     }
+    //   }).catch((err)=>{
+    //     alert("Error in verifying");
+    //   })
+    // };
+
+     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
 
     
@@ -88,7 +92,7 @@ export default function WorkExperience() {
             console.log(curr_work_ex);
             if(curr_work_ex.length!=0){
               setWorkExperience(curr_work_ex);
-              is_verified.setState(response.data[0].is_verified);
+              // is_verified.setState(response.data[0].is_verified);
             }
             
 
@@ -271,8 +275,38 @@ export default function WorkExperience() {
   return (
     <div id="work-experience">
     <React.Fragment>
-      <h1 style={{display:"inline"}}> 
-      Internships & Work Experience <Checkbox {...is_verified} style={{display:"inline"}}></Checkbox></h1>
+    <Grid container spacing={1}>
+          <Grid item xs={6} sm={4}>
+            <h1>Internships & Work Experience</h1>
+          </Grid>
+
+          <Grid item xs={6} sm={2}>
+            <Dropdown
+              disabled={!props.isCoordinator}
+              options={options}
+              // onChange={this._onSelect}
+              value={defaultOption}
+              placeholder="Select an option"
+            />
+          </Grid>
+
+          <Grid item xs={6} sm={4}>
+            <TextField
+              disabled={!props.isCoordinator}
+              multiline
+              variant="outlined"
+              label="Verification Message"
+            ></TextField>
+          </Grid>
+
+          {props.isCoordinator && (
+            <Grid item xs={6} sm={1}>
+              <Button variant="outlined" color="primary">
+                Save
+              </Button>
+            </Grid>
+          )}
+        </Grid>
       {work_experience.map((x,i)=>{
         return(
           

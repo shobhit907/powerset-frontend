@@ -3,19 +3,13 @@ import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import InputLabel from "@material-ui/core/InputLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import { useLocation } from "react-router-dom";
-import { useHistory } from "react-router-dom";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { formatMs } from "@material-ui/core";
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
+
 const axios = require("axios");
 const qs = require("querystring");
 const moment = require("moment");
-export default function Semesters() {
+export default function Semesters(props) {
   const [dummy, setDummy] = useState(0);
   const [projects, setProjects] = useState([
     {
@@ -60,6 +54,8 @@ export default function Semesters() {
   // const [id,setId]=useState(0);
   let token = localStorage.getItem("token");
   let id = localStorage.getItem("id");
+  const options = ["Verified", "Unverified", "Rejected"];
+  const defaultOption = options[1];
   const getData = () => {
     const headers = {
       Authorization: token,
@@ -304,7 +300,38 @@ export default function Semesters() {
 
   return (
     <div id="semesters"><React.Fragment>
-      <h1>Education</h1>
+      <Grid container spacing={1}>
+          <Grid item xs={6} sm={4}>
+            <h1>Education</h1>
+          </Grid>
+
+          <Grid item xs={6} sm={2}>
+            <Dropdown
+              disabled={!props.isCoordinator}
+              options={options}
+              // onChange={this._onSelect}
+              value={defaultOption}
+              placeholder="Select an option"
+            />
+          </Grid>
+
+          <Grid item xs={6} sm={4}>
+            <TextField
+              disabled={!props.isCoordinator}
+              multiline
+              variant="outlined"
+              label="Verification Message"
+            ></TextField>
+          </Grid>
+
+          {props.isCoordinator && (
+            <Grid item xs={6} sm={1}>
+              <Button variant="outlined" color="primary">
+                Save
+              </Button>
+            </Grid>
+          )}
+        </Grid>
       {semesters.map((x, i) => {
         return (
           <Grid container spacing={3}>

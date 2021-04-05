@@ -284,28 +284,29 @@ export default function Projects(props) {
     <div id="projects">
       <React.Fragment>
         <Grid container spacing={1}>
-          <Grid item xs={6} sm={2}>
+          <Grid item xs={6} sm={4}>
             <h1>Projects</h1>
           </Grid>
-          {props.isCoordinator && (
-            <Grid item xs={6} sm={2}>
-              <Dropdown
-                options={options}
-                // onChange={this._onSelect}
-                value={defaultOption}
-                placeholder="Select an option"
-              />
-            </Grid>
-          )}
-          {props.isCoordinator && (
-            <Grid item xs={6} sm={4}>
-              <TextField
-                multiline
-                variant="filled"
-                label="Verification Message"
-              ></TextField>
-            </Grid>
-          )}
+
+          <Grid item xs={6} sm={2}>
+            <Dropdown
+              disabled={!props.isCoordinator}
+              options={options}
+              // onChange={this._onSelect}
+              value={defaultOption}
+              placeholder="Select an option"
+            />
+          </Grid>
+
+          <Grid item xs={6} sm={4}>
+            <TextField
+              disabled={!props.isCoordinator}
+              multiline
+              variant="outlined"
+              label="Verification Message"
+            ></TextField>
+          </Grid>
+
           {props.isCoordinator && (
             <Grid item xs={6} sm={1}>
               <Button variant="outlined" color="primary">

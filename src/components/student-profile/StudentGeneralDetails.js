@@ -5,12 +5,14 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
-import { Checkbox } from 'pretty-checkbox-react';
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
+
 const axios = require("axios");
 const qs = require("querystring");
 const moment = require("moment");
 
-export default function StudentGeneralDetails() {
+export default function StudentGeneralDetails(props) {
   const [DOB, onChangeDOB] = useState(new Date());
   const [institute, setInstitute] = useState("");
   const [branch, setBranch] = useState("");
@@ -27,6 +29,10 @@ export default function StudentGeneralDetails() {
   const [errorText, setErrorText] = useState("");
   let token = localStorage.getItem("token");
   console.log(token);
+
+  const options = ["Verified", "Unverified", "Rejected"];
+  const defaultOption = options[1];
+
   const handleStudentCreate = () => {
     var dobRegex = new RegExp(
       "^d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"
@@ -127,9 +133,38 @@ export default function StudentGeneralDetails() {
   return (
     <div id="student-general-details">
         <React.Fragment>
-        <h1 style={{display:"inline"}}>
-       About You <Checkbox bigger shape="round" style={{display:"inline"}}></Checkbox>
-        </h1>
+        <Grid container spacing={1}>
+          <Grid item xs={6} sm={4}>
+            <h1>About You</h1>
+          </Grid>
+
+          <Grid item xs={6} sm={2}>
+            <Dropdown
+              disabled={!props.isCoordinator}
+              options={options}
+              // onChange={this._onSelect}
+              value={defaultOption}
+              placeholder="Select an option"
+            />
+          </Grid>
+
+          <Grid item xs={6} sm={4}>
+            <TextField
+              disabled={!props.isCoordinator}
+              multiline
+              variant="outlined"
+              label="Verification Message"
+            ></TextField>
+          </Grid>
+
+          {props.isCoordinator && (
+            <Grid item xs={6} sm={1}>
+              <Button variant="outlined" color="primary">
+                Save
+              </Button>
+            </Grid>
+          )}
+        </Grid>
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6}>
             <TextField

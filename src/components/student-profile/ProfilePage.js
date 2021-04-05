@@ -58,11 +58,11 @@ class ProfilePage extends React.Component {
           </nav>
           <div class="contents">
             
-            <StudentGeneralDetails></StudentGeneralDetails>
+            <StudentGeneralDetails isCoordinator={true}></StudentGeneralDetails>
             <br></br><br></br>
-            <WorkExperience></WorkExperience>
+            <WorkExperience isCoordinator={true}></WorkExperience>
             <br></br><br></br>
-            <Projects isCoordinator={true}></Projects>
+            <Projects isCoordinator={false}></Projects>
             <br></br><br></br>
             <Courses></Courses>
             <br></br><br></br>

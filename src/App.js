@@ -7,9 +7,10 @@ import ConfirmEmail from "./components/ConfirmEmail"
 import CreateJob from './components/CreateJob';
 import JobsList from "./components/JobsList";
 import PrivateRoute from "./components/PrivateRoute";
-import StudentDashBoard from "./components/StudentDashboard";
+import StudentDashBoard from "./components/student-profile/StudentDashboard";
 import ProfilePage from "./components/student-profile/ProfilePage";
 import TestApp from './components/TestApp';
+import JobsAppliedByStudent from './components/student-profile/JobsAppliedByStudent';
 function App() {
 
   return (
@@ -26,6 +27,10 @@ function App() {
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
           <PrivateRoute path="/job-profiles" component={JobsList} />
+          {/* <PrivateRoute path="/coordinator/applicants/" component={AppliedStudentsTable}/>
+          <PrivateRoute path="/coordinator/students/" component={StudentsListForCoordinator}/>
+          <PrivateRoute path="/coordinator/jobs-list/" component={JobsListCoordinator}/> */}
+          <PrivateRoute path="/jobs-applied/" component={JobsAppliedByStudent}/>
         </Switch>
       </div>
 

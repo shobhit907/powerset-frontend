@@ -18,7 +18,7 @@ class ProfilePage extends React.Component {
     return (
       <Container >
           <NavBar></NavBar>
-        <div class="flex" id="testapp-body">
+        <div class="flex" id="">
           <nav class="sidebar">
             <a href="#student-general-details">
               <i class="fa fa-user fa-lg"></i>

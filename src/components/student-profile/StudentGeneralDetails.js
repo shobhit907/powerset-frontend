@@ -6,7 +6,10 @@ import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import Button from "@material-ui/core/Button";
 import Dropdown from "react-dropdown";
+import Avatar from "@material-ui/core/Avatar";
 import "react-dropdown/style.css";
+import { makeStyles } from "@material-ui/core/styles";
+import logo from "../../images/pp.jpeg";
 
 const axios = require("axios");
 const qs = require("querystring");
@@ -18,6 +21,7 @@ export default function StudentGeneralDetails(props) {
   const [branch, setBranch] = useState("");
   const [profile, setProfile] = useState("");
   const [degree, setDegree] = useState("");
+  const [name, setName] = useState("");
   const [fathers_name, setFathersName] = useState("");
   const [mothers_name, setMothersName] = useState("");
   const [category, setCategory] = useState("");
@@ -115,6 +119,7 @@ export default function StudentGeneralDetails(props) {
         setEntryNo(response.data.entry_number);
         setProfile(response.data.preferred_profile);
         setInstitute(response.data.institute.name);
+        setName(response.data.user.name);
         localStorage.setItem("id", response.data.id);
       })
       .catch((err) => {
@@ -130,9 +135,28 @@ export default function StudentGeneralDetails(props) {
   React.useEffect(() => {
     getData();
   }, []);
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      display: "flex",
+      "& > *": {
+        margin: theme.spacing(1),
+      },
+    },
+    small: {
+      width: theme.spacing(3),
+      height: theme.spacing(3),
+    },
+    large: {
+      width: theme.spacing(20),
+      height: theme.spacing(20),
+    },
+  }));
+  const classes = useStyles();
+
   return (
     <div id="student-general-details">
-        <React.Fragment>
+      <React.Fragment>
         <Grid container spacing={1}>
           <Grid item xs={6} sm={4}>
             <h1>About You</h1>
@@ -166,12 +190,26 @@ export default function StudentGeneralDetails(props) {
           )}
         </Grid>
         <Grid container spacing={3}>
+          <Grid item>
+            <span className={classes.root}>
+              <Avatar alt="Shobhit Gupta" src={logo} className={classes.large}></Avatar>
+            </span>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              id="my-name"
+              name="myname"
+              label="Name"
+              autoComplete="Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               id="fathersName"
               name="fathersName"
               label="Father's Name"
-              fullWidth
               autoComplete="Father's Name"
               value={fathers_name}
               onChange={(e) => setFathersName(e.target.value)}
@@ -182,19 +220,17 @@ export default function StudentGeneralDetails(props) {
               id="mothersName"
               name="mothersName"
               label="Mother's Name"
-              fullWidth
               autoComplete="Mother's Name"
               value={mothers_name}
               onChange={(e) => setMothersName(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             <TextField
               required
               id="entryno"
               name="entryno"
               label="Entry No"
-              fullWidth
               autoComplete="Entry No"
               value={entry_no}
               onChange={(e) => setEntryNo(e.target.value)}

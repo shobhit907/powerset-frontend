@@ -1,6 +1,8 @@
 import React from 'react';
+import  { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { useHistory } from "react-router-dom";
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -72,7 +75,7 @@ const headCells = [
   { id: 'min_ctc', numeric: true, disablePadding: false, label: 'Min CTC' },
   { id: 'max_ctc', numeric: true, disablePadding: false, label: 'Max CTC' },
   { id: 'last_date', numeric: false, disablePadding: false, label: 'Last Date' },
-  { id: 'view_details', numeric: false, disablePadding: false, label: 'View Details' },
+  { id: 'edit', numeric: false, disablePadding: false, label: 'Edit Job' },
 ];
 
 function EnhancedTableHead(props) {
@@ -84,14 +87,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all jobs' }}
-          />
-        </TableCell>
+        
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -150,6 +146,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
+  const history=useHistory();
   const { numSelected } = props;
 
   return (
@@ -164,7 +161,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Apply To Jobs
+          List of Jobs
         </Typography>
       )}
 
@@ -173,9 +170,9 @@ const EnhancedTableToolbar = (props) => {
           <Button variant="contained" color="secondary">Apply</Button>
         </Tooltip>
       ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
+        <Tooltip title="Add Job">
+          <IconButton aria-label="Add Job">
+            <AddCircleOutlineOutlinedIcon onClick={(e)=>history.push('/add-job')}/>
           </IconButton>
         </Tooltip>
       )}
@@ -231,7 +228,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function JobsTable() {
+export default function JobsListCoordinator() {
+    
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('company');
@@ -337,9 +335,10 @@ export default function JobsTable() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
-  const handleViewJobDescription=(e,job_id)=>{
-    
-  }
+  const handleEditJob = (event,job_id) => {
+
+    console.log("editing job");
+  };
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -360,7 +359,7 @@ export default function JobsTable() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
+              
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -374,28 +373,17 @@ export default function JobsTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.company)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
                       key={row.job_id}
-                      //{console.log(row.company)}
-                      selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
+                     
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         {row.company}
                       </TableCell>
-                      <TableCell align="right">{row.job_title}</TableCell>
+                      <TableCell align="center">{row.job_title}</TableCell>
                       <TableCell align="right">{row.min_ctc}</TableCell>
                       <TableCell align="right">{row.max_ctc}</TableCell>
-                      <TableCell align="right">{row.last_date}</TableCell>
-                      <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
+                      <TableCell align="center">{row.last_date}</TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleEditJob(e,row.job_id)}>Edit Job</Button></TableCell>
                     </TableRow>
                   );
                 })}

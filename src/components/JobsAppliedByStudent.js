@@ -1,6 +1,8 @@
 import React from 'react';
+import  { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { useHistory } from "react-router-dom";
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -20,7 +23,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Button } from '@material-ui/core';
+import { Button, Dialog } from '@material-ui/core';
 const axios = require('axios')
 //let rows=[];
 
@@ -69,10 +72,10 @@ function stableSort(array, comparator) {
 const headCells = [
   { id: 'company', numeric: false, disablePadding: true, label: 'Company' },
   { id: 'job_title', numeric: true, disablePadding: false, label: 'Job Title' },
-  { id: 'min_ctc', numeric: true, disablePadding: false, label: 'Min CTC' },
-  { id: 'max_ctc', numeric: true, disablePadding: false, label: 'Max CTC' },
-  { id: 'last_date', numeric: false, disablePadding: false, label: 'Last Date' },
-  { id: 'view_details', numeric: false, disablePadding: false, label: 'View Details' },
+  { id: 'applied_on', numeric: false, disablePadding: false, label: 'Date Applied On' },
+  { id: 'description', numeric: false, disablePadding: false, label: 'View Description' },
+  { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+  {id:'cancel',numeric:false,disablePadding:false,label:'Cancel '}
 ];
 
 function EnhancedTableHead(props) {
@@ -84,14 +87,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all jobs' }}
-          />
-        </TableCell>
+        
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -150,6 +146,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
+  const history=useHistory();
   const { numSelected } = props;
 
   return (
@@ -164,21 +161,10 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Apply To Jobs
+          Jobs you Applied In
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Apply">
-          <Button variant="contained" color="secondary">Apply</Button>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
     </Toolbar>
   );
 };
@@ -231,7 +217,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function JobsTable() {
+export default function JobsAppliedByStudent() {
+    
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('company');
@@ -252,7 +239,7 @@ export default function JobsTable() {
       axios({
         method: 'get',
         
-        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        url:'https://powerset-backend.herokuapp.com/placements/applied-jobs/',
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -264,12 +251,19 @@ export default function JobsTable() {
           var curr_rows=[]
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
-            obj.company=response.data[i].company.name;
-            obj.job_title=response.data[i].title;
-            obj.min_ctc=response.data[i].min_ctc;
-            obj.max_ctc=response.data[i].max_ctc;
-            obj.last_date=response.data[i].end_date;
-            obj.job_id=response.data[i].id;
+            obj.company=response.data[i].job_profile.company.name;
+            obj.job_title=response.data[i].job_profile.title;
+            obj.applied_on=response.data[i].date_applied;
+            obj.job_id=response.data[i].job_profile.id;
+            
+            obj.is_selected=response.data[i].is_selected;
+            obj.round=response.data[i].job_round;
+            if(obj.is_selected==true){
+                obj.status="Accepted";
+            }
+            else{
+                obj.status="Round "+response.data[i].job_round;
+            }
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -337,9 +331,44 @@ export default function JobsTable() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
-  const handleViewJobDescription=(e,job_id)=>{
+  const handleViewJobDescription = (event,job_id) => {
+
+    console.log("Viewing Job Description");
+  };
+  const handleCancelJobApplication = (event,job_id) => {
+    let token=localStorage.getItem('token');
+    let obj=new Object();
+    obj.id=job_id;
+    let temp=[];
+    temp=[...temp,obj];
     
-  }
+
+    
+    
+    console.log(temp);
+    console.log("Job id is"+job_id);
+
+    axios({
+        method: 'delete',
+        
+        url:'https://powerset-backend.herokuapp.com/placements/cancel/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+        },
+        data:temp,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (err) {
+        //console.log(err.response.data);
+        // console.log(err.response.status);
+        // console.log(err.response.headers);
+        console.log(err);
+      });
+    
+  };
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -360,7 +389,7 @@ export default function JobsTable() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
+              
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -374,28 +403,17 @@ export default function JobsTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.company)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
                       key={row.job_id}
-                      //{console.log(row.company)}
-                      selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
+                     
                       <TableCell component="th" id={labelId} scope="row" padding="none">
                         {row.company}
                       </TableCell>
-                      <TableCell align="right">{row.job_title}</TableCell>
-                      <TableCell align="right">{row.min_ctc}</TableCell>
-                      <TableCell align="right">{row.max_ctc}</TableCell>
-                      <TableCell align="right">{row.last_date}</TableCell>
+                      <TableCell align="center">{row.job_title}</TableCell>
+                      <TableCell align="center">{row.applied_on}</TableCell>
                       <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
+                      <TableCell align="left">{row.status}</TableCell>
+                      <TableCell alight="left"><Button color="secondary" variant="contained" onClick={(e)=>handleCancelJobApplication(e,row.job_id)}>Cancel Application</Button></TableCell>
                     </TableRow>
                   );
                 })}

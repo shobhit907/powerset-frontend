@@ -22,23 +22,7 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
 const axios = require('axios')
-//let rows=[];
 
-
-// function createData(company, job_title, min_ctc, max_ctc, last_date) {
-//   return {company, job_title, min_ctc, max_ctc, last_date};
-// }
-
-// const rows = [
-//   createData('DE Shaw', 'Software Engineer', 3100000, 3500000, "26/04/2021"),
-//   createData('Nutanix', 'Software Engineer', 2900000, 3000000, "28/04/2021"),
-//   createData('Flipkart', 'Software Engineer', 2650000, 2700000, "30/05/2021"),
-//   createData('Microsoft', 'Software Engineer', 4100000, 4300000, "26/04/2021"),
-//   createData('Goldman Sachs', 'Analyst', 2100000, 250000, "26/04/2021"),
-//   createData('Sprinlr', 'Product Engineer', 3000000, 3000000, "26/04/2021"),
-//   createData('Amazon', 'Software Engineer', 3100000, 3200000, "26/04/2021"),
-  
-// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -67,12 +51,13 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'company', numeric: false, disablePadding: true, label: 'Company' },
-  { id: 'job_title', numeric: true, disablePadding: false, label: 'Job Title' },
-  { id: 'min_ctc', numeric: true, disablePadding: false, label: 'Min CTC' },
-  { id: 'max_ctc', numeric: true, disablePadding: false, label: 'Max CTC' },
-  { id: 'last_date', numeric: false, disablePadding: false, label: 'Last Date' },
-  { id: 'view_details', numeric: false, disablePadding: false, label: 'View Details' },
+    { id: 'roll_no', numeric: false, disablePadding: true, label: 'Enrollment No' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
+  { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
+  { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
+  { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
+  
 ];
 
 function EnhancedTableHead(props) {
@@ -84,14 +69,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all jobs' }}
-          />
-        </TableCell>
+        
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -164,7 +142,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Apply To Jobs
+          Students List
         </Typography>
       )}
 
@@ -231,7 +209,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function JobsTable() {
+export default function StudentsListForCoordinator() {
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('company');
@@ -240,6 +218,7 @@ export default function JobsTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
+  const [update,setUpdate]=React.useState(false);
 
   const getData=()=>{
     let token=localStorage.getItem('token');
@@ -252,7 +231,7 @@ export default function JobsTable() {
       axios({
         method: 'get',
         
-        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        url:'https://powerset-backend.herokuapp.com/students/',
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -264,12 +243,13 @@ export default function JobsTable() {
           var curr_rows=[]
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
-            obj.company=response.data[i].company.name;
-            obj.job_title=response.data[i].title;
-            obj.min_ctc=response.data[i].min_ctc;
-            obj.max_ctc=response.data[i].max_ctc;
-            obj.last_date=response.data[i].end_date;
-            obj.job_id=response.data[i].id;
+            obj.name=response.data[i].user.name;
+            obj.branch=response.data[i].branch;
+            obj.batch=response.data[i].batch;
+            obj.cgpa=response.data[i].cgpa;
+            obj.student_id=response.data[i].id;
+            obj.roll_no=response.data[i].entry_number;
+            obj.is_selected=response.data[i].is_selected;
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -305,26 +285,6 @@ export default function JobsTable() {
     setSelected([]);
   };
 
-  const handleClick = (event, company) => {
-    const selectedIndex = selected.indexOf(company);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, company);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -333,13 +293,11 @@ export default function JobsTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const handleViewProfile=(event,student_id)=>{
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
   };
-  const handleViewJobDescription=(e,job_id)=>{
-    
-  }
+  
+   
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -374,28 +332,18 @@ export default function JobsTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.company)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.job_id}
-                      //{console.log(row.company)}
-                      selected={isItemSelected}
+                      key={row.student_id}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
+                      
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.company}
+                        {row.roll_no}
                       </TableCell>
-                      <TableCell align="right">{row.job_title}</TableCell>
-                      <TableCell align="right">{row.min_ctc}</TableCell>
-                      <TableCell align="right">{row.max_ctc}</TableCell>
-                      <TableCell align="right">{row.last_date}</TableCell>
-                      <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+                      <TableCell align="left">{row.branch}</TableCell>
+                      <TableCell align="left">{row.batch}</TableCell>
+                      <TableCell align="right">{row.cgpa}</TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
+                      
                     </TableRow>
                   );
                 })}

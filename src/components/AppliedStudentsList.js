@@ -67,12 +67,14 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'company', numeric: false, disablePadding: true, label: 'Company' },
-  { id: 'job_title', numeric: true, disablePadding: false, label: 'Job Title' },
-  { id: 'min_ctc', numeric: true, disablePadding: false, label: 'Min CTC' },
-  { id: 'max_ctc', numeric: true, disablePadding: false, label: 'Max CTC' },
-  { id: 'last_date', numeric: false, disablePadding: false, label: 'Last Date' },
-  { id: 'view_details', numeric: false, disablePadding: false, label: 'View Details' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
+  { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
+  { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
+  { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
+  { id: 'round', numeric: true, disablePadding: false, label: 'Round' },
+  { id: 'next_round', numeric: false, disablePadding: false, label: 'Next Round' },
+  { id: 'reject', numeric: false, disablePadding: false, label: 'Reject' },
 ];
 
 function EnhancedTableHead(props) {
@@ -84,14 +86,7 @@ function EnhancedTableHead(props) {
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{ 'aria-label': 'select all jobs' }}
-          />
-        </TableCell>
+        
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -164,7 +159,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Apply To Jobs
+          Applicants List
         </Typography>
       )}
 
@@ -231,7 +226,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function JobsTable() {
+export default function AppliedStudentsTable() {
+  
+    
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('company');
@@ -240,19 +237,20 @@ export default function JobsTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
+  const [jobId,setJobId]=React.useState(0);
 
-  const getData=()=>{
+  const getData=(job_id)=>{
+    
+    console.log(job_id);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
     console.log("Hello");
-    const headers={
-      'Authorization':token,
-    }
-    
+    let url='https://powerset-backend.herokuapp.com/placements/job-profiles/'+job_id.toString()+"/applicants/";
+    let url2="https://powerset-backend.herokuapp.com/placements/job-profiles/23/applicants/"
       axios({
         method: 'get',
         
-        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        url:url,
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -264,12 +262,12 @@ export default function JobsTable() {
           var curr_rows=[]
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
-            obj.company=response.data[i].company.name;
-            obj.job_title=response.data[i].title;
-            obj.min_ctc=response.data[i].min_ctc;
-            obj.max_ctc=response.data[i].max_ctc;
-            obj.last_date=response.data[i].end_date;
-            obj.job_id=response.data[i].id;
+            obj.name=response.data[i].student.user.name;
+            obj.branch=response.data[i].student.branch;
+            obj.batch=response.data[i].student.batch;
+            obj.cgpa=response.data[i].student.cgpa;
+            obj.round=response.data[i].job_round;
+            obj.student_id=response.data[i].student.id;
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -279,15 +277,17 @@ export default function JobsTable() {
   
       })
       .catch(function (err) {
-        //console.log(err.response.data);
-        // console.log(err.response.status);
-        // console.log(err.response.headers);
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
         console.log(err);
       });
   }
   
   React.useEffect(()=>{
-    getData();
+    var pathArray = window.location.pathname.split('/');
+    let job_id=pathArray[3];
+    getData(job_id);
 },[]);
 
   const handleRequestSort = (event, property) => {
@@ -305,26 +305,6 @@ export default function JobsTable() {
     setSelected([]);
   };
 
-  const handleClick = (event, company) => {
-    const selectedIndex = selected.indexOf(company);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, company);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -333,12 +313,27 @@ export default function JobsTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  const handleViewProfile=(event,student_id)=>{
 
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked);
   };
-  const handleViewJobDescription=(e,job_id)=>{
+  const handleMoveToNextRound=(event,student_id)=>{
+    var new_rows=[];
+    // for(var i=0;i<rows.length;i++){
+    //     var obj=rows[i];
+    //     if(obj.student_id==student_id){
+    //         obj.round=obj.round+1;
+            
+    //     }
+    //     new_rows=[...new_rows,obj];
+        
+    // }
     
+    };
+   const handleSelectStudent=(event, student_id)=>{
+
+   }
+   const handleRejectStudent=(event, student_id)=>{
+
   }
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
@@ -374,28 +369,18 @@ export default function JobsTable() {
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.company)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.job_id}
-                      //{console.log(row.company)}
-                      selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
+                      
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.company}
+                        {row.name}
                       </TableCell>
-                      <TableCell align="right">{row.job_title}</TableCell>
-                      <TableCell align="right">{row.min_ctc}</TableCell>
-                      <TableCell align="right">{row.max_ctc}</TableCell>
-                      <TableCell align="right">{row.last_date}</TableCell>
-                      <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
+                      <TableCell align="left">{row.branch}</TableCell>
+                      <TableCell align="left">{row.batch}</TableCell>
+                      <TableCell align="right">{row.cgpa}</TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
+                      <TableCell align="right">{row.round}</TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleMoveToNextRound(e,row.student_id)}>Move to Next Round</Button></TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleRejectStudent(e,row.student_id)}>Reject</Button></TableCell>
                     </TableRow>
                   );
                 })}

@@ -34,8 +34,8 @@ function App() {
           <PrivateRoute path="/job-profiles" component={JobsList} />
           <PrivateRoute path="/applicants/" component={AppliedStudentsTable}/>
           <PrivateRoute path="/student/" component={ViewStudent}></PrivateRoute>
-          <PrivateRoute path="/coordinator/students/" component={StudentsListForCoordinator}/>
-          <PrivateRoute path="/coordinator/jobs-list/" component={JobsListCoordinator}/>
+          <PrivateRoute path="/students/" component={StudentsListForCoordinator}/>
+          <PrivateRoute path="/jobs-list/" component={JobsListCoordinator}/>
           <PrivateRoute exact path="/coordinator" component={CoordinatorDashboard} />
         </Switch>
       </div>

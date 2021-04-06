@@ -247,9 +247,8 @@ export default function AppliedStudentsTable() {
     console.log(job_id);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
-    console.log("Hello");
     let url='https://powerset-backend.herokuapp.com/placements/job-profiles/'+job_id.toString()+"/applicants/";
-    let url2="https://powerset-backend.herokuapp.com/placements/job-profiles/23/applicants/"
+    // let url2="https://powerset-backend.herokuapp.com/placements/job-profiles/23/applicants/"
       axios({
         method: 'get',
         
@@ -316,9 +315,9 @@ export default function AppliedStudentsTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const handleViewProfile=(event,student_id)=>{
+  const handleViewProfile=async(event,student_id)=>{
     let redirect_url="/student/"+student_id.toString();
-    history.push(redirect_url);
+    await history.push(redirect_url);
   };
   const handleMoveToNextRound=(event,student_id)=>{
     var new_rows=[];

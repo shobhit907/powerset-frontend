@@ -14,8 +14,12 @@ import Awards from "./Awards";
 import "./ProfilePage.css";
 
 export default function ProfilePage(props) {
+  console.log("From ProfilePage -> ",props.student_id);
+  React.useEffect(()=>{
+    return ()=>{}
+  },[props.student_id]);
     return (
-      <Container >
+      <Container fluid={true}>
           <NavBar></NavBar>
         <div class="flex" id="">
           <nav class="sidebar">

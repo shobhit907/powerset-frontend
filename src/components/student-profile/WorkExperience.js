@@ -107,6 +107,7 @@ export default function WorkExperience(props) {
 
     React.useEffect(()=>{
       getData();
+      return ()=>{};
   },[]);
     
     

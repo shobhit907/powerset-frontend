@@ -23,22 +23,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import { Button } from "@material-ui/core";
 import NavBar from "./navbar/NavBar";
 const axios = require("axios");
-//let rows=[];
 
-// function createData(company, job_title, min_ctc, max_ctc, last_date) {
-//   return {company, job_title, min_ctc, max_ctc, last_date};
-// }
-
-// const rows = [
-//   createData('DE Shaw', 'Software Engineer', 3100000, 3500000, "26/04/2021"),
-//   createData('Nutanix', 'Software Engineer', 2900000, 3000000, "28/04/2021"),
-//   createData('Flipkart', 'Software Engineer', 2650000, 2700000, "30/05/2021"),
-//   createData('Microsoft', 'Software Engineer', 4100000, 4300000, "26/04/2021"),
-//   createData('Goldman Sachs', 'Analyst', 2100000, 250000, "26/04/2021"),
-//   createData('Sprinlr', 'Product Engineer', 3000000, 3000000, "26/04/2021"),
-//   createData('Amazon', 'Software Engineer', 3100000, 3200000, "26/04/2021"),
-
-// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -155,9 +140,39 @@ const useToolbarStyles = makeStyles((theme) => ({
   },
 }));
 
+const handleApply=(event,selected)=>{
+  let arr=[];
+  let token = localStorage.getItem("token");
+  for(var i=0;i<selected.length;i++){
+    
+    var obj=new Object();
+    obj.id=selected[i];
+    console.log(obj.id);
+    arr=[...arr,obj];
+  }
+  axios({
+    method: 'post',
+    
+    url:'https://powerset-backend.herokuapp.com/placements/apply/',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization':token,
+    },
+    data:arr,
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (err) {
+    console.log(err.response.data);
+    console.log(err.response.status);
+    console.log(err.response.headers);
+    console.log(err);
+  });
+};
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
-  const { numSelected } = props;
+  const { numSelected,selected } = props;
 
   return (
     <Toolbar
@@ -187,7 +202,7 @@ const EnhancedTableToolbar = (props) => {
 
       {numSelected > 0 ? (
         <Tooltip title="Apply">
-          <Button variant="contained" color="secondary">
+          <Button variant="contained" color="secondary" onClick={(e)=>handleApply(e,selected)}>
             Apply
           </Button>
         </Tooltip>
@@ -204,6 +219,7 @@ const EnhancedTableToolbar = (props) => {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  selected: PropTypes.array.isRequired,
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -288,6 +304,7 @@ export default function JobsTable() {
           obj.min_ctc = response.data[i].min_ctc;
           obj.max_ctc = response.data[i].max_ctc;
           obj.last_date = response.data[i].end_date;
+          obj.job_id=response.data[i].id;
           curr_rows = [...curr_rows, obj];
         }
         setRows(curr_rows);
@@ -313,19 +330,19 @@ export default function JobsTable() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.company);
+      const newSelecteds = rows.map((n) => n.job_id);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, company) => {
-    const selectedIndex = selected.indexOf(company);
+  const handleClick = (event, job_id) => {
+    const selectedIndex = selected.indexOf(job_id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, company);
+      newSelected = newSelected.concat(selected, job_id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -353,7 +370,7 @@ export default function JobsTable() {
     setDense(event.target.checked);
   };
 
-  const isSelected = (company) => selected.indexOf(company) !== -1;
+  const isSelected = (job_id) => selected.indexOf(job_id) !== -1;
 
   const emptyRows =
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -364,7 +381,7 @@ export default function JobsTable() {
 
       <div className={classes.root}>
         <Paper className={classes.paper}>
-          <EnhancedTableToolbar numSelected={selected.length} />
+          <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
           <TableContainer>
             <Table
               className={classes.table}
@@ -385,17 +402,17 @@ export default function JobsTable() {
                 {stableSort(rows, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.company);
+                    const isItemSelected = isSelected(row.job_id);
                     const labelId = `enhanced-table-checkbox-${index}`;
 
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.company)}
+                        onClick={(event) => handleClick(event, row.job_id)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.company}
+                        key={row.job_id}
                         //{console.log(row.company)}
                         selected={isItemSelected}
                       >

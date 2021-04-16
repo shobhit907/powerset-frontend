@@ -59,6 +59,11 @@ const NavBar = () => {
                 Interviews
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/coordinator">
+                Coordinator View
+              </a>
+            </li>
           </ul>
 
           <button

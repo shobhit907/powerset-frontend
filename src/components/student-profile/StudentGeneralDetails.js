@@ -9,7 +9,8 @@ import Dropdown from "react-dropdown";
 import Avatar from "@material-ui/core/Avatar";
 import "react-dropdown/style.css";
 import { makeStyles } from "@material-ui/core/styles";
-import logo from "../../images/pp.jpeg";
+import shobhit_pic from "../../images/pp.jpeg";
+import rohit_pic from "../../images/rohit-pic.jpeg";
 
 const axios = require("axios");
 const qs = require("querystring");
@@ -32,16 +33,21 @@ export default function StudentGeneralDetails(props) {
   const [career_plans, setCareerPlans] = useState("");
   const [errorText, setErrorText] = useState("");
   const [student_id, set_student_id] = useState();
-  React.useEffect(()=>{
-    if(props.student_id){
+  console.log("From student general details -> ", props.student_id);
+  React.useEffect(() => {
+    if (props.student_id && props.student_id!=-1) {
       set_student_id(props.student_id);
+    } 
+    else{
+      set_student_id(localStorage.getItem("id"));
     }
-    if(student_id==-1){
-      set_student_id(localStorage.getItem('id'));
-    }
-  
-  },[]);
-  
+    // getData();
+  }, []);
+  React.useEffect(() => {
+    getData();
+  }, [student_id]);
+
+
   let token = localStorage.getItem("token");
   console.log(token);
 
@@ -118,14 +124,17 @@ export default function StudentGeneralDetails(props) {
     const headers = {
       Authorization: token,
     };
-    var request_url="";
-    if(student_id && student_id!==-1){
-      request_url = "https://powerset-backend.herokuapp.com/students/"+student_id.toString()+"/";
-      
-    }else{
+    var request_url = "";
+    if (student_id && student_id != -1) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        student_id.toString() +
+        "/";
+    } else {
       request_url = "https://powerset-backend.herokuapp.com/students/me/";
     }
-    
+    console.log("Requesting at ",request_url);
+
     axios
       .get(request_url, { headers })
       .then((response) => {
@@ -152,10 +161,7 @@ export default function StudentGeneralDetails(props) {
       });
   };
 
-  React.useEffect(() => {
-    getData();
-  }, []);
-
+  
   const useStyles = makeStyles((theme) => ({
     root: {
       display: "flex",
@@ -176,232 +182,247 @@ export default function StudentGeneralDetails(props) {
 
   return (
     <div id="student-general-details">
-      {student_id!=-1 && (<React.Fragment>
-        <Grid container spacing={1}>
-          <Grid item xs={6} sm={4}>
-            <h1>About You</h1>
-          </Grid>
-
-          <Grid item xs={6} sm={2}>
-            <Dropdown
-              disabled={!props.isCoordinator}
-              options={options}
-              // onChange={this._onSelect}
-              value={defaultOption}
-              placeholder="Select an option"
-            />
-          </Grid>
-
-          <Grid item xs={6} sm={4}>
-            <TextField
-              disabled={!props.isCoordinator}
-              multiline
-              variant="outlined"
-              label="Verification Message"
-            ></TextField>
-          </Grid>
-
-          {props.isCoordinator && (
-            <Grid item xs={6} sm={1}>
-              <Button variant="outlined" color="primary">
-                Save
-              </Button>
+      {student_id && student_id != -1 && (
+        <React.Fragment>
+          <Grid container spacing={1}>
+            <Grid item xs={6} sm={4}>
+              <h1>About You</h1>
             </Grid>
-          )}
-        </Grid>
-        <Grid container spacing={3}>
-          <Grid item>
-            <span className={classes.root}>
-              <Avatar alt="Shobhit Gupta" src={logo} className={classes.large}></Avatar>
-            </span>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="my-name"
-              name="myname"
-              label="Name"
-              autoComplete="Your Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="fathersName"
-              name="fathersName"
-              label="Father's Name"
-              autoComplete="Father's Name"
-              value={fathers_name}
-              onChange={(e) => setFathersName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="mothersName"
-              name="mothersName"
-              label="Mother's Name"
-              autoComplete="Mother's Name"
-              value={mothers_name}
-              onChange={(e) => setMothersName(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <TextField
-              required
-              id="entryno"
-              name="entryno"
-              label="Entry No"
-              autoComplete="Entry No"
-              value={entry_no}
-              onChange={(e) => setEntryNo(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              id="DOB"
-              label="Date of Birth"
-              type="date"
-              defaultValue="2000-05-05"
-              InputLabelProps={{
-                shrink: true,
-              }}
-              value={DOB}
-              onChange={(e) => onChangeDOB(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <InputLabel id="demo-simple-select-label">
-              Select Institute
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              inputProps={{ "aria-label": "Without label" }}
-              value={institute}
-              onChange={(e) => setInstitute(e.target.value)}
-            >
-              <MenuItem value={""}>Select.. </MenuItem>
-              <MenuItem value={"Indian Institute of Technology Bombay"}>
-                Indian Institute of Technology Bombay
-              </MenuItem>
-              <MenuItem value={"Indian Institute of Technology Delhi"}>
-                Indian Institute of Technology Delhi
-              </MenuItem>
-              <MenuItem value={"Indian Institute of Technology Ropar"}>
-                Indian Institute of Technology Ropar
-              </MenuItem>
-            </Select>
-          </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <InputLabel id="demo-simple-select-label">Select Degree</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              inputProps={{ "aria-label": "Without label" }}
-              value={degree}
-              onChange={(e) => setDegree(e.target.value)}
-            >
-              <MenuItem value={""}>Select.. </MenuItem>
-              <MenuItem value={"BTech"}>B.Tech</MenuItem>
-              <MenuItem value={"MTech"}>M.Tech</MenuItem>
-              <MenuItem value={"Dual Degree"}>Dual Degree</MenuItem>
-            </Select>
-          </Grid>
+            <Grid item xs={6} sm={2}>
+              <Dropdown
+                disabled={!props.isCoordinator}
+                options={options}
+                // onChange={this._onSelect}
+                value={defaultOption}
+                placeholder="Select an option"
+              />
+            </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <InputLabel id="demo-simple-select-label">Select Branch</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              inputProps={{ "aria-label": "Without label" }}
-              value={branch}
-              onChange={(e) => setBranch(e.target.value)}
-            >
-              <MenuItem value={""}>Select.. </MenuItem>
-              <MenuItem value={"Computer Science"}>Computer Science</MenuItem>
-              <MenuItem value={"Electrical"}>Electrical</MenuItem>
-              <MenuItem value={"Mechanical"}>Mechanical</MenuItem>
-            </Select>
-          </Grid>
+            <Grid item xs={6} sm={4}>
+              <TextField
+                disabled={!props.isCoordinator}
+                multiline
+                variant="outlined"
+                label="Verification Message"
+              ></TextField>
+            </Grid>
 
-          <Grid item xs={12} sm={6}>
-            <InputLabel id="demo-simple-select-label">
-              Select Profile
-            </InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              inputProps={{ "aria-label": "Without label" }}
-              value={profile}
-              onChange={(e) => setProfile(e.target.value)}
+            {props.isCoordinator && (
+              <Grid item xs={6} sm={1}>
+                <Button variant="outlined" color="primary">
+                  Save
+                </Button>
+              </Grid>
+            )}
+          </Grid>
+          <Grid container spacing={3}>
+            <Grid item>
+              <span className={classes.root}>
+                {student_id==2 && <Avatar
+                  alt="Shobhit Gupta"
+                  src={shobhit_pic}
+                  className={classes.large}
+                ></Avatar>}
+                {student_id==3 && <Avatar
+                  alt="Rohit Tuli"
+                  src={rohit_pic}
+                  className={classes.large}
+                ></Avatar>}
+              </span>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="my-name"
+                name="myname"
+                label="Name"
+                autoComplete="Your Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="fathersName"
+                name="fathersName"
+                label="Father's Name"
+                autoComplete="Father's Name"
+                value={fathers_name}
+                onChange={(e) => setFathersName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="mothersName"
+                name="mothersName"
+                label="Mother's Name"
+                autoComplete="Mother's Name"
+                value={mothers_name}
+                onChange={(e) => setMothersName(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                required
+                id="entryno"
+                name="entryno"
+                label="Entry No"
+                autoComplete="Entry No"
+                value={entry_no}
+                onChange={(e) => setEntryNo(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                id="DOB"
+                label="Date of Birth"
+                type="date"
+                defaultValue="2000-05-05"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={DOB}
+                onChange={(e) => onChangeDOB(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <InputLabel id="demo-simple-select-label">
+                Select Institute
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                inputProps={{ "aria-label": "Without label" }}
+                value={institute}
+                onChange={(e) => setInstitute(e.target.value)}
+              >
+                <MenuItem value={""}>Select.. </MenuItem>
+                <MenuItem value={"Indian Institute of Technology Bombay"}>
+                  Indian Institute of Technology Bombay
+                </MenuItem>
+                <MenuItem value={"Indian Institute of Technology Delhi"}>
+                  Indian Institute of Technology Delhi
+                </MenuItem>
+                <MenuItem value={"Indian Institute of Technology Ropar"}>
+                  Indian Institute of Technology Ropar
+                </MenuItem>
+              </Select>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <InputLabel id="demo-simple-select-label">
+                Select Degree
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                inputProps={{ "aria-label": "Without label" }}
+                value={degree}
+                onChange={(e) => setDegree(e.target.value)}
+              >
+                <MenuItem value={""}>Select.. </MenuItem>
+                <MenuItem value={"BTech"}>B.Tech</MenuItem>
+                <MenuItem value={"MTech"}>M.Tech</MenuItem>
+                <MenuItem value={"Dual Degree"}>Dual Degree</MenuItem>
+              </Select>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <InputLabel id="demo-simple-select-label">
+                Select Branch
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                inputProps={{ "aria-label": "Without label" }}
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+              >
+                <MenuItem value={""}>Select.. </MenuItem>
+                <MenuItem value={"Computer Science"}>Computer Science</MenuItem>
+                <MenuItem value={"Electrical"}>Electrical</MenuItem>
+                <MenuItem value={"Mechanical"}>Mechanical</MenuItem>
+              </Select>
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <InputLabel id="demo-simple-select-label">
+                Select Profile
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                inputProps={{ "aria-label": "Without label" }}
+                value={profile}
+                onChange={(e) => setProfile(e.target.value)}
+              >
+                <MenuItem value={""}>Select.. </MenuItem>
+                <MenuItem value={"Software"}>Software</MenuItem>
+                <MenuItem value={"Core"}>Core Engineering</MenuItem>
+                <MenuItem value={"Non Core"}>Non Core</MenuItem>
+                <MenuItem value={"Consulting"}>Consulting</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="intro"
+                name="intro"
+                label="Tell us about yourself"
+                fullWidth
+                multiline
+                rows={3}
+                value={introduction}
+                onChange={(e) => setIntroduction(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="plans"
+                name="plans"
+                label="Tell us your career plans"
+                fullWidth
+                multiline
+                rows={3}
+                value={career_plans}
+                onChange={(e) => setCareerPlans(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="tech_skills"
+                name="tech_skills"
+                label="List your Technical Skills"
+                fullWidth
+                multiline
+                rows={3}
+                value={technical_skills}
+                onChange={(e) => setTechnicalSkills(e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                id="volunteer"
+                label="Enter your Volunteer Experience"
+                multiline
+                rows={3}
+                fullWidth
+                value={volunteer_experience}
+                onChange={(e) => setVolunteerExperience(e.target.value)}
+              />
+            </Grid>
+            <Grid item sm={12}>
+              <p style={{ color: "red" }}> {errorText}</p>
+            </Grid>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleStudentCreate}
             >
-              <MenuItem value={""}>Select.. </MenuItem>
-              <MenuItem value={"Software"}>Software</MenuItem>
-              <MenuItem value={"Core"}>Core Engineering</MenuItem>
-              <MenuItem value={"Non Core"}>Non Core</MenuItem>
-              <MenuItem value={"Consulting"}>Consulting</MenuItem>
-            </Select>
+              Save and Create Entry
+            </Button>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="intro"
-              name="intro"
-              label="Tell us about yourself"
-              fullWidth
-              multiline
-              rows={3}
-              value={introduction}
-              onChange={(e) => setIntroduction(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="plans"
-              name="plans"
-              label="Tell us your career plans"
-              fullWidth
-              multiline
-              rows={3}
-              value={career_plans}
-              onChange={(e) => setCareerPlans(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="tech_skills"
-              name="tech_skills"
-              label="List your Technical Skills"
-              fullWidth
-              multiline
-              rows={3}
-              value={technical_skills}
-              onChange={(e) => setTechnicalSkills(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              id="volunteer"
-              label="Enter your Volunteer Experience"
-              multiline
-              rows={3}
-              fullWidth
-              value={volunteer_experience}
-              onChange={(e) => setVolunteerExperience(e.target.value)}
-            />
-          </Grid>
-          <Grid item sm={12}>
-            <p style={{ color: "red" }}> {errorText}</p>
-          </Grid>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleStudentCreate}
-          >
-            Save and Create Entry
-          </Button>
-        </Grid>
-      </React.Fragment>)}
+        </React.Fragment>
+      )}
     </div>
   );
 }

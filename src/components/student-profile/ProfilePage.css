@@ -20,7 +20,7 @@ h1 span {
 }
 body {
   font-family: "Open Sans", arial;
-  color: #fff;
+  /* color: #fff; */
   /* background: #666c82;   */
   margin: 0;
 }
@@ -31,7 +31,7 @@ body {
   margin-top: 15px;
   background: #daf7a6;
   height: 100%;
-  width: 250px;
+  width: 20%;
   box-shadow: 4px 4px 4px #3c3f35;
   border-radius: 5px;
   margin-left: 1%;
@@ -109,7 +109,7 @@ footer {
   margin-left: 3%;
 }
 .right {
-  display: inline-block;
+  display: inline;
   float: right;
   margin-right: 3%;
 }

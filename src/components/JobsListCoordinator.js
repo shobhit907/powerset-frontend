@@ -252,7 +252,7 @@ export default function JobsListCoordinator() {
       axios({
         method: 'get',
         
-        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/all/',
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,

@@ -21,7 +21,7 @@ function App() {
   return (
 
     <Router>
-      <div className="App" style={{ overflow: "scroll", scrollbars: "hidden" }}>
+      <div className="App" style={{ overflow: "scroll", scrollbars: "hidden" ,backgroundColor: '#e1e8e7'}}>
 
         <Switch>
           <Route path="/login" component={Login} />

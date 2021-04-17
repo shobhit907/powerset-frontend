@@ -23,6 +23,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
 import { Redirect } from 'react-router';
 import { useHistory } from "react-router-dom";
+import NavBar from "./navbar/NavBar";
 const axios = require('axios')
 //let rows=[];
 
@@ -69,10 +70,10 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'name', numeric: false, disablePadding: false, label: 'Name' },
   { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
-  { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
-  { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
+  { id: 'batch', numeric: false, disablePadding: true, label: 'Batch' },
+  { id: 'cgpa', numeric: true, disablePadding: true, label: 'CGPA' },
   { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
   { id: 'round', numeric: true, disablePadding: false, label: 'Round' },
   { id: 'next_round', numeric: false, disablePadding: false, label: 'Next Round' },
@@ -213,7 +214,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   table: {
-    minWidth: 750,
+    minWidth: 700,
   },
   visuallyHidden: {
     border: 0,
@@ -245,6 +246,7 @@ export default function AppliedStudentsTable() {
   const getData=(job_id)=>{
     
     console.log(job_id);
+    setJobId(job_id);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
     let url='https://powerset-backend.herokuapp.com/placements/job-profiles/'+job_id.toString()+"/applicants/";
@@ -270,6 +272,13 @@ export default function AppliedStudentsTable() {
             obj.cgpa=response.data[i].student.cgpa;
             obj.round=response.data[i].job_round;
             obj.student_id=response.data[i].student.id;
+            obj.no_of_rounds=response.data[i].job_profile.number_of_rounds;
+            obj.is_selected=response.data[i].is_selected;
+            if(obj.round>obj.no_of_rounds){
+              obj.round="Selected";
+            }
+            console.log(obj.no_of_rounds);
+            console.log(obj.is_selected);
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -320,23 +329,77 @@ export default function AppliedStudentsTable() {
     await history.push(redirect_url);
   };
   const handleMoveToNextRound=(event,student_id)=>{
-    var new_rows=[];
-    // for(var i=0;i<rows.length;i++){
-    //     var obj=rows[i];
-    //     if(obj.student_id==student_id){
-    //         obj.round=obj.round+1;
-            
-    //     }
-    //     new_rows=[...new_rows,obj];
+    let token=localStorage.getItem('token');
+    console.log("Hello");
+    console.log(jobId);
+    console.log(student_id);
+      axios({
+        method: 'put',
         
-    // }
-    
+        url:'https://powerset-backend.herokuapp.com/placements/update-round/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+        },
+        data:{
+          job_id:jobId,
+          student_id:student_id,
+        }
+      })
+      .then(function (response) {
+        console.log(response);
+        if(response.status==200){
+          alert("Student moved to next round!");
+          window.location.reload();
+        }
+        else {
+          alert("Some error occoured");
+        }
+      })
+      .catch(function (err) {
+        alert("Some error occoured");
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+        console.log(err);
+      });
     };
-   const handleSelectStudent=(event, student_id)=>{
 
-   }
    const handleRejectStudent=(event, student_id)=>{
-
+    let token=localStorage.getItem('token');
+    console.log("Hello");
+    console.log(jobId);
+    console.log(student_id);
+      axios({
+        method: 'delete',
+        
+        url:'https://powerset-backend.herokuapp.com/placements/reject/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+        },
+        data:{
+          job_id:jobId,
+          student_id:student_id,
+        }
+      })
+      .then(function (response) {
+        console.log(response);
+        if(response.status==200){
+          alert("Student Rejected!");
+          window.location.reload();
+        }
+        else {
+          alert("Some error occoured");
+        }
+      })
+      .catch(function (err) {
+        alert("Some error occoured");
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+        console.log(err);
+      });
   }
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
@@ -344,7 +407,9 @@ export default function AppliedStudentsTable() {
 
   return (
     <div className={classes.root}>
+    <NavBar/>
       <Paper className={classes.paper}>
+      
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
@@ -382,8 +447,8 @@ export default function AppliedStudentsTable() {
                       <TableCell align="right">{row.cgpa}</TableCell>
                       <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
                       <TableCell align="right">{row.round}</TableCell>
-                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleMoveToNextRound(e,row.student_id)}>Move to Next Round</Button></TableCell>
-                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleRejectStudent(e,row.student_id)}>Reject</Button></TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary" disabled={row.is_selected} onClick={(e)=>handleMoveToNextRound(e,row.student_id)}>{row.no_of_rounds==row.round?"Shortlist":"Next Round"}</Button></TableCell>
+                      <TableCell align="left"><Button variant="contained" color="primary"  onClick={(e)=>handleRejectStudent(e,row.student_id)}>Reject</Button></TableCell>
                     </TableRow>
                   );
                 })}

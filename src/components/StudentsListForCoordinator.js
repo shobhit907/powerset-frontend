@@ -21,6 +21,9 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
+import { useHistory } from "react-router-dom";
+import Navbar from "./navbar/NavBar";
+import NavBar from './navbar/NavBar';
 const axios = require('axios')
 
 
@@ -219,6 +222,7 @@ export default function StudentsListForCoordinator() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
   const [update,setUpdate]=React.useState(false);
+  const history = useHistory();
 
   const getData=()=>{
     let token=localStorage.getItem('token');
@@ -294,7 +298,8 @@ export default function StudentsListForCoordinator() {
     setPage(0);
   };
   const handleViewProfile=(event,student_id)=>{
-
+    let redirect_url="/student/"+student_id.toString();
+    history.push(redirect_url);
   };
   
    
@@ -304,6 +309,7 @@ export default function StudentsListForCoordinator() {
 
   return (
     <div className={classes.root}>
+      <NavBar></NavBar>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>

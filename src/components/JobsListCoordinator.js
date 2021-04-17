@@ -24,6 +24,7 @@ import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
+import NavBar from "./navbar/NavBar";
 const axios = require('axios')
 //let rows=[];
 
@@ -345,6 +346,7 @@ export default function JobsListCoordinator() {
 
   return (
     <div className={classes.root}>
+      <NavBar></NavBar>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>

@@ -47,8 +47,8 @@ export default function SignUp() {
         })
         .then(function (response) {
           console.log(JSON.stringify(response.data));
-          alert("Account Created Successfully, please verify your email through the mail we sent you.");
-          history.push("/sign-in");
+          alert("Account Created Successfully, please verify your email through the mail we sent you and then login.");
+          history.push("/login");
         })
         .catch(function (err) {
           console.log(err);
@@ -134,7 +134,7 @@ export default function SignUp() {
                 <div className="d-flex justify-content-center align-items-center mt-4">
                   <span className="fw-normal">
                     Already have an account?
-                    <Card.Link as={Link} to={'/sign-in'} className="fw-bold">
+                    <Card.Link as={Link} to={'/login'} className="fw-bold">
                       {` Login here `}
                     </Card.Link>
                   </span>

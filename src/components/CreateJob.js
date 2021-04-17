@@ -14,7 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-
+import NavBar from "./navbar/NavBar";
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
@@ -135,6 +135,8 @@ export default function CreateJob(){
       
     }
     return(
+      <div>
+        <NavBar></NavBar>
     <React.Fragment>
       <CssBaseline />
 
@@ -367,5 +369,6 @@ export default function CreateJob(){
         </Paper>
         </main>
     </React.Fragment>
+    </div>
     );
 }

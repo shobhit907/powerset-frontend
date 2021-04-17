@@ -1,6 +1,8 @@
 import React from 'react';
+import  { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { useHistory } from "react-router-dom";
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -20,9 +23,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Button } from '@material-ui/core';
-import { Redirect } from 'react-router';
-import { useHistory } from "react-router-dom";
+import { Button, Dialog } from '@material-ui/core';
 const axios = require('axios')
 //let rows=[];
 
@@ -69,14 +70,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
-  { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
-  { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
-  { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
-  { id: 'round', numeric: true, disablePadding: false, label: 'Round' },
-  { id: 'next_round', numeric: false, disablePadding: false, label: 'Next Round' },
-  { id: 'reject', numeric: false, disablePadding: false, label: 'Reject' },
+  { id: 'company', numeric: false, disablePadding: true, label: 'Company' },
+  { id: 'job_title', numeric: true, disablePadding: false, label: 'Job Title' },
+  { id: 'applied_on', numeric: false, disablePadding: false, label: 'Date Applied On' },
+  { id: 'description', numeric: false, disablePadding: false, label: 'View Description' },
+  { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+  {id:'cancel',numeric:false,disablePadding:false,label:'Cancel '}
 ];
 
 function EnhancedTableHead(props) {
@@ -147,6 +146,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
+  const history=useHistory();
   const { numSelected } = props;
 
   return (
@@ -161,21 +161,10 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Applicants List
+          Jobs you Applied In
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Apply">
-          <Button variant="contained" color="secondary">Apply</Button>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
     </Toolbar>
   );
 };
@@ -228,8 +217,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AppliedStudentsTable() {
-  
+export default function JobsAppliedByStudent() {
     
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
@@ -239,20 +227,19 @@ export default function AppliedStudentsTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
-  const [jobId,setJobId]=React.useState(0);
-  const history = useHistory();
 
-  const getData=(job_id)=>{
-    
-    console.log(job_id);
+  const getData=()=>{
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
-    let url='https://powerset-backend.herokuapp.com/placements/job-profiles/'+job_id.toString()+"/applicants/";
-    // let url2="https://powerset-backend.herokuapp.com/placements/job-profiles/23/applicants/"
+    console.log("Hello");
+    const headers={
+      'Authorization':token,
+    }
+    
       axios({
         method: 'get',
         
-        url:url,
+        url:'https://powerset-backend.herokuapp.com/placements/applied-jobs/',
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -264,12 +251,19 @@ export default function AppliedStudentsTable() {
           var curr_rows=[]
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
-            obj.name=response.data[i].student.user.name;
-            obj.branch=response.data[i].student.branch;
-            obj.batch=response.data[i].student.batch;
-            obj.cgpa=response.data[i].student.cgpa;
+            obj.company=response.data[i].job_profile.company.name;
+            obj.job_title=response.data[i].job_profile.title;
+            obj.applied_on=response.data[i].date_applied;
+            obj.job_id=response.data[i].job_profile.id;
+            
+            obj.is_selected=response.data[i].is_selected;
             obj.round=response.data[i].job_round;
-            obj.student_id=response.data[i].student.id;
+            if(obj.is_selected==true){
+                obj.status="Accepted";
+            }
+            else{
+                obj.status="Round "+response.data[i].job_round;
+            }
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -279,17 +273,15 @@ export default function AppliedStudentsTable() {
   
       })
       .catch(function (err) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
+        //console.log(err.response.data);
+        // console.log(err.response.status);
+        // console.log(err.response.headers);
         console.log(err);
       });
   }
   
   React.useEffect(()=>{
-    var pathArray = window.location.pathname.split('/');
-    let job_id=pathArray[2];
-    getData(job_id);
+    getData();
 },[]);
 
   const handleRequestSort = (event, property) => {
@@ -307,6 +299,26 @@ export default function AppliedStudentsTable() {
     setSelected([]);
   };
 
+  const handleClick = (event, company) => {
+    const selectedIndex = selected.indexOf(company);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, company);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -315,29 +327,48 @@ export default function AppliedStudentsTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const handleViewProfile=async(event,student_id)=>{
-    let redirect_url="/student/"+student_id.toString();
-    await history.push(redirect_url);
+
+  const handleChangeDense = (event) => {
+    setDense(event.target.checked);
   };
-  const handleMoveToNextRound=(event,student_id)=>{
-    var new_rows=[];
-    // for(var i=0;i<rows.length;i++){
-    //     var obj=rows[i];
-    //     if(obj.student_id==student_id){
-    //         obj.round=obj.round+1;
-            
-    //     }
-    //     new_rows=[...new_rows,obj];
-        
-    // }
+  const handleViewJobDescription = (event,job_id) => {
+
+    console.log("Viewing Job Description");
+  };
+  const handleCancelJobApplication = (event,job_id) => {
+    let token=localStorage.getItem('token');
+    let obj=new Object();
+    obj.id=job_id;
+    let temp=[];
+    temp=[...temp,obj];
     
-    };
-   const handleSelectStudent=(event, student_id)=>{
 
-   }
-   const handleRejectStudent=(event, student_id)=>{
+    
+    
+    console.log(temp);
+    console.log("Job id is"+job_id);
 
-  }
+    axios({
+        method: 'delete',
+        
+        url:'https://powerset-backend.herokuapp.com/placements/cancel/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+        },
+        data:temp,
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (err) {
+        //console.log(err.response.data);
+        // console.log(err.response.status);
+        // console.log(err.response.headers);
+        console.log(err);
+      });
+    
+  };
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -358,7 +389,7 @@ export default function AppliedStudentsTable() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
+              
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -372,18 +403,17 @@ export default function AppliedStudentsTable() {
                   return (
                     <TableRow
                       hover
+                      key={row.job_id}
                     >
-                      
+                     
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.name}
+                        {row.company}
                       </TableCell>
-                      <TableCell align="left">{row.branch}</TableCell>
-                      <TableCell align="left">{row.batch}</TableCell>
-                      <TableCell align="right">{row.cgpa}</TableCell>
-                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
-                      <TableCell align="right">{row.round}</TableCell>
-                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleMoveToNextRound(e,row.student_id)}>Move to Next Round</Button></TableCell>
-                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleRejectStudent(e,row.student_id)}>Reject</Button></TableCell>
+                      <TableCell align="center">{row.job_title}</TableCell>
+                      <TableCell align="center">{row.applied_on}</TableCell>
+                      <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
+                      <TableCell align="left">{row.status}</TableCell>
+                      <TableCell alight="left"><Button color="secondary" variant="contained" onClick={(e)=>handleCancelJobApplication(e,row.job_id)}>Cancel Application</Button></TableCell>
                     </TableRow>
                   );
                 })}

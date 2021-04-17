@@ -1,46 +1,49 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import './bootstrap.min.css';
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from "./components/Login";
 import SignUp from "./components/Signup";
-import MainPage from "./components/StudentDetailsMainPage"
 import ConfirmEmail from "./components/ConfirmEmail"
-import Particles from 'react-particles-js';
-import particlesConfig from './Config/particlesConfig';
 import CreateJob from './components/CreateJob';
 import JobsList from "./components/JobsList";
-import AppliedStudentsTable from "./components/AppliedStudentsList";
-import StudentsListForCoordinator from "./components/StudentsListForCoordinator";
+import PrivateRoute from "./components/PrivateRoute";
+import StudentDashBoard from "./components/student-profile/StudentDashboard";
+import ProfilePage from "./components/student-profile/ProfilePage";
+import TestApp from './components/TestApp';
+import JobsAppliedByStudent from './components/student-profile/JobsAppliedByStudent';
+import AppliedStudentsTable from './components/AppliedStudentsList';
+import ViewStudent from "./components/ViewStudent";
 import JobsListCoordinator from "./components/JobsListCoordinator";
-import JobsAppliedByStudent from './components/JobsAppliedByStudent';
-
+import StudentsListForCoordinator from "./components/StudentsListForCoordinator";
+import CoordinatorDashboard from "./components/CoordinatorDashboard";
 function App() {
-  
+
   return (
-    
+
     <Router>
-    <div className="App" style={{  overflow: "scroll", scrollbars:"hidden" }}>
-        
-          <Switch>
-          <Route exact path='/' component={Login} />
-          <Route path="/sign-in" component={Login} />
-          <Route path="/sign-up" component={SignUp} />
-          <Route path="/edit-details" component={MainPage} />
-          <Route path="/auth/activate/" component={ConfirmEmail} />
-          <Route path="/add-job" component={CreateJob}/>
-          <Route path="/apply" component={JobsList}/>
-          <Route path="/coordinator/applicants/" component={AppliedStudentsTable}/>
-          <Route path="/coordinator/students/" component={StudentsListForCoordinator}/>
-          <Route path="/coordinator/jobs-list/" component={JobsListCoordinator}/>
-          <Route path="/jobs-applied/" component={JobsAppliedByStudent}/>
-          </Switch>
-        </div>
-      
+      <div className="App" style={{ overflow: "scroll", scrollbars: "hidden" }}>
+
+        <Switch>
+          <Route path="/login" component={Login} />
+          <Route path="/register" component={SignUp} />
+          <Route path="/testapp" component={TestApp} />
+          <PrivateRoute exact path="/" component={StudentDashBoard} />
+          <PrivateRoute path="/profile" component={ProfilePage} />
+          <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
+          <PrivateRoute path="/add-job" component={CreateJob} />
+          <PrivateRoute path="/job-profiles" component={JobsList} />
+          <PrivateRoute path="/applicants/" component={AppliedStudentsTable}/>
+          <PrivateRoute path="/student/" component={ViewStudent}></PrivateRoute>
+          <PrivateRoute path="/students/" component={StudentsListForCoordinator}/>
+          <PrivateRoute path="/jobs-list/" component={JobsListCoordinator}/>
+          <PrivateRoute exact path="/coordinator" component={CoordinatorDashboard} />
+        </Switch>
+      </div>
+
     </Router>
-    
-    
-    
+
+
+
   )
 }
 

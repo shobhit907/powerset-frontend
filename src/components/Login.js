@@ -57,7 +57,7 @@ export default function Login() {
             console.log(err.response.headers);
           }
         })
-        history.push('/edit-details');
+        history.push('/');
         })
         .catch(function (err) {
           console.log(err);
@@ -133,7 +133,7 @@ export default function Login() {
                 <div className="d-flex justify-content-center align-items-center mt-4">
                   <span className="fw-normal">
                     Not registered?
-                    <Card.Link as={Link} to={'/sign-up'} className="fw-bold">
+                    <Card.Link as={Link} to={'/register'} className="fw-bold">
                       {` Create account `}
                     </Card.Link>
                   </span>

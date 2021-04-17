@@ -46,7 +46,7 @@ export default function Semesters(props) {
   ]);
   const [noOfCourses, setNoOfCourses] = useState(1);
   const [semesters, setSemesters] = useState([
-    { sgpa: 0.0, backlogs: 0, grade_sheet: [] },
+    { sgpa: 0.0, backlogs: 0, grade_sheet: null,grade_sheet_url:null },
   ]);
   const [noOfSemesters, setNoOfSemesters] = useState(1);
   const [errorText, setErrorText] = useState("");
@@ -83,15 +83,14 @@ export default function Semesters(props) {
           //console.log(response.data[i].job_title);
           obj.sgpa = response.data[i].sgpa;
           obj.backlogs = response.data[i].number_of_backlogs;
+          obj.grade_sheet_url=response.data[i].grade_sheet;
           curr_semester = [...curr_semester, obj];
         }
         console.log(curr_semester);
         if (curr_semester.length != 0) setSemesters(curr_semester);
       })
       .catch(function (err) {
-        console.log(err.response.data);
-        console.log(err.response.status);
-        console.log(err.response.headers);
+        console.log(err);
       });
   };
 
@@ -379,6 +378,7 @@ export default function Semesters(props) {
                 type="file"
                 onChange={(e) => handleInputChange(e, i, 6)}
               />
+              <a href={x.grade_sheet_url} target="_blank">View</a>
             </Grid>
 
             {semesters.length - 1 === i && (

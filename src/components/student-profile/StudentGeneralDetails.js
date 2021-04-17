@@ -13,8 +13,7 @@ import shobhit_pic from "../../images/pp.jpeg";
 import rohit_pic from "../../images/rohit-pic.jpeg";
 
 const axios = require("axios");
-const qs = require("querystring");
-const moment = require("moment");
+const qs = require("querystring")
 
 export default function StudentGeneralDetails(props) {
   const [DOB, onChangeDOB] = useState(new Date());
@@ -33,24 +32,15 @@ export default function StudentGeneralDetails(props) {
   const [career_plans, setCareerPlans] = useState("");
   const [errorText, setErrorText] = useState("");
   const [student_id, set_student_id] = useState();
-  console.log("From student general details -> ", props.student_id);
-  React.useEffect(() => {
-    if (props.student_id && props.student_id!=-1) {
-      set_student_id(props.student_id);
-    } 
-    else{
-      set_student_id(localStorage.getItem("id"));
-    }
-    // getData();
-  }, []);
+  const [profile_pic,set_profile_pic]=useState(shobhit_pic);
+  console.log("From student general details -> ", props.student_id,student_id);
   React.useEffect(() => {
     getData();
-  }, [student_id]);
+  }, [props.student_id,student_id]);
 
 
   let token = localStorage.getItem("token");
-  console.log(token);
-
+  
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
 
@@ -111,8 +101,13 @@ export default function StudentGeneralDetails(props) {
     })
       .then(function (response) {
         console.log(response);
-        localStorage.setItem("id", response.data.id);
-        set_student_id(response.data.id);
+        if (props.student_id>=0){
+
+        }else{
+          localStorage.setItem("id", response.data.id);
+          set_student_id(response.data.id);
+        }
+        
       })
       .catch(function (err) {
         console.log(err.response.data);
@@ -125,23 +120,21 @@ export default function StudentGeneralDetails(props) {
       Authorization: token,
     };
     var request_url = "";
-    if (student_id && student_id != -1) {
+    if (props.student_id>=0) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
-        student_id.toString() +
+        props.student_id.toString() +
         "/";
     } else {
       request_url = "https://powerset-backend.herokuapp.com/students/me/";
     }
-    console.log("Requesting at ",request_url);
-
+    
     axios
       .get(request_url, { headers })
       .then((response) => {
         console.log(response);
 
         setBranch(response.data.branch);
-        console.log(response.data.branch);
         setDegree(response.data.degree);
         setMothersName(response.data.mother_name);
         setFathersName(response.data.father_name);
@@ -149,15 +142,16 @@ export default function StudentGeneralDetails(props) {
         setProfile(response.data.preferred_profile);
         setInstitute(response.data.institute.name);
         setName(response.data.user.name);
-        localStorage.setItem("id", response.data.id);
+        if(props.student_id>=0){
+
+        }else{
+          localStorage.setItem("id", response.data.id);
+          set_student_id(response.data.id);
+        }
+        
       })
       .catch((err) => {
         console.log(err);
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        }
       });
   };
 
@@ -181,8 +175,9 @@ export default function StudentGeneralDetails(props) {
   const classes = useStyles();
 
   return (
+    <React.Fragment key={props.student_id}>
     <div id="student-general-details">
-      {student_id && student_id != -1 && (
+      
         <React.Fragment>
           <Grid container spacing={1}>
             <Grid item xs={6} sm={4}>
@@ -219,16 +214,15 @@ export default function StudentGeneralDetails(props) {
           <Grid container spacing={3}>
             <Grid item>
               <span className={classes.root}>
-                {student_id==2 && <Avatar
+                {(props.student_id==2 || student_id==2) && (<Avatar
                   alt="Shobhit Gupta"
-                  src={shobhit_pic}
+                  src={profile_pic}
                   className={classes.large}
-                ></Avatar>}
-                {student_id==3 && <Avatar
-                  alt="Rohit Tuli"
-                  src={rohit_pic}
+                ></Avatar>)}
+                {(props.student_id!=2 && student_id!=2) && (<Avatar
                   className={classes.large}
-                ></Avatar>}
+                ></Avatar>)}
+                
               </span>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -277,7 +271,6 @@ export default function StudentGeneralDetails(props) {
                 id="DOB"
                 label="Date of Birth"
                 type="date"
-                defaultValue="2000-05-05"
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -422,7 +415,8 @@ export default function StudentGeneralDetails(props) {
             </Button>
           </Grid>
         </React.Fragment>
-      )}
+      
     </div>
+    </React.Fragment>
   );
 }

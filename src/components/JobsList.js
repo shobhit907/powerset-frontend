@@ -52,12 +52,11 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'company', numeric: false, disablePadding: true, label: 'Company' },
-  { id: 'job_title', numeric: true, disablePadding: false, label: 'Job Title' },
-  { id: 'min_ctc', numeric: true, disablePadding: false, label: 'Min CTC' },
-  { id: 'max_ctc', numeric: true, disablePadding: false, label: 'Max CTC' },
-  { id: 'last_date', numeric: false, disablePadding: false, label: 'Last Date' },
-  { id: 'view_details', numeric: false, disablePadding: false, label: 'View Details' },
+  { id: "company", numeric: false, disablePadding: true, label: "Company" },
+  { id: "job_title", numeric: true, disablePadding: false, label: "Job Title" },
+  { id: "min_ctc", numeric: true, disablePadding: false, label: "Min CTC" },
+  { id: "max_ctc", numeric: true, disablePadding: false, label: "Max CTC" },
+  { id: "last_date", numeric: true, disablePadding: false, label: "Last Date" },
 ];
 
 function EnhancedTableHead(props) {
@@ -163,8 +162,16 @@ const handleApply=(event,selected)=>{
   })
   .then(function (response) {
     console.log(response);
+    if(response.status==200){
+      alert("Successfully Applied");
+    }
+    else{
+      alert("Some error occoured while applying");
+    }
+    window.location.reload();
   })
   .catch(function (err) {
+    alert("Some error occoured while applying");
     console.log(err.response.data);
     console.log(err.response.status);
     console.log(err.response.headers);
@@ -370,6 +377,9 @@ export default function JobsTable() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
+  const handleViewDetails = (event) => {
+    
+  };
 
   const isSelected = (job_id) => selected.indexOf(job_id) !== -1;
 
@@ -377,79 +387,87 @@ export default function JobsTable() {
     rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
-      <Paper className={classes.paper}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
-          <Table
-            className={classes.table}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-            aria-label="enhanced table"
-          >
-            <EnhancedTableHead
-              classes={classes}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {stableSort(rows, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.company);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+    <div>
+      <NavBar></NavBar>
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.company)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.job_id}
-                      //{console.log(row.company)}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={isItemSelected}
-                          inputProps={{ 'aria-labelledby': labelId }}
-                        />
-                      </TableCell>
-                      <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.company}
-                      </TableCell>
-                      <TableCell align="right">{row.job_title}</TableCell>
-                      <TableCell align="right">{row.min_ctc}</TableCell>
-                      <TableCell align="right">{row.max_ctc}</TableCell>
-                      <TableCell align="right">{row.last_date}</TableCell>
-                      <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onChangePage={handleChangePage}
-          onChangeRowsPerPage={handleChangeRowsPerPage}
-        />
-      </Paper>
-      
+      <div className={classes.root}>
+        <Paper className={classes.paper}>
+          <EnhancedTableToolbar numSelected={selected.length} selected={selected}/>
+          <TableContainer>
+            <Table
+              className={classes.table}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+              aria-label="enhanced table"
+            >
+              <EnhancedTableHead
+                classes={classes}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody>
+                {stableSort(rows, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.job_id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, row.job_id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.job_id}
+                        //{console.log(row.company)}
+                        selected={isItemSelected}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={isItemSelected}
+                            inputProps={{ "aria-labelledby": labelId }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
+                          {row.company}
+                        </TableCell>
+                        <TableCell align="right">{row.job_title}</TableCell>
+                        <TableCell align="right">{row.min_ctc}</TableCell>
+                        <TableCell align="right">{row.max_ctc}</TableCell>
+                        <TableCell align="right">{row.last_date}</TableCell>
+                        <TableCell align="right"><Button variant="contained" color="secondary" onClick={(e)=>handleViewDetails(e)}>View Details</Button></TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow style={{ height: (dense ? 33 : 53) * emptyRows }}>
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </div>
     </div>
   );
 }

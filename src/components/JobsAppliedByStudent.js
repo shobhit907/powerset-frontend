@@ -335,7 +335,17 @@ export default function JobsAppliedByStudent() {
 
     console.log("Viewing Job Description");
   };
+  const handleCancel=(event,job_id)=>{
+    var choice=window.confirm("Do you want to cancel your application?")
+    if(choice==false){
+      return;
+    }
+    else{
+      handleCancelJobApplication(event,job_id);
+    }
+  }
   const handleCancelJobApplication = (event,job_id) => {
+    
     let token=localStorage.getItem('token');
     let obj=new Object();
     obj.id=job_id;
@@ -360,8 +370,10 @@ export default function JobsAppliedByStudent() {
       })
       .then(function (response) {
         console.log(response);
+        window.location.reload();
       })
       .catch(function (err) {
+        alert("Some error occoured");
         //console.log(err.response.data);
         // console.log(err.response.status);
         // console.log(err.response.headers);
@@ -413,7 +425,7 @@ export default function JobsAppliedByStudent() {
                       <TableCell align="center">{row.applied_on}</TableCell>
                       <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
                       <TableCell align="left">{row.status}</TableCell>
-                      <TableCell alight="left"><Button color="secondary" variant="contained" onClick={(e)=>handleCancelJobApplication(e,row.job_id)}>Cancel Application</Button></TableCell>
+                      <TableCell alight="left"><Button color="secondary" variant="contained" disabled={row.is_selected} onClick={(e)=>handleCancel(e,row.job_id)}>Cancel Application</Button></TableCell>
                     </TableRow>
                   );
                 })}

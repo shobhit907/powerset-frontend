@@ -59,6 +59,7 @@ const headCells = [
   { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
   { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
   { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
+  { id: 'verified', numeric: false, disablePadding: false, label: 'Verified' },
   { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
   
 ];
@@ -254,6 +255,7 @@ export default function StudentsListForCoordinator() {
             obj.student_id=response.data[i].id;
             obj.roll_no=response.data[i].entry_number;
             obj.is_selected=response.data[i].is_selected;
+            obj.is_verified=response.data[i].is_verified;
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -309,7 +311,7 @@ export default function StudentsListForCoordinator() {
 
   return (
     <div className={classes.root}>
-      <NavBar></NavBar>
+      
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -348,6 +350,7 @@ export default function StudentsListForCoordinator() {
                       <TableCell align="left">{row.branch}</TableCell>
                       <TableCell align="left">{row.batch}</TableCell>
                       <TableCell align="right">{row.cgpa}</TableCell>
+                      <TableCell align="left">{row.is_verified=="V"?"Verified":"Not Verified"}</TableCell>
                       <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
                       
                     </TableRow>

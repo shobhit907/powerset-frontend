@@ -21,7 +21,7 @@ export default function CoordinatorDashBoard() {
       <h3 style={{textAlign:"center",fontWeight:"lighter",fontSize:40}}>Students List</h3> 
       <p style={{textAlign:"center",fontWeight:"lighter"}}>Click the view profile button to view the student's profile and verify the sections </p>
       <StudentsListForCoordinator/>
-
+    
     </div>
   );
 }

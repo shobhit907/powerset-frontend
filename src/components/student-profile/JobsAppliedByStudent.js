@@ -23,7 +23,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Button, Dialog } from '@material-ui/core';
+import { Button} from '@material-ui/core';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 const axios = require('axios')
 //let rows=[];
 
@@ -228,6 +233,17 @@ export default function JobsAppliedByStudent() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+
   const getData=()=>{
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
@@ -336,6 +352,7 @@ export default function JobsAppliedByStudent() {
     console.log("Viewing Job Description");
   };
   const handleCancelJobApplication = (event,job_id) => {
+    handleClickOpen();return;
     let token=localStorage.getItem('token');
     let obj=new Object();
     obj.id=job_id;
@@ -377,6 +394,29 @@ export default function JobsAppliedByStudent() {
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
+        
+        <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Cancel Job Application?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure, you want to cancel the job application? 
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="primary">
+            Yes, Cancel
+          </Button>
+          <Button onClick={handleClose} color="primary" autoFocus>
+            No, don't cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
         <TableContainer>
           <Table
             className={classes.table}

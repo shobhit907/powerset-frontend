@@ -28,12 +28,12 @@ function App() {
           <Route path="/register" component={SignUp} />
           <Route path="/testapp" component={TestApp} />
           <PrivateRoute exact path="/" component={StudentDashBoard} />
-          <PrivateRoute path="/profile" component={ProfilePage} />
+          <PrivateRoute path="/profile" component={ProfilePage} student_id={-1}></PrivateRoute>
           <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
           <PrivateRoute path="/job-profiles" component={JobsList} />
           <PrivateRoute path="/applicants/" component={AppliedStudentsTable}/>
-          <PrivateRoute path="/student/" component={ViewStudent}></PrivateRoute>
+          <PrivateRoute path="/student/:student_id" component={ViewStudent}></PrivateRoute>
           <PrivateRoute path="/students/" component={StudentsListForCoordinator}/>
           <PrivateRoute path="/jobs-list/" component={JobsListCoordinator}/>
           <PrivateRoute exact path="/coordinator" component={CoordinatorDashboard} />

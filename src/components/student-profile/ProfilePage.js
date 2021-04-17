@@ -14,14 +14,12 @@ import Awards from "./Awards";
 import "./ProfilePage.css";
 
 export default function ProfilePage(props) {
-  console.log("From ProfilePage -> ",props.student_id);
-  React.useEffect(()=>{
-    return ()=>{}
-  },[props.student_id]);
-    return (
+  console.log("From ProfilePage ---------> ", props.student_id);
+  return (
+    <React.Fragment key={props.student_id}>
       <Container fluid={true}>
-          <NavBar></NavBar>
-        <div class="flex" id="">
+        <NavBar></NavBar>
+        <div class="flex">
           <nav class="sidebar">
             <a href="#student-general-details">
               <i class="fa fa-user fa-lg"></i>
@@ -57,38 +55,32 @@ export default function ProfilePage(props) {
               <i class="fa fa-trophy fa-lg"></i>
               <span>Awards</span>
             </a>
-
           </nav>
           <div class="contents">
-            
             <StudentGeneralDetails {...props}></StudentGeneralDetails>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
             <WorkExperience {...props}></WorkExperience>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
             <Projects {...props}></Projects>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
             <Courses {...props}></Courses>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
             <Semesters {...props}></Semesters>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
             <PositionOfResponsibility {...props}></PositionOfResponsibility>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
             <Awards {...props}></Awards>
-            <br></br><br></br>
+            <br></br>
+            <br></br>
           </div>
         </div>
-        <footer>
-          <div class="left">
-            Copyright ©2021 Powerset | Team B3 - IIT Ropar
-          </div>
-          <div class="right">
-            <a href="#">Home</a>
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-            <a href="#">Privacy Policy</a>
-          </div>
-        </footer>
       </Container>
-    );
+    </React.Fragment>
+  );
 }
-

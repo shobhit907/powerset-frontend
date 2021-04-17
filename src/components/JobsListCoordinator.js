@@ -77,6 +77,7 @@ const headCells = [
   { id: 'max_ctc', numeric: true, disablePadding: false, label: 'Max CTC' },
   { id: 'last_date', numeric: false, disablePadding: false, label: 'Last Date' },
   { id: 'edit', numeric: false, disablePadding: false, label: 'Edit Job' },
+  { id: 'view_applicants', numeric: false, disablePadding: false, label: 'View Applicants' },
 ];
 
 function EnhancedTableHead(props) {
@@ -239,7 +240,7 @@ export default function JobsListCoordinator() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
-
+  const history=useHistory();
   const getData=()=>{
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
@@ -251,7 +252,7 @@ export default function JobsListCoordinator() {
       axios({
         method: 'get',
         
-        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/',
+        url:'https://powerset-backend.herokuapp.com/placements/job-profiles/all/',
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -340,13 +341,17 @@ export default function JobsListCoordinator() {
 
     console.log("editing job");
   };
+  const handleViewApplicants=(event,job_id) => {
+    //const history=useHistory()
+    history.push("/applicants/"+job_id.toString()+"/");
+  }
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
-      <NavBar></NavBar>
+      
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -386,6 +391,7 @@ export default function JobsListCoordinator() {
                       <TableCell align="right">{row.max_ctc}</TableCell>
                       <TableCell align="center">{row.last_date}</TableCell>
                       <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleEditJob(e,row.job_id)}>Edit Job</Button></TableCell>
+                      <TableCell align="left"><Button variant="contained" color="secondary" onClick={(e)=>handleViewApplicants(e,row.job_id)}>View Applicants</Button></TableCell>
                     </TableRow>
                   );
                 })}

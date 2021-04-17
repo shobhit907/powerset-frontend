@@ -1,6 +1,8 @@
 import React from 'react';
+import  { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { useHistory } from "react-router-dom";
 import { lighten, makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +13,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -20,12 +23,25 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Button } from '@material-ui/core';
-import { useHistory } from "react-router-dom";
-import Navbar from "./navbar/NavBar";
-import NavBar from './navbar/NavBar';
+import { Button, Dialog } from '@material-ui/core';
 const axios = require('axios')
+//let rows=[];
 
+
+// function createData(company, job_title, min_ctc, max_ctc, last_date) {
+//   return {company, job_title, min_ctc, max_ctc, last_date};
+// }
+
+// const rows = [
+//   createData('DE Shaw', 'Software Engineer', 3100000, 3500000, "26/04/2021"),
+//   createData('Nutanix', 'Software Engineer', 2900000, 3000000, "28/04/2021"),
+//   createData('Flipkart', 'Software Engineer', 2650000, 2700000, "30/05/2021"),
+//   createData('Microsoft', 'Software Engineer', 4100000, 4300000, "26/04/2021"),
+//   createData('Goldman Sachs', 'Analyst', 2100000, 250000, "26/04/2021"),
+//   createData('Sprinlr', 'Product Engineer', 3000000, 3000000, "26/04/2021"),
+//   createData('Amazon', 'Software Engineer', 3100000, 3200000, "26/04/2021"),
+  
+// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -54,14 +70,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-    { id: 'roll_no', numeric: false, disablePadding: true, label: 'Enrollment No' },
-  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
-  { id: 'branch', numeric: false, disablePadding: false, label: 'Branch' },
-  { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
-  { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
-  { id: 'verified', numeric: false, disablePadding: false, label: 'Verified' },
-  { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
-  
+  { id: 'company', numeric: false, disablePadding: true, label: 'Company' },
+  { id: 'job_title', numeric: true, disablePadding: false, label: 'Job Title' },
+  { id: 'applied_on', numeric: false, disablePadding: false, label: 'Date Applied On' },
+  { id: 'description', numeric: false, disablePadding: false, label: 'View Description' },
+  { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
+  {id:'cancel',numeric:false,disablePadding:false,label:'Cancel '}
 ];
 
 function EnhancedTableHead(props) {
@@ -132,6 +146,7 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
   const classes = useToolbarStyles();
+  const history=useHistory();
   const { numSelected } = props;
 
   return (
@@ -146,21 +161,10 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       ) : (
         <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-          Students List
+          Jobs you Applied In
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Apply">
-          <Button variant="contained" color="secondary">Apply</Button>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
     </Toolbar>
   );
 };
@@ -213,7 +217,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function StudentsListForCoordinator() {
+export default function JobsAppliedByStudent() {
+    
   const classes = useStyles();
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('company');
@@ -222,8 +227,6 @@ export default function StudentsListForCoordinator() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
-  const [update,setUpdate]=React.useState(false);
-  const history = useHistory();
 
   const getData=()=>{
     let token=localStorage.getItem('token');
@@ -236,7 +239,7 @@ export default function StudentsListForCoordinator() {
       axios({
         method: 'get',
         
-        url:'https://powerset-backend.herokuapp.com/students/',
+        url:'https://powerset-backend.herokuapp.com/placements/applied-jobs/',
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -248,14 +251,19 @@ export default function StudentsListForCoordinator() {
           var curr_rows=[]
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
-            obj.name=response.data[i].user.name;
-            obj.branch=response.data[i].branch;
-            obj.batch=response.data[i].batch;
-            obj.cgpa=response.data[i].cgpa;
-            obj.student_id=response.data[i].id;
-            obj.roll_no=response.data[i].entry_number;
+            obj.company=response.data[i].job_profile.company.name;
+            obj.job_title=response.data[i].job_profile.title;
+            obj.applied_on=response.data[i].date_applied;
+            obj.job_id=response.data[i].job_profile.id;
+            
             obj.is_selected=response.data[i].is_selected;
-            obj.is_verified=response.data[i].is_verified;
+            obj.round=response.data[i].job_round;
+            if(obj.is_selected==true){
+                obj.status="Accepted";
+            }
+            else{
+                obj.status="Round "+response.data[i].job_round;
+            }
             curr_rows=[...curr_rows,obj];
           }
           setRows(curr_rows);
@@ -291,6 +299,26 @@ export default function StudentsListForCoordinator() {
     setSelected([]);
   };
 
+  const handleClick = (event, company) => {
+    const selectedIndex = selected.indexOf(company);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, company);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelected(newSelected);
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -299,19 +327,66 @@ export default function StudentsListForCoordinator() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-  const handleViewProfile=(event,student_id)=>{
-    let redirect_url="/student/"+student_id.toString();
-    history.push(redirect_url);
+
+  const handleChangeDense = (event) => {
+    setDense(event.target.checked);
   };
-  
-   
+  const handleViewJobDescription = (event,job_id) => {
+
+    console.log("Viewing Job Description");
+  };
+  const handleCancel=(event,job_id)=>{
+    var choice=window.confirm("Do you want to cancel your application?")
+    if(choice==false){
+      return;
+    }
+    else{
+      handleCancelJobApplication(event,job_id);
+    }
+  }
+  const handleCancelJobApplication = (event,job_id) => {
+    
+    let token=localStorage.getItem('token');
+    let obj=new Object();
+    obj.id=job_id;
+    let temp=[];
+    temp=[...temp,obj];
+    
+
+    
+    
+    console.log(temp);
+    console.log("Job id is"+job_id);
+
+    axios({
+        method: 'delete',
+        
+        url:'https://powerset-backend.herokuapp.com/placements/cancel/',
+        headers:{
+          'Content-Type':'application/json',
+          'Authorization':token,
+        },
+        data:temp,
+      })
+      .then(function (response) {
+        console.log(response);
+        window.location.reload();
+      })
+      .catch(function (err) {
+        alert("Some error occoured");
+        //console.log(err.response.data);
+        // console.log(err.response.status);
+        // console.log(err.response.headers);
+        console.log(err);
+      });
+    
+  };
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
-      
       <Paper className={classes.paper}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -326,7 +401,7 @@ export default function StudentsListForCoordinator() {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
+              
               onRequestSort={handleRequestSort}
               rowCount={rows.length}
             />
@@ -340,19 +415,17 @@ export default function StudentsListForCoordinator() {
                   return (
                     <TableRow
                       hover
-                      key={row.student_id}
+                      key={row.job_id}
                     >
-                      
+                     
                       <TableCell component="th" id={labelId} scope="row" padding="none">
-                        {row.roll_no}
+                        {row.company}
                       </TableCell>
-                      <TableCell align="left">{row.name}</TableCell>
-                      <TableCell align="left">{row.branch}</TableCell>
-                      <TableCell align="left">{row.batch}</TableCell>
-                      <TableCell align="right">{row.cgpa}</TableCell>
-                      <TableCell align="left">{row.is_verified=="V"?"Verified":"Not Verified"}</TableCell>
-                      <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
-                      
+                      <TableCell align="center">{row.job_title}</TableCell>
+                      <TableCell align="center">{row.applied_on}</TableCell>
+                      <TableCell alight="left"><Button color="primary" variant="contained" onClick={(e)=>handleViewJobDescription(e,row.job_id)}>View Details</Button></TableCell>
+                      <TableCell align="left">{row.status}</TableCell>
+                      <TableCell alight="left"><Button color="secondary" variant="contained" disabled={row.is_selected} onClick={(e)=>handleCancel(e,row.job_id)}>Cancel Application</Button></TableCell>
                     </TableRow>
                   );
                 })}

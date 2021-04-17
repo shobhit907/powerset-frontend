@@ -162,8 +162,16 @@ const handleApply=(event,selected)=>{
   })
   .then(function (response) {
     console.log(response);
+    if(response.status==200){
+      alert("Successfully Applied");
+    }
+    else{
+      alert("Some error occoured while applying");
+    }
+    window.location.reload();
   })
   .catch(function (err) {
+    alert("Some error occoured while applying");
     console.log(err.response.data);
     console.log(err.response.status);
     console.log(err.response.headers);
@@ -369,6 +377,9 @@ export default function JobsTable() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
+  const handleViewDetails = (event) => {
+    
+  };
 
   const isSelected = (job_id) => selected.indexOf(job_id) !== -1;
 
@@ -434,6 +445,7 @@ export default function JobsTable() {
                         <TableCell align="right">{row.min_ctc}</TableCell>
                         <TableCell align="right">{row.max_ctc}</TableCell>
                         <TableCell align="right">{row.last_date}</TableCell>
+                        <TableCell align="right"><Button variant="contained" color="secondary" onClick={(e)=>handleViewDetails(e)}>View Details</Button></TableCell>
                       </TableRow>
                     );
                   })}

@@ -57,6 +57,8 @@ const useStyles = makeStyles((theme) => ({
   
 export default function CreateJob(){
     const [job_title,setJobTitle]=useState("");
+    const [company,setCompany]=useState("");
+    const [placement, setPlacement]=useState("");
     const [domain,setDomain]=useState("");
     const [description,setDescription]=useState("");
     const [minCgpa,setMinCgpa]=useState(0.0);
@@ -66,8 +68,8 @@ export default function CreateJob(){
     const [lastDate,setLastDate]=useState(new Date());
     const [startDate,setStartDate]=useState(new Date());
     const [eligibleBatches,setEligibleBatches]=useState({firstYear:false,secondYear:false,thirdYear:false,fourthYear:false});
-    const [eligibleBranches,setEligibleBranches]=useState({cs:false,elec:false,mech:false,chem:false,civil:false,met:false});
-    const [eligibleGenders,setEligibleGenders]=useState("");
+    const [eligibleBranches,setEligibleBranches]=useState({CSE:false,EE:false,ME:false,MNC:false,CE:false,MME:false}); // replace mnc with chem
+    const [eligibleGenders,setEligibleGenders]=useState({M:false,F:false,O:false});
     const [salaryBreakup,setSalaryBreakup]=useState("");
     const [additionalInfo, setAdditionalInfo]=useState("");
     const classes = useStyles();
@@ -78,10 +80,33 @@ export default function CreateJob(){
     const handleBranch = (event) => {
       setEligibleBranches({ ...eligibleBranches, [event.target.name]: event.target.checked });
     };
+    const handleGender =(event)=>{
+      setEligibleGenders({...eligibleGenders,[event.target.name]:event.target.checked});
+    }
     const handleSubmit=()=>{
+      var branches=[];
+      for(const [key,value] of Object.entries(eligibleBranches)){
+        if(value==true){
+          branches=[...branches,key];
+          
+        }
+
+        //console.log(key);
+      }
+      var genders=[]
+      for(const [key,value] of Object.entries(eligibleGenders)){
+        if(value==true){
+          genders=[...genders,key];
+          
+        }
+
+        //console.log(key);
+      }
+      //console.log(branches);
+
       let data=new FormData();
-      data.set('company','Flipkart');
-      data.set('placement','Intern');
+      data.set('company',company);
+      data.set('placement',placement);
       data.set('title',job_title);
       data.set('domain',domain);
       data.set('min_cgpa',minCgpa);
@@ -91,9 +116,9 @@ export default function CreateJob(){
       data.set('start_date',startDate);
       data.set('end_date',lastDate);
       data.set('max_backlogs',maxBacklogs);
-      data.set('branches_eligible','CSE');
+      data.set('branches_eligible', JSON.stringify(branches));
       data.set('salary_breakup',salaryBreakup);
-      data.set('gender_allowed',eligibleGenders);
+      data.set('gender_allowed',JSON.stringify(genders));
       data.set('extra_data',additionalInfo);
       console.log(token);
       axios({
@@ -105,23 +130,6 @@ export default function CreateJob(){
     
         },
         data:data,
-        // data :{
-        //   'company':'Flipkart',
-        //   'placement':'Intern',
-        //   'title':job_title,
-        //   'domain':domain,
-        //   'min_cgpa':minCgpa,
-        //   'description':description,
-        //   'min_ctc':minCtc,
-        //   'max_ctc':maxCtc,
-        //   'start_date':'2020-07-15',
-        //   'end_date':'2020-07-15',
-        //   'max_backlogs':maxBacklogs,
-        //   'branches_eligible':'CSE',
-        //   'salary_breakup':salaryBreakup,
-        //   'gender_allowed':eligibleGenders,
-        //   'extra_data':additionalInfo,
-        // },
         
       })
       .then(function (response) {
@@ -139,13 +147,39 @@ export default function CreateJob(){
         <NavBar></NavBar>
     <React.Fragment>
       <CssBaseline />
-
+      
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography component="h1" variant="h4" align="center">
             Enter Job Details
           </Typography>
           <Grid container spacing={4} alignContent="center">
+
+          <Grid item xs={12} sm={6}>
+          <TextField
+            
+            id="company"
+            name="company"
+            label="Enter Company Name"
+            value={company}
+            onChange={(e) => setCompany(e.target.value)}
+          />
+          </Grid>
+          <Grid>
+          <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          inputProps={{ 'aria-label': 'Without label' }}
+          value={placement}
+          onChange={(e) => setPlacement(e.target.value)}
+          fullWidth
+        >
+        <MenuItem value={""}>Select.. </MenuItem>
+          <MenuItem value={"Intern"}>Internship</MenuItem>
+          <MenuItem value={"Placement"}>Placement</MenuItem>
+        </Select>
+          </Grid>
+        
           <Grid item xs={12} sm={6}>
           <TextField
             
@@ -287,49 +321,51 @@ export default function CreateJob(){
         <InputLabel>Select Eligible Branches</InputLabel>
         <FormGroup column>
       <FormControlLabel
-        control={<Checkbox checked={eligibleBranches.cs} onChange={handleBranch} name="cs" />}
+        control={<Checkbox checked={eligibleBranches.cs} onChange={handleBranch} name="CSE" />}
         label="Computer Science"
       />
       <FormControlLabel
-        control={<Checkbox checked={eligibleBranches.elec} onChange={handleBranch} name="elec" />}
+        control={<Checkbox checked={eligibleBranches.elec} onChange={handleBranch} name="EE" />}
         label="Electrical"
       />
       <FormControlLabel
-        control={<Checkbox checked={eligibleBranches.mech} onChange={handleBranch} name="mech" />}
+        control={<Checkbox checked={eligibleBranches.mech} onChange={handleBranch} name="ME" />}
         label="Mechanical"
       />
       <FormControlLabel
-        control={<Checkbox checked={eligibleBranches.chem} onChange={handleBranch} name="chem" />}
+        control={<Checkbox checked={eligibleBranches.chem} onChange={handleBranch} name="MNC" />} // change here
         label="Chemical"
       />
       <FormControlLabel
-      control={<Checkbox checked={eligibleBranches.civil} onChange={handleBranch} name="civil" />}
+      control={<Checkbox checked={eligibleBranches.civil} onChange={handleBranch} name="CE" />}
       label="Civil"
     />
     <FormControlLabel
-        control={<Checkbox checked={eligibleBranches.meta} onChange={handleBranch} name="meta" />}
+        control={<Checkbox checked={eligibleBranches.meta} onChange={handleBranch} name="MME" />}
         label="Metallurgy"
       />
       </FormGroup>
         </Grid>
         
-        <Grid item xs={12} sm={6} alignContent="center">
-        <InputLabel id="demo-simple-select-label">Select Eligible Genders</InputLabel>
-      <Select
-        labelId="demo-simple-select-label"
-        id="demo-simple-select"
-        inputProps={{ 'aria-label': 'Without label' }}
-        fullWidth
-        value={eligibleGenders}
-        onChange={(e) => setEligibleGenders(e.target.value)}
-      >
-      <MenuItem value={""}>Select.. </MenuItem>
-        <MenuItem value={"M"}>Male Only</MenuItem>
-        <MenuItem value={"F"}>Female Only</MenuItem>
-        <MenuItem value={"B"}>Both Allowed</MenuItem>
-        
-      </Select>
+        <Grid item xs={12} sm={6}>
+        <InputLabel>Select Eligible Genders</InputLabel>
+        <FormGroup column>
+      <FormControlLabel
+        control={<Checkbox checked={eligibleGenders.M} onChange={handleGender} name="M" />}
+        label="Male"
+      />
+      <FormControlLabel
+        control={<Checkbox checked={eligibleGenders.F} onChange={handleGender} name="F" />}
+        label="Female"
+      />
+      <FormControlLabel
+        control={<Checkbox checked={eligibleGenders.O} onChange={handleGender} name="O" />}
+        label="Others"
+      />
+     
+      </FormGroup>
         </Grid>
+        
 
         <Grid item xs={12} sm={6}>
           <TextField

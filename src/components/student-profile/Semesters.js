@@ -45,6 +45,9 @@ export default function Semesters(props) {
     { code: "", title: "", grade_secured: "" },
   ]);
   const [noOfCourses, setNoOfCourses] = useState(1);
+  const [resume, setResume]=useState({resume:null, resume_url:null});
+  const [tenth, setTenth]=useState({percentage: "",grade_sheet:null, grade_sheet_url:null});
+  const [twelveth, setTwelveth]=useState({percentage: "",grade_sheet:null, grade_sheet_url:null});
   const [semesters, setSemesters] = useState([
     { sgpa: 0.0, backlogs: 0, grade_sheet: null,grade_sheet_url:null },
   ]);

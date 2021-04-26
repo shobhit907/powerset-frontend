@@ -19,13 +19,16 @@ export default function StudentGeneralDetails(props) {
   const [DOB, onChangeDOB] = useState(new Date());
   const [institute, setInstitute] = useState("");
   const [branch, setBranch] = useState("");
+  const [batch, setBatch] = useState(2018);
   const [profile, setProfile] = useState("");
   const [degree, setDegree] = useState("");
   const [name, setName] = useState("");
   const [fathers_name, setFathersName] = useState("");
   const [mothers_name, setMothersName] = useState("");
+  const [cgpa, setCGPA] = useState(0);
   const [category, setCategory] = useState("");
   const [entry_no, setEntryNo] = useState("");
+  const [placement, setPlacement] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [technical_skills, setTechnicalSkills] = useState("");
   const [volunteer_experience, setVolunteerExperience] = useState("");
@@ -59,37 +62,69 @@ export default function StudentGeneralDetails(props) {
       setErrorText("Mothers Name must only contain letters and spaces");
       return;
     }
-    // if (introduction.length < 30 || introduction.length > 500) {
-    //   setErrorText("Introduction should be between 30 and 300 characters");
-    //   return;
-    // }
-    // if (technical_skills.length < 30 || technical_skills.length > 500) {
-    //   setErrorText("Technical Skills should be between 30 and 300 characters");
-    //   return;
-    // }
-    // if (volunteer_experience.length < 30 || volunteer_experience.length > 500) {
-    //   setErrorText(
-    //     "Volunteer Experience should be between 30 and 300 characters"
-    //   );
-    //   return;
-    // }
-    // if (career_plans.length < 30 || career_plans.length > 500) {
-    //   setErrorText("Career Plans should be between 30 and 300 characters");
-    //   return;
-    // }
-    if (!dobRegex.test(DOB)) {
-      setErrorText("Date of Birth has invalid format");
+    if (introduction.length < 30 || introduction.length > 500) {
+      setErrorText("Introduction should be between 30 and 300 characters");
       return;
     }
+    if (technical_skills.length < 30 || technical_skills.length > 500) {
+      setErrorText("Technical Skills should be between 30 and 300 characters");
+      return;
+    }
+    if (volunteer_experience.length < 30 || volunteer_experience.length > 500) {
+      setErrorText(
+        "Volunteer Experience should be between 30 and 300 characters"
+      );
+      return;
+    }
+    if (career_plans.length < 30 || career_plans.length > 500) {
+      setErrorText("Career Plans should be between 30 and 300 characters");
+      return;
+    }
+    if (isNaN(cgpa) || cgpa.toString().indexOf('.') == -1){
+      setErrorText("CGPA should be in the format 9.91")
+      return
+    }
+    if(category==""){
+      setErrorText("Select Category");
+      return;
+    }
+    if(branch==""){
+      setErrorText("Select Branch");
+      return;
+    }
+    if(placement==""){
+      setErrorText("Select Placements");
+      return;
+    }
+    if(isNaN(batch) ||batch<2016 || batch>2025){
+      setErrorText("Select Batch between 2016 and 2025");
+      return;
+    }
+    if(institute==""){
+      setErrorText("Select Institute");
+      return;
+    }
+    // if (!dobRegex.test(DOB)) {
+    //   setErrorText("Date of Birth has invalid format");
+    //   return;
+    // }
     let data = new FormData();
     data.set("branch", branch);
+    data.set("batch", batch);
+    data.set("placement", placement);
     data.set("degree", degree);
     data.set("mother_name", mothers_name);
     data.set("father_name", fathers_name);
     data.set("entry_number", entry_no);
+    data.set("cgpa", cgpa);
     data.set("preferred_profile", profile);
     data.set("institute", institute);
-    data.set("category", "GEN");
+    data.set("category", category);
+    data.set("introduction",introduction);
+    data.set("technical_skills",technical_skills);
+    data.set("career_plans",career_plans);
+    data.set("volunteer_experience",volunteer_experience);
+    var check=false
     axios({
       method: "post",
       url: "https://powerset-backend.herokuapp.com/students/",
@@ -113,7 +148,11 @@ export default function StudentGeneralDetails(props) {
         console.log(err.response.data);
         console.log(err.response.status);
         console.log(err.response.headers);
+        if(err.response.status==400){
+          alert("Entry Number is already taken, Contact coordinator")
+        }
       });
+      
   };
   const getData = () => {
     const headers = {
@@ -135,6 +174,8 @@ export default function StudentGeneralDetails(props) {
         console.log(response);
 
         setBranch(response.data.branch);
+        setBatch(response.data.batch);
+        setPlacement(response.data.placement.name);
         setDegree(response.data.degree);
         setMothersName(response.data.mother_name);
         setFathersName(response.data.father_name);
@@ -142,6 +183,12 @@ export default function StudentGeneralDetails(props) {
         setProfile(response.data.preferred_profile);
         setInstitute(response.data.institute.name);
         setName(response.data.user.name);
+        setCategory(response.data.category);
+        setCGPA(response.data.cgpa);
+        setIntroduction(response.data.introduction);
+        setTechnicalSkills(response.data.technical_skills);
+        setVolunteerExperience(response.data.volunteer_experience);
+        setCareerPlans(response.data.career_plans);
         if(props.student_id>=0){
 
         }else{
@@ -255,7 +302,7 @@ export default function StudentGeneralDetails(props) {
                 onChange={(e) => setMothersName(e.target.value)}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 required
                 id="entryno"
@@ -266,7 +313,18 @@ export default function StudentGeneralDetails(props) {
                 onChange={(e) => setEntryNo(e.target.value)}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
+            <TextField
+              required
+              id="cgpa"
+              name="cgpa"
+              label="CGPA"
+              autoComplete="CGPA"
+              value={cgpa}
+              onChange={(e) => setCGPA(e.target.value)}
+            />
+          </Grid>
+            <Grid item xs={12} sm={6}>
               <TextField
                 id="DOB"
                 label="Date of Birth"
@@ -279,6 +337,41 @@ export default function StudentGeneralDetails(props) {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
+            <InputLabel id="demo-simple-select-label">
+              Internship/Placement
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              inputProps={{ "aria-label": "Without label" }}
+              value={placement}
+              onChange={(e) => setPlacement(e.target.value)}
+            >
+              <MenuItem value={""}>Select.. </MenuItem>
+              <MenuItem value={"Intern"}>Internship</MenuItem>
+              <MenuItem value={"Placement"}>Placement</MenuItem>
+            </Select>
+          </Grid>
+            <Grid item xs={12} sm={6}>
+            <InputLabel id="demo-simple-select-label">
+              Select Category
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              inputProps={{ "aria-label": "Without label" }}
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <MenuItem value={""}>Select.. </MenuItem>
+              <MenuItem value={"GEN"}>General</MenuItem>
+              <MenuItem value={"OBC"}>OBC</MenuItem>
+              <MenuItem value={"SC"}>SC</MenuItem>
+              <MenuItem value={"ST"}>ST</MenuItem>
+            </Select>
+          </Grid>
+
+            <Grid item xs={12} sm={6}>
               <InputLabel id="demo-simple-select-label">
                 Select Institute
               </InputLabel>
@@ -290,13 +383,8 @@ export default function StudentGeneralDetails(props) {
                 onChange={(e) => setInstitute(e.target.value)}
               >
                 <MenuItem value={""}>Select.. </MenuItem>
-                <MenuItem value={"Indian Institute of Technology Bombay"}>
-                  Indian Institute of Technology Bombay
-                </MenuItem>
-                <MenuItem value={"Indian Institute of Technology Delhi"}>
-                  Indian Institute of Technology Delhi
-                </MenuItem>
-                <MenuItem value={"Indian Institute of Technology Ropar"}>
+                
+                <MenuItem value={"IIT Ropar"}>
                   Indian Institute of Technology Ropar
                 </MenuItem>
               </Select>
@@ -319,7 +407,17 @@ export default function StudentGeneralDetails(props) {
                 <MenuItem value={"Dual Degree"}>Dual Degree</MenuItem>
               </Select>
             </Grid>
-
+            <Grid>
+            <TextField
+            required
+            id="batch"
+            name="batch"
+            label="Batch"
+            autoComplete="Batch"
+            value={batch}
+            onChange={(e) => setBatch(e.target.value)}
+          />
+        </Grid>
             <Grid item xs={12} sm={6}>
               <InputLabel id="demo-simple-select-label">
                 Select Branch
@@ -332,9 +430,17 @@ export default function StudentGeneralDetails(props) {
                 onChange={(e) => setBranch(e.target.value)}
               >
                 <MenuItem value={""}>Select.. </MenuItem>
-                <MenuItem value={"Computer Science"}>Computer Science</MenuItem>
-                <MenuItem value={"Electrical"}>Electrical</MenuItem>
-                <MenuItem value={"Mechanical"}>Mechanical</MenuItem>
+                <MenuItem value={"CSE"}>Computer Science</MenuItem>
+                <MenuItem value={"EE"}>Electrical</MenuItem>
+                <MenuItem value={"ME"}>Mechanical</MenuItem>
+                <MenuItem value={"CE"}>Civil</MenuItem>
+                <MenuItem value={"MME"}>Metallurgical and Materials Engineering</MenuItem>
+                <MenuItem value={"MNC"}>Methamatics and Computing</MenuItem>
+                <MenuItem value={"CBME"}>Center for BioMedical Engineering</MenuItem>
+                <MenuItem value={"HSS"}>Humanities and Social Sciences</MenuItem>
+                <MenuItem value={"P"}>Physics</MenuItem>
+                <MenuItem value={"C"}>Chemistry</MenuItem>
+                <MenuItem value={"M"}>Mathematics</MenuItem>
               </Select>
             </Grid>
 

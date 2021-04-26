@@ -28,7 +28,11 @@ export default function SignUp() {
     function handleSubmit(event) {
         event.preventDefault();
         console.log(email,password);
-
+        console.log(email.toString().split("@")[1])
+        if(email.toString().split("@")[1]!="iitrpr.ac.in"){
+          alert("Email should be iitrpr domain only")
+          return
+        }
         let data = new FormData();
         console.log('boundary:', data._boundary);
     data.set('email', email);

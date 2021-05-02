@@ -53,33 +53,7 @@ export default function WorkExperience(props) {
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
 
-  // const onVerifiedChange=async()=>{
-  //   const headers={
-  //     'Authorization':token,
-  //   }
-  //   // alert("Work experience is_verified changing to "+(!is_verified.state).toString());
-  //   axios({
-  //     method: 'put',
-
-  //       url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/verify/',
-  //       headers:{
-  //         'Content-Type':'application/json',
-  //         'Authorization':token,
-  //       },
-  //       data : {
-  //         is_verified:!is_verified.state
-  //       },
-  //   }).then((response)=>{
-  //     if(is_verified.state){
-  //       alert("Unverified")
-  //     }else{
-  //       alert("Verified")
-  //     }
-  //   }).catch((err)=>{
-  //     alert("Error in verifying");
-  //   })
-  // };
-
+  
   
 
   const getData = () => {

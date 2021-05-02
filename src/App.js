@@ -29,7 +29,7 @@ function App() {
           <Route path="/testapp" component={TestApp} />
           <PrivateRoute exact path="/" component={StudentDashBoard} />
           <PrivateRoute path="/profile" component={ProfilePage} student_id={-1}></PrivateRoute>
-          <PrivateRoute path="/auth/activate/" component={ConfirmEmail} />
+          <Route path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />
           <PrivateRoute path="/job-profiles" component={JobsList} />
           <PrivateRoute path="/applicants/" component={AppliedStudentsTable}/>

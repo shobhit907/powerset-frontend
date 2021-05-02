@@ -33,7 +33,7 @@ export default function WorkExperience(props) {
       start_date: "",
       end_date: "",
       description: "",
-      compensation: 0,
+      compensation_min: 0,
     },
   ]);
   const [noOfWorkExperience, setNoOfWorkExperience] = useState(1);
@@ -118,7 +118,7 @@ export default function WorkExperience(props) {
           obj.description = response.data[i].description;
           obj.company = response.data[i].company;
           obj.location = response.data[i].location;
-          obj.compensation = response.data[i].compensation;
+          obj.compensation_min = response.data[i].compensation_min;
           curr_work_ex = [...curr_work_ex, obj];
         }
         console.log(curr_work_ex);
@@ -212,7 +212,7 @@ export default function WorkExperience(props) {
       //   setErrorText("Work Experience "+String(i+1)+": Description must be between 30 and 500 characters");
       //   return;
       // }
-      if (!decimalOrFloat.test(work_experience[i].compensation)) {
+      if (!decimalOrFloat.test(work_experience[i].compensation_min)) {
         setErrorText(
           "Work Experience " +
             String(i + 1) +
@@ -221,6 +221,9 @@ export default function WorkExperience(props) {
         return;
       }
     }
+    let token = localStorage.getItem("token");
+  let id = localStorage.getItem("id");
+    
     var request_url = "";
     if (props.student_id >= 0) {
       request_url =
@@ -233,8 +236,6 @@ export default function WorkExperience(props) {
         String(id) +
         "/work-experiences/";
     }
-    let token = localStorage.getItem("token");
-  let id = localStorage.getItem("id");
     axios({
       method: "post",
 
@@ -318,7 +319,7 @@ export default function WorkExperience(props) {
             start_date: "",
             end_date: "",
             description: "",
-            compensation: "",
+            compensation_min: "",
           },
         ]);
         setNoOfWorkExperience(noOfWorkExperience + 1);
@@ -389,11 +390,12 @@ export default function WorkExperience(props) {
       "Content-Type": "application/json",
       Authorization: token,
     };
-    axios.put(request_url,
-     {
-       "is_verified":is_verified,
-       "verification_message":verification_message
-      },
+    const data = {
+      "is_verified":is_verified,
+      "verification_message":verification_message
+    }
+    console.log(data);
+    axios.put(request_url,data,
       {headers:headers}
     )
       .then(function (response) {
@@ -430,7 +432,8 @@ export default function WorkExperience(props) {
                 variant="outlined"
                 placeholder="Verification Message"
                 value={verification_message}
-                onChange={(e)=>{set_verification_message(e.value)}}
+                onChange={(e)=>{
+                  set_verification_message(e.target.value)}}
               ></TextField>
             </Grid>
 
@@ -502,10 +505,10 @@ export default function WorkExperience(props) {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    id="compensation"
-                    name="compensation"
+                    id="compensation_min"
+                    name="compensation_min"
                     label="Compensation"
-                    value={x.compensation}
+                    value={x.compensation_min}
                     onChange={(e) => handleInputChange(e, i, 3)}
                   />
                 </Grid>

@@ -15,6 +15,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import NavBar from "./navbar/NavBar";
+import { useHistory } from "react-router-dom";
 const axios = require('axios')
 const qs = require('querystring')
 const moment=require('moment')
@@ -73,7 +74,9 @@ export default function CreateJob(){
     const [salaryBreakup,setSalaryBreakup]=useState("");
     const [additionalInfo, setAdditionalInfo]=useState("");
     const classes = useStyles();
+    const history = useHistory();
     let token=localStorage.getItem('token');
+    
     const handleBatch = (event) => {
       setEligibleBatches({ ...eligibleBatches, [event.target.name]: event.target.checked });
     };
@@ -134,6 +137,8 @@ export default function CreateJob(){
       })
       .then(function (response) {
         console.log(response);
+        alert("Job Created Successfully!");
+        history.push("/coordinator");
       })
       .catch(function (err) {
         console.log(err.response.data);

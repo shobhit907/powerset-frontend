@@ -25,24 +25,10 @@ import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
 import NavBar from "./navbar/NavBar";
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 const axios = require('axios')
 //let rows=[];
-
-
-// function createData(company, job_title, min_ctc, max_ctc, last_date) {
-//   return {company, job_title, min_ctc, max_ctc, last_date};
-// }
-
-// const rows = [
-//   createData('DE Shaw', 'Software Engineer', 3100000, 3500000, "26/04/2021"),
-//   createData('Nutanix', 'Software Engineer', 2900000, 3000000, "28/04/2021"),
-//   createData('Flipkart', 'Software Engineer', 2650000, 2700000, "30/05/2021"),
-//   createData('Microsoft', 'Software Engineer', 4100000, 4300000, "26/04/2021"),
-//   createData('Goldman Sachs', 'Analyst', 2100000, 250000, "26/04/2021"),
-//   createData('Sprinlr', 'Product Engineer', 3000000, 3000000, "26/04/2021"),
-//   createData('Amazon', 'Software Engineer', 3100000, 3200000, "26/04/2021"),
-  
-// ];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -240,6 +226,9 @@ export default function JobsListCoordinator() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
+  const [interns,setInterns]=React.useState([]);
+  const [placements,setPlacements]=React.useState([]);
+  const [selectedTab,setSelectedTab]=React.useState(0);
   const history=useHistory();
   const getData=()=>{
     let token=localStorage.getItem('token');
@@ -261,7 +250,8 @@ export default function JobsListCoordinator() {
       .then(function (response) {
         console.log(response);
           console.log(response.data.length);
-          var curr_rows=[]
+          var curr_interns=[]
+          var curr_placements=[]
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
             obj.company=response.data[i].company.name;
@@ -270,12 +260,20 @@ export default function JobsListCoordinator() {
             obj.max_ctc=response.data[i].max_ctc;
             obj.last_date=response.data[i].end_date;
             obj.job_id=response.data[i].id;
-            curr_rows=[...curr_rows,obj];
+            obj.placement=response.data[i].placement.name;
+            if(obj.placement=="Intern"){
+              curr_interns=[...curr_interns,obj];
+            }
+            else {
+              curr_placements=[...curr_placements,obj]
+            }
+            
           }
-          setRows(curr_rows);
-          console.log(curr_rows);
-          
-        
+          setInterns(curr_interns);
+          setPlacements(curr_placements);
+          console.log(curr_interns);
+          console.log(curr_placements);
+          setRows(curr_interns);
   
       })
       .catch(function (err) {
@@ -337,6 +335,15 @@ export default function JobsListCoordinator() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
+
+  const handleChangeTab=(event, new_value)=>{
+    setSelectedTab(new_value);
+    if(new_value==0){
+      setRows(interns);
+
+    }
+    else setRows(placements);
+  }
   const handleEditJob = (event,job_id) => {
 
     console.log("editing job");
@@ -353,6 +360,17 @@ export default function JobsListCoordinator() {
     <div className={classes.root}>
       
       <Paper className={classes.paper}>
+      <Tabs
+        value={selectedTab}
+        indicatorColor="primary"
+        textColor="primary"
+        onChange={handleChangeTab}
+        
+      >
+        <Tab label="Internship" />
+        <Tab label="Placement" />
+        
+      </Tabs>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table

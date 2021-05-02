@@ -23,7 +23,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import Navbar from "./navbar/NavBar";
-import NavBar from './navbar/NavBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 const axios = require('axios')
 
 
@@ -60,6 +61,7 @@ const headCells = [
   { id: 'batch', numeric: false, disablePadding: false, label: 'Batch' },
   { id: 'cgpa', numeric: true, disablePadding: false, label: 'CGPA' },
   { id: 'verified', numeric: false, disablePadding: false, label: 'Verified' },
+  { id: 'selected', numeric: false, disablePadding: false, label: 'Selected' },
   { id: 'profile', numeric: false, disablePadding: false, label: 'View Profile' },
   
 ];
@@ -223,6 +225,9 @@ export default function StudentsListForCoordinator() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
   const [update,setUpdate]=React.useState(false);
+  const [interns,setInterns]=React.useState([]);
+  const [placements,setPlacements]=React.useState([]);
+  const [selectedTab,setSelectedTab]=React.useState(0);
   const history = useHistory();
 
   const getData=()=>{
@@ -245,7 +250,8 @@ export default function StudentsListForCoordinator() {
       .then(function (response) {
         console.log(response);
           console.log(response.data.length);
-          var curr_rows=[]
+          var curr_interns=[];
+          var curr_placements=[];
           for(var i=0;i<response.data.length;i++){
             var obj=new Object();
             obj.name=response.data[i].user.name;
@@ -256,10 +262,19 @@ export default function StudentsListForCoordinator() {
             obj.roll_no=response.data[i].entry_number;
             obj.is_selected=response.data[i].is_selected;
             obj.is_verified=response.data[i].is_verified;
-            curr_rows=[...curr_rows,obj];
+            obj.placement=response.data[i].placement.name;
+            if(obj.placement=="Intern"){
+              curr_interns=[...curr_interns,obj];
+            }
+            else {
+              curr_placements=[...curr_placements,obj]
+            }
           }
-          setRows(curr_rows);
-          console.log(curr_rows);
+          setInterns(curr_interns);
+          setPlacements(curr_placements);
+          console.log(curr_placements);
+          console.log(curr_interns);
+          setRows(curr_interns);
           
         
   
@@ -304,7 +319,14 @@ export default function StudentsListForCoordinator() {
     history.push(redirect_url);
   };
   
-   
+  const handleChangeTab=(event, new_value)=>{
+    setSelectedTab(new_value);
+    if(new_value==0){
+      setRows(interns);
+
+    }
+    else setRows(placements);
+  }
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -313,6 +335,17 @@ export default function StudentsListForCoordinator() {
     <div className={classes.root}>
       
       <Paper className={classes.paper}>
+      <Tabs
+        value={selectedTab}
+        indicatorColor="primary"
+        textColor="primary"
+        onChange={handleChangeTab}
+        
+      >
+        <Tab label="Internship" />
+        <Tab label="Placement" />
+        
+      </Tabs>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
@@ -350,7 +383,9 @@ export default function StudentsListForCoordinator() {
                       <TableCell align="left">{row.branch}</TableCell>
                       <TableCell align="left">{row.batch}</TableCell>
                       <TableCell align="right">{row.cgpa}</TableCell>
+                      
                       <TableCell align="left">{row.is_verified=="V"?"Verified":"Not Verified"}</TableCell>
+                      <TableCell align="left">{row.is_selected=="V"?"Selected":"Not Selected"}</TableCell>
                       <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
                       
                     </TableRow>

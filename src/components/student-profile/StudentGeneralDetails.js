@@ -37,12 +37,15 @@ export default function StudentGeneralDetails(props) {
   const [student_id, set_student_id] = useState();
   const [profile_pic,set_profile_pic]=useState(shobhit_pic);
   console.log("From student general details -> ", props.student_id,student_id);
+  const [is_verified,set_is_verified]=useState("Unverified");
+  const [verification_message,set_verification_message]=useState("");
+
   React.useEffect(() => {
     getData();
   }, [props.student_id,student_id]);
 
 
-  let token = localStorage.getItem("token");
+  
   
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
@@ -125,6 +128,7 @@ export default function StudentGeneralDetails(props) {
     data.set("career_plans",career_plans);
     data.set("volunteer_experience",volunteer_experience);
     var check=false
+    let token = localStorage.getItem("token");
     axios({
       method: "post",
       url: "https://powerset-backend.herokuapp.com/students/",
@@ -155,6 +159,7 @@ export default function StudentGeneralDetails(props) {
       
   };
   const getData = () => {
+    let token = localStorage.getItem("token");
     const headers = {
       Authorization: token,
     };
@@ -189,6 +194,8 @@ export default function StudentGeneralDetails(props) {
         setTechnicalSkills(response.data.technical_skills);
         setVolunteerExperience(response.data.volunteer_experience);
         setCareerPlans(response.data.career_plans);
+        set_is_verified(response.data.is_verified);
+          set_verification_message(response.data.verification_message);
         if(props.student_id>=0){
 
         }else{
@@ -221,38 +228,77 @@ export default function StudentGeneralDetails(props) {
   }));
   const classes = useStyles();
 
+  const handleVerify=()=>{
+    let id = localStorage.getItem("id");
+    let token = localStorage.getItem("token");
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(props.student_id) +
+        "/verify/";
+    } else {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(id) +
+        "/verify/";
+    }
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token,
+    };
+    const data = {
+      "is_verified":is_verified,
+      "verification_message":verification_message
+    }
+    console.log(data);
+    axios.put(request_url,data,
+      {headers:headers}
+    )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
   return (
     <React.Fragment key={props.student_id}>
     <div id="student-general-details">
       
         <React.Fragment>
           <Grid container spacing={1}>
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={3} sm={3}>
               <h1>About You</h1>
             </Grid>
 
-            <Grid item xs={6} sm={2}>
+            <Grid item xs={4} sm={2}>
               <Dropdown
                 disabled={!props.isCoordinator}
                 options={options}
-                // onChange={this._onSelect}
-                value={defaultOption}
+                onChange={(e)=>{set_is_verified(e.value)}}
+                value={is_verified}
                 placeholder="Select an option"
               />
             </Grid>
 
-            <Grid item xs={6} sm={4}>
+            <Grid item xs={4} sm={6}>
               <TextField
                 disabled={!props.isCoordinator}
                 multiline
+                rowsMax={4}
                 variant="outlined"
-                label="Verification Message"
+                placeholder="Verification Message"
+                value={verification_message}
+                onChange={(e)=>{
+                  set_verification_message(e.target.value)}}
               ></TextField>
             </Grid>
 
             {props.isCoordinator && (
-              <Grid item xs={6} sm={1}>
-                <Button variant="outlined" color="primary">
+              <Grid item xs={1} sm={1}>
+                <Button variant="outlined" color="primary" onClick={handleVerify}>
                   Save
                 </Button>
               </Grid>

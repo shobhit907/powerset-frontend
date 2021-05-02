@@ -65,24 +65,8 @@ export default function StudentGeneralDetails(props) {
       setErrorText("Mothers Name must only contain letters and spaces");
       return;
     }
-    if (introduction.length < 30 || introduction.length > 500) {
-      setErrorText("Introduction should be between 30 and 300 characters");
-      return;
-    }
-    if (technical_skills.length < 30 || technical_skills.length > 500) {
-      setErrorText("Technical Skills should be between 30 and 300 characters");
-      return;
-    }
-    if (volunteer_experience.length < 30 || volunteer_experience.length > 500) {
-      setErrorText(
-        "Volunteer Experience should be between 30 and 300 characters"
-      );
-      return;
-    }
-    if (career_plans.length < 30 || career_plans.length > 500) {
-      setErrorText("Career Plans should be between 30 and 300 characters");
-      return;
-    }
+    
+    
     if (isNaN(cgpa) || cgpa.toString().indexOf('.') == -1){
       setErrorText("CGPA should be in the format 9.91")
       return
@@ -307,12 +291,12 @@ export default function StudentGeneralDetails(props) {
           <Grid container spacing={3}>
             <Grid item>
               <span className={classes.root}>
-                {(props.student_id==2 || student_id==2) && (<Avatar
+                {(props.student_id==5 || student_id==5) && (<Avatar
                   alt="Shobhit Gupta"
                   src={profile_pic}
                   className={classes.large}
                 ></Avatar>)}
-                {(props.student_id!=2 && student_id!=2) && (<Avatar
+                {(props.student_id!=5 && student_id!=5) && (<Avatar
                   className={classes.large}
                 ></Avatar>)}
                 

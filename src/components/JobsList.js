@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { lighten, makeStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Checkbox from "@material-ui/core/Checkbox";
@@ -60,6 +61,7 @@ const headCells = [
 ];
 
 function EnhancedTableHead(props) {
+  const history=useHistory();
   const {
     classes,
     onSelectAllClick,
@@ -283,7 +285,7 @@ export default function JobsTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
-
+  const history = useHistory();
   const getData = () => {
     let token = localStorage.getItem("token");
     let id = localStorage.getItem("id");
@@ -377,8 +379,8 @@ export default function JobsTable() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
-  const handleViewDetails = (event) => {
-    
+  const handleViewDetails = (event,job_id) => {
+    history.push("/job-profile/"+job_id.toString());
   };
 
   const isSelected = (job_id) => selected.indexOf(job_id) !== -1;
@@ -445,7 +447,7 @@ export default function JobsTable() {
                         <TableCell align="right">{row.min_ctc}</TableCell>
                         <TableCell align="right">{row.max_ctc}</TableCell>
                         <TableCell align="right">{row.last_date}</TableCell>
-                        <TableCell align="right"><Button variant="contained" color="secondary" onClick={(e)=>handleViewDetails(e)}>View Details</Button></TableCell>
+                        <TableCell align="right"><Button variant="contained" color="secondary" onClick={(e)=>handleViewDetails(e,row.job_id)}>View Details</Button></TableCell>
                       </TableRow>
                     );
                   })}

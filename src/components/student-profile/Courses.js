@@ -24,31 +24,47 @@ export default function Courses(props) {
     const [errorText,setErrorText]=useState("");
     const [student_id, set_student_id] = useState();
    // const [id,setId]=useState(0);
-    let token=localStorage.getItem('token');
-    let id=localStorage.getItem('id');
+    const [student_id, set_student_id] = useState();
     const options = ["Verified", "Unverified", "Rejected"];
+    const [is_verified,set_is_verified]=useState("Unverified");
+  const [verification_message,set_verification_message]=useState("");
   const defaultOption = options[1];
     const getData =  ()=>{
+<<<<<<< HEAD
       let token = localStorage.getItem("token");
       let id = localStorage.getItem("id");
       const headers={
         'Authorization':token,
       }
       var request_url = "";
+=======
+      
+      let token = localStorage.getItem("token");
+   let id = localStorage.getItem("id");
+    const headers = {
+      'Content-Type': "application/json",
+      Authorization: token,
+    };
+    var request_url = "";
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     if (props.student_id >= 0) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         props.student_id.toString() +
         "/courses/";
     } else {
+<<<<<<< HEAD
       if(id==null){
         return;
       }
+=======
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       set_student_id(id);
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         id.toString() +
         "/courses/";
+<<<<<<< HEAD
     }  
         axios({
           method: 'get',
@@ -59,6 +75,10 @@ export default function Courses(props) {
             'Authorization':token,
           },
         })
+=======
+    }
+        axios.get(request_url, { headers })
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
         .then(function (response) {
           console.log(response);
             console.log(response.data.length);
@@ -73,8 +93,12 @@ export default function Courses(props) {
               curr_courses=[...curr_courses,obj];
             }
             console.log(curr_courses);
-            if(curr_courses.length!=0)
+            if(curr_courses.length!=0){
               setCourses(curr_courses);
+              set_is_verified(response.data[0].is_verified);
+          set_verification_message(response.data[0].verification_message);
+            }
+              
           
 
         })
@@ -87,10 +111,14 @@ export default function Courses(props) {
     
   }
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
       getData();
+<<<<<<< HEAD
   },[props.student_id,student_id]);
     
+=======
+    }, [props.student_id,student_id]);
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     
     const handleSave=()=>{
         setErrorText("");
@@ -107,18 +135,26 @@ export default function Courses(props) {
           setErrorText("Course "+String(i+1)+": Code must be only letters and numbers and length < 8");
           return;
         }
-        if(!decimalOrFloat.test(courses[i].grade_secured)){
-            setErrorText("Course "+String(i+1)+": Grade Secured must be decimal or float");
+        if(!lettersAndSpaces.test(courses[i].grade_secured)){
+            setErrorText("Course "+String(i+1)+": Grade Secured must be letters");
             return;
         }
       }
+<<<<<<< HEAD
       let token = localStorage.getItem("token");
     let id = localStorage.getItem("id");
+=======
+
+      let token = localStorage.getItem("token");
+  let id = localStorage.getItem("id");
+    
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     var request_url = "";
     if (props.student_id >= 0) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         String(props.student_id) +
+<<<<<<< HEAD
         "/work-experiences/";
     } else {
       if(id==null){
@@ -130,6 +166,16 @@ export default function Courses(props) {
         "/work-experiences/";
     }
  
+=======
+        "/courses/";
+    } else {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(id) +
+        "/courses/";
+    }
+
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       axios({
         method: 'post',
         
@@ -248,42 +294,80 @@ export default function Courses(props) {
     
     };
 
+    const handleVerify=()=>{
+      let id = localStorage.getItem("id");
+      let token = localStorage.getItem("token");
+      var request_url = "";
+      if (props.student_id >= 0) {
+        request_url =
+          "https://powerset-backend.herokuapp.com/students/" +
+          String(props.student_id) +
+          "/courses/verify/";
+      } else {
+        request_url =
+          "https://powerset-backend.herokuapp.com/students/" +
+          String(id) +
+          "/courses/verify/";
+      }
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: token,
+      };
+      const data = {
+        "is_verified":is_verified,
+        "verification_message":verification_message
+      }
+      console.log(data);
+      axios.put(request_url,data,
+        {headers:headers}
+      )
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    };
 
   return (
     <React.Fragment key={props.student_id}>
     <div id="courses">
-    <React.Fragment>
+    <React.Fragment key={props.student_id}>
     <Grid container spacing={1}>
-          <Grid item xs={6} sm={4}>
+          <Grid  item xs={3} sm={3}>
             <h1>Courses</h1>
           </Grid>
 
-          <Grid item xs={6} sm={2}>
-            <Dropdown
-              disabled={!props.isCoordinator}
-              options={options}
-              // onChange={this._onSelect}
-              value={defaultOption}
-              placeholder="Select an option"
-            />
-          </Grid>
-
-          <Grid item xs={6} sm={4}>
-            <TextField
-              disabled={!props.isCoordinator}
-              multiline
-              variant="outlined"
-              label="Verification Message"
-            ></TextField>
-          </Grid>
-
-          {props.isCoordinator && (
-            <Grid item xs={6} sm={1}>
-              <Button variant="outlined" color="primary">
-                Save
-              </Button>
+          <Grid item xs={4} sm={2}>
+              <Dropdown
+                disabled={!props.isCoordinator}
+                options={options}
+                onChange={(e)=>{set_is_verified(e.value)}}
+                value={is_verified}
+                placeholder="Select an option"
+              />
             </Grid>
-          )}
+
+            <Grid item xs={4} sm={6}>
+              <TextField
+                disabled={!props.isCoordinator}
+                multiline
+                rowsMax={4}
+                variant="outlined"
+                placeholder="Verification Message"
+                value={verification_message}
+                onChange={(e)=>{
+                  set_verification_message(e.target.value)}}
+              ></TextField>
+            </Grid>
+
+            {props.isCoordinator && (
+              <Grid item xs={1} sm={1}>
+                <Button variant="outlined" color="primary" onClick={handleVerify}>
+                  Save
+                </Button>
+              </Grid>
+            )}
         </Grid>
     {courses.map((x,i)=>{
       return(

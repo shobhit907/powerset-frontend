@@ -33,7 +33,7 @@ export default function WorkExperience(props) {
       start_date: "",
       end_date: "",
       description: "",
-      compensation: 0,
+      compensation_min: 0,
     },
   ]);
   const [noOfWorkExperience, setNoOfWorkExperience] = useState(1);
@@ -53,33 +53,7 @@ export default function WorkExperience(props) {
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
 
-  // const onVerifiedChange=async()=>{
-  //   const headers={
-  //     'Authorization':token,
-  //   }
-  //   // alert("Work experience is_verified changing to "+(!is_verified.state).toString());
-  //   axios({
-  //     method: 'put',
-
-  //       url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/work-experiences/verify/',
-  //       headers:{
-  //         'Content-Type':'application/json',
-  //         'Authorization':token,
-  //       },
-  //       data : {
-  //         is_verified:!is_verified.state
-  //       },
-  //   }).then((response)=>{
-  //     if(is_verified.state){
-  //       alert("Unverified")
-  //     }else{
-  //       alert("Verified")
-  //     }
-  //   }).catch((err)=>{
-  //     alert("Error in verifying");
-  //   })
-  // };
-
+  
   
 
   const getData = () => {
@@ -121,7 +95,7 @@ export default function WorkExperience(props) {
           obj.description = response.data[i].description;
           obj.company = response.data[i].company;
           obj.location = response.data[i].location;
-          obj.compensation = response.data[i].compensation;
+          obj.compensation_min = response.data[i].compensation_min;
           curr_work_ex = [...curr_work_ex, obj];
         }
         console.log(curr_work_ex);
@@ -215,7 +189,7 @@ export default function WorkExperience(props) {
       //   setErrorText("Work Experience "+String(i+1)+": Description must be between 30 and 500 characters");
       //   return;
       // }
-      if (!decimalOrFloat.test(work_experience[i].compensation)) {
+      if (!decimalOrFloat.test(work_experience[i].compensation_min)) {
         setErrorText(
           "Work Experience " +
             String(i + 1) +
@@ -325,7 +299,7 @@ export default function WorkExperience(props) {
             start_date: "",
             end_date: "",
             description: "",
-            compensation: "",
+            compensation_min: "",
           },
         ]);
         setNoOfWorkExperience(noOfWorkExperience + 1);
@@ -396,11 +370,12 @@ export default function WorkExperience(props) {
       "Content-Type": "application/json",
       Authorization: token,
     };
-    axios.put(request_url,
-     {
-       "is_verified":is_verified,
-       "verification_message":verification_message
-      },
+    const data = {
+      "is_verified":is_verified,
+      "verification_message":verification_message
+    }
+    console.log(data);
+    axios.put(request_url,data,
       {headers:headers}
     )
       .then(function (response) {
@@ -437,7 +412,8 @@ export default function WorkExperience(props) {
                 variant="outlined"
                 placeholder="Verification Message"
                 value={verification_message}
-                onChange={(e)=>{set_verification_message(e.value)}}
+                onChange={(e)=>{
+                  set_verification_message(e.target.value)}}
               ></TextField>
             </Grid>
 
@@ -509,10 +485,10 @@ export default function WorkExperience(props) {
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    id="compensation"
-                    name="compensation"
+                    id="compensation_min"
+                    name="compensation_min"
                     label="Compensation"
-                    value={x.compensation}
+                    value={x.compensation_min}
                     onChange={(e) => handleInputChange(e, i, 3)}
                   />
                 </Grid>

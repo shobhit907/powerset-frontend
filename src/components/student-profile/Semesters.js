@@ -54,10 +54,9 @@ export default function Semesters(props) {
   const [noOfSemesters, setNoOfSemesters] = useState(1);
   const [errorText, setErrorText] = useState("");
   const [student_id, set_student_id] = useState();
-
+  const [is_verified,set_is_verified]=useState("Unverified");
+  const [verification_message,set_verification_message]=useState("");
   // const [id,setId]=useState(0);
-  let token = localStorage.getItem("token");
-  let id = localStorage.getItem("id");
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
   const getData = () => {
@@ -106,7 +105,10 @@ export default function Semesters(props) {
           curr_semester = [...curr_semester, obj];
         }
         console.log(curr_semester);
-        if (curr_semester.length != 0) setSemesters(curr_semester);
+        if (curr_semester.length != 0){ setSemesters(curr_semester);
+          set_is_verified(response.data[0].is_verified);
+          set_verification_message(response.data[0].verification_message);
+        }
       })
       .catch(function (err) {
         console.log(err);
@@ -333,40 +335,79 @@ export default function Semesters(props) {
     }
   };
 
+  const handleVerify=()=>{
+    let id = localStorage.getItem("id");
+    let token = localStorage.getItem("token");
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(props.student_id) +
+        "/semesters/verify/";
+    } else {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(id) +
+        "/semesters/verify/";
+    }
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: token,
+    };
+    const data = {
+      "is_verified":is_verified,
+      "verification_message":verification_message
+    }
+    console.log(data);
+    axios.put(request_url,data,
+      {headers:headers}
+    )
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (err) {
+        console.log(err);
+      });
+  };
+
   return (
     <React.Fragment key={props.student_id}>
     <div id="semesters"><React.Fragment>
       <Grid container spacing={1}>
-          <Grid item xs={6} sm={4}>
+          <Grid item xs={3} sm={3}>
             <h1>Education</h1>
           </Grid>
 
-          <Grid item xs={6} sm={2}>
-            <Dropdown
-              disabled={!props.isCoordinator}
-              options={options}
-              // onChange={this._onSelect}
-              value={defaultOption}
-              placeholder="Select an option"
-            />
-          </Grid>
-
-          <Grid item xs={6} sm={4}>
-            <TextField
-              disabled={!props.isCoordinator}
-              multiline
-              variant="outlined"
-              label="Verification Message"
-            ></TextField>
-          </Grid>
-
-          {props.isCoordinator && (
-            <Grid item xs={6} sm={1}>
-              <Button variant="outlined" color="primary">
-                Save
-              </Button>
+          <Grid item xs={4} sm={2}>
+              <Dropdown
+                disabled={!props.isCoordinator}
+                options={options}
+                onChange={(e)=>{set_is_verified(e.value)}}
+                value={is_verified}
+                placeholder="Select an option"
+              />
             </Grid>
-          )}
+
+            <Grid item xs={4} sm={6}>
+              <TextField
+                disabled={!props.isCoordinator}
+                multiline
+                rowsMax={4}
+                variant="outlined"
+                placeholder="Verification Message"
+                value={verification_message}
+                onChange={(e)=>{
+                  set_verification_message(e.target.value)}}
+              ></TextField>
+            </Grid>
+
+            {props.isCoordinator && (
+              <Grid item xs={1} sm={1}>
+                <Button variant="outlined" color="primary" onClick={handleVerify}>
+                  Save
+                </Button>
+              </Grid>
+            )}
         </Grid>
       {semesters.map((x, i) => {
         return (

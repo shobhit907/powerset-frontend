@@ -24,12 +24,16 @@ export default function PositionOfResponsibility(props) {
     const [errorText,setErrorText]=useState("");
     const [student_id, set_student_id] = useState();
    // const [id,setId]=useState(0);
-    let token=localStorage.getItem('token');
-    let id=localStorage.getItem('id');
-
+   const [is_verified,set_is_verified]=useState("Unverified");
+  const [verification_message,set_verification_message]=useState("");
+   const [student_id, set_student_id] = useState();
     const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
     const getData =  ()=>{
+<<<<<<< HEAD
+=======
+      
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       let token = localStorage.getItem("token");
    let id = localStorage.getItem("id");
     const headers = {
@@ -43,15 +47,19 @@ export default function PositionOfResponsibility(props) {
         props.student_id.toString() +
         "/positions-of-responsibilities/";
     } else {
+<<<<<<< HEAD
       if(id==null){
         return;
       }
+=======
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       set_student_id(id);
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         id.toString() +
         "/positions-of-responsibilities/";
     }
+<<<<<<< HEAD
         axios({
           method: 'get',
           url:request_url,
@@ -60,6 +68,10 @@ export default function PositionOfResponsibility(props) {
             'Authorization':token,
           },
         })
+=======
+        
+        axios.get(request_url, { headers })
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
         .then(function (response) {
           console.log(response);
             console.log(response.data.length);
@@ -75,8 +87,12 @@ export default function PositionOfResponsibility(props) {
               curr_por=[...curr_por,obj];
             }
             console.log(curr_por);
-            if(curr_por.length!=0)
+            if(curr_por.length!=0){
               setPor(curr_por);
+              set_is_verified(response.data[0].is_verified);
+          set_verification_message(response.data[0].verification_message);
+            }
+              
           
 
         })
@@ -88,9 +104,13 @@ export default function PositionOfResponsibility(props) {
      
     }
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
       getData();
+<<<<<<< HEAD
   },[props.student_id,student_id]);
+=======
+    }, [props.student_id,student_id]);
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     
     
     const handleSave=()=>{
@@ -116,12 +136,10 @@ export default function PositionOfResponsibility(props) {
           setErrorText("POR "+String(i+1)+": To Date must be after From Date");
           return;
         }
-        if(por[i].description.length<30 || por[i].description.length>500){
-          setErrorText("POR "+String(i+1)+": Description must be between 30 and 500 characters");
-          return;
-        }
+        
       }
       let token = localStorage.getItem("token");
+<<<<<<< HEAD
       let id = localStorage.getItem("id");
       var request_url = "";
       if (props.student_id >= 0) {
@@ -139,6 +157,22 @@ export default function PositionOfResponsibility(props) {
           "/positions-of-responsibilities/";
       }
    
+=======
+  let id = localStorage.getItem("id");
+    
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(props.student_id) +
+        "/positions-of-responsibilities/";
+    } else {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(id) +
+        "/positions-of-responsibilities/";
+    }
+>>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       axios({
         method: 'post',
         
@@ -255,43 +289,80 @@ export default function PositionOfResponsibility(props) {
         }
     
     };
-
+    const handleVerify=()=>{
+      let id = localStorage.getItem("id");
+      let token = localStorage.getItem("token");
+      var request_url = "";
+      if (props.student_id >= 0) {
+        request_url =
+          "https://powerset-backend.herokuapp.com/students/" +
+          String(props.student_id) +
+          "/positions-of-responsibilities/verify/";
+      } else {
+        request_url =
+          "https://powerset-backend.herokuapp.com/students/" +
+          String(id) +
+          "/positions-of-responsibilities/verify/";
+      }
+      const headers = {
+        "Content-Type": "application/json",
+        Authorization: token,
+      };
+      const data = {
+        "is_verified":is_verified,
+        "verification_message":verification_message
+      }
+      console.log(data);
+      axios.put(request_url,data,
+        {headers:headers}
+      )
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (err) {
+          console.log(err);
+        });
+    };
 
   return (
     <React.Fragment key={props.student_id}>
     <div id="positions-of-responsibility">
-    <React.Fragment>
+    <React.Fragment key={props.student_id}>
     <Grid container spacing={1}>
-          <Grid item xs={6} sm={4}>
+          <Grid item xs={3} sm={3}>
             <h1>Positions of Responsibility</h1>
           </Grid>
 
-          <Grid item xs={6} sm={2}>
-            <Dropdown
-              disabled={!props.isCoordinator}
-              options={options}
-              // onChange={this._onSelect}
-              value={defaultOption}
-              placeholder="Select an option"
-            />
-          </Grid>
-
-          <Grid item xs={6} sm={4}>
-            <TextField
-              disabled={!props.isCoordinator}
-              multiline
-              variant="outlined"
-              label="Verification Message"
-            ></TextField>
-          </Grid>
-
-          {props.isCoordinator && (
-            <Grid item xs={6} sm={1}>
-              <Button variant="outlined" color="primary">
-                Save
-              </Button>
+          <Grid item xs={4} sm={2}>
+              <Dropdown
+                disabled={!props.isCoordinator}
+                options={options}
+                onChange={(e)=>{set_is_verified(e.value)}}
+                value={is_verified}
+                placeholder="Select an option"
+              />
             </Grid>
-          )}
+
+            <Grid item xs={4} sm={6}>
+              <TextField
+                disabled={!props.isCoordinator}
+                multiline
+                rowsMax={4}
+                variant="outlined"
+                placeholder="Verification Message"
+                value={verification_message}
+                onChange={(e)=>{
+                  set_verification_message(e.target.value)}}
+              ></TextField>
+            </Grid>
+
+            {props.isCoordinator && (
+              <Grid item xs={1} sm={1}>
+                <Button variant="outlined" color="primary" onClick={handleVerify}>
+                  Save
+                </Button>
+              </Grid>
+            )}
         </Grid>
       
       {por.map((x,i)=>{

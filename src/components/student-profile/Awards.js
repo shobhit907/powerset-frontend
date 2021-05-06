@@ -22,6 +22,7 @@ export default function Awards(props) {
     const [courses, setCourses] = useState([{ code:"",title: "",grade:""}]);
     const [noOfCourses,setNoOfCourses]=useState(1);
     const [errorText,setErrorText]=useState("");
+    const [student_id, set_student_id] = useState();
    // const [id,setId]=useState(0);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
@@ -29,16 +30,32 @@ export default function Awards(props) {
     const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
     const getData =  ()=>{
-      
-      const headers={
-        'Authorization':token,
+      let token = localStorage.getItem("token");
+   let id = localStorage.getItem("id");
+    const headers = {
+      'Content-Type': "application/json",
+      Authorization: token,
+    };
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        props.student_id.toString() +
+        "/awards-and-recognitions/";
+    } else {
+      if(id==null){
+        return;
       }
-      
-        
+      set_student_id(id);
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        id.toString() +
+        "/awards-and-recognitions/";
+    }
         axios({
           method: 'get',
           
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/awards-and-recognitions/',
+          url:request_url,
           headers:{
             'Content-Type':'application/json',
             'Authorization':token,
@@ -74,17 +91,17 @@ export default function Awards(props) {
         });
         
       
-     
+      
     }
 
     React.useEffect(()=>{
       getData();
-  },[]);
+  },[props.student_id,student_id]);
     
     
     const handleSave=()=>{
 
-
+        id=localStorage.getItem('id');
         setErrorText("");
         var lettersAndSpaces=new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
 
@@ -109,14 +126,26 @@ export default function Awards(props) {
           return;
         }
       }
-      //console.log(id);
-      let myurl='https://powerset-backend.herokuapp.com/students/'+String(id)+'/projects/';
-      //console.log(myurl);
-     
+      var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        props.student_id.toString() +
+        "/awards-and-recognitions/";
+    } else {
+      if(id==null){
+        return;
+      }
+      set_student_id(id);
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        id.toString() +
+        "/awards-and-recognitions/";
+    }
       axios({
         method: 'post',
         
-        url: 'https://powerset-backend.herokuapp.com/students/'+String(id)+'/awards-and-recognitions/',
+        url: request_url,
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -133,6 +162,7 @@ export default function Awards(props) {
         console.log(err.response.status);
         console.log(err.response.headers);
       });
+    
     }
 
     const handleInputChange = (e, index,field) => {
@@ -232,6 +262,7 @@ export default function Awards(props) {
 
 
   return (
+    <React.Fragment key={props.student_id}>
     <div id="awards">
     <React.Fragment>
     <Grid container spacing={1}>
@@ -333,5 +364,6 @@ export default function Awards(props) {
       </Button>
     </React.Fragment>
     </div>
+    </React.Fragment>
   );
 }

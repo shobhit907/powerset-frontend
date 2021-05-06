@@ -108,6 +108,7 @@ export default function StudentGeneralDetails(props) {
     //   setErrorText("Date of Birth has invalid format");
     //   return;
     // }
+    
     let data = new FormData();
     data.set("branch", branch);
     data.set("batch", batch);

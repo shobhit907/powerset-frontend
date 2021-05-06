@@ -10,6 +10,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import DeleteIcon from '@material-ui/icons/Delete';
+import SearchBar from "material-ui-search-bar";
 import FilterListIcon from '@material-ui/icons/FilterList';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -20,11 +21,12 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Button } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { useHistory } from "react-router-dom";
 import Navbar from "./navbar/NavBar";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import {ExportCSV} from "./ExportButton";
 const axios = require('axios')
 
 
@@ -152,17 +154,7 @@ const EnhancedTableToolbar = (props) => {
         </Typography>
       )}
 
-      {numSelected > 0 ? (
-        <Tooltip title="Apply">
-          <Button variant="contained" color="secondary">Apply</Button>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton aria-label="filter list">
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      
     </Toolbar>
   );
 };
@@ -228,6 +220,7 @@ export default function StudentsListForCoordinator() {
   const [interns,setInterns]=React.useState([]);
   const [placements,setPlacements]=React.useState([]);
   const [selectedTab,setSelectedTab]=React.useState(0);
+  const [searched, setSearched] = React.useState("");
   const history = useHistory();
 
   const getData=()=>{
@@ -327,14 +320,47 @@ export default function StudentsListForCoordinator() {
     }
     else setRows(placements);
   }
+  const requestSearch=(searchVal)=>{
+    console.log(searchVal);
+    if(selectedTab==0){
+      const filteredRows=interns.filter((row)=>{
+        return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
+        row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase())
+        ;
+      })
+      setRows(filteredRows);
+    }
+    else if(selectedTab==1){
+      const filteredRows=placements.filter((row)=>{
+        return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
+        row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ;
+      })
+      setRows(filteredRows);
+    }
+  }
+  const cancelSearch=()=>{
+    setSearched("");
+    requestSearch(searched);
+  }
   const isSelected = (company) => selected.indexOf(company) !== -1;
-
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} spacing={"10 px"}>
       
       <Paper className={classes.paper}>
+      <SearchBar
+      value={searched}
+      onChange={(searchVal) => requestSearch(searchVal)}
+      onCancelSearch={() => cancelSearch()}
+      style={{border:'3px solid rgba(0, 0, 0, 0.05)'}}
+    />
+    <Grid container>
+    <Grid item sm={10} >
       <Tabs
         value={selectedTab}
         indicatorColor="primary"
@@ -346,6 +372,11 @@ export default function StudentsListForCoordinator() {
         <Tab label="Placement" />
         
       </Tabs>
+      </Grid>
+      <Grid item sm={1}>
+      <ExportCSV csvData={rows} fileName={"students"}/>
+      </Grid>
+      </Grid>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table

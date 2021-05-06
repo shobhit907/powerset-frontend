@@ -53,6 +53,7 @@ export default function Semesters(props) {
   ]);
   const [noOfSemesters, setNoOfSemesters] = useState(1);
   const [errorText, setErrorText] = useState("");
+  const [student_id, set_student_id] = useState();
 
   // const [id,setId]=useState(0);
   let token = localStorage.getItem("token");
@@ -60,17 +61,32 @@ export default function Semesters(props) {
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
   const getData = () => {
+    let token = localStorage.getItem("token");
+   let id = localStorage.getItem("id");
     const headers = {
+      'Content-Type': "application/json",
       Authorization: token,
     };
-
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        props.student_id.toString() +
+        "/semesters/";
+    } else {
+      if(id==null){
+        return;
+      }
+      set_student_id(id);
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        id.toString() +
+        "/semesters/";
+    }
     axios({
       method: "get",
 
-      url:
-        "https://powerset-backend.herokuapp.com/students/" +
-        String(id) +
-        "/semesters/",
+      url:request_url,
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
@@ -99,7 +115,7 @@ export default function Semesters(props) {
 
   React.useEffect(() => {
     getData();
-  }, []);
+  }, [props.student_id,student_id]);
 
   const handleSave = async() => {
     setErrorText("");
@@ -133,15 +149,32 @@ export default function Semesters(props) {
 
       //console.log(id);
       //
-      let myurl =
-        "https://powerset-backend.herokuapp.com/students/" +
-        String(id) +
-        "/semesters/";
-      //console.log(myurl);
+      let token = localStorage.getItem("token");
+      let id = localStorage.getItem("id");
+       const headers = {
+         'Content-Type': "application/json",
+         Authorization: token,
+       };
+       var request_url = "";
+       if (props.student_id >= 0) {
+         request_url =
+           "https://powerset-backend.herokuapp.com/students/" +
+           props.student_id.toString() +
+           "/semesters/";
+       } else {
+         if(id==null){
+           return;
+         }
+         set_student_id(id);
+         request_url =
+           "https://powerset-backend.herokuapp.com/students/" +
+           id.toString() +
+           "/semesters/";
+       }
       axios({
         method: "post",
 
-        url: myurl,
+        url: request_url,
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: token,
@@ -301,6 +334,7 @@ export default function Semesters(props) {
   };
 
   return (
+    <React.Fragment key={props.student_id}>
     <div id="semesters"><React.Fragment>
       <Grid container spacing={1}>
           <Grid item xs={6} sm={4}>
@@ -403,5 +437,6 @@ export default function Semesters(props) {
         Save
       </Button>
     </React.Fragment></div>
+    </React.Fragment>
   );
 }

@@ -45,6 +45,7 @@ export default function Projects(props) {
   const [courses, setCourses] = useState([{ code: "", title: "", grade: "" }]);
   const [noOfCourses, setNoOfCourses] = useState(1);
   const [errorText, setErrorText] = useState("");
+  const [student_id, set_student_id] = useState();
   // const [id,setId]=useState(0);
   let token = localStorage.getItem("token");
   let id = localStorage.getItem("id");
@@ -53,17 +54,32 @@ export default function Projects(props) {
   const defaultOption = options[1];
 
   const getData = () => {
+    let token = localStorage.getItem("token");
+   let id = localStorage.getItem("id");
     const headers = {
+      'Content-Type': "application/json",
       Authorization: token,
     };
-
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        props.student_id.toString() +
+        "/projects/";
+    } else {
+      if(id==null){
+        return;
+      }
+      set_student_id(id);
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        id.toString() +
+        "/projects/";
+    }
     axios({
       method: "get",
 
-      url:
-        "https://powerset-backend.herokuapp.com/students/" +
-        String(id) +
-        "/projects/",
+      url:request_url,
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
@@ -96,7 +112,7 @@ export default function Projects(props) {
 
   React.useEffect(() => {
     getData();
-  }, []);
+  }, [props.student_id,student_id]);
 
   const handleSave = () => {
     setErrorText("");
@@ -139,15 +155,32 @@ export default function Projects(props) {
       // }
     }
     //console.log(id);
-    let myurl =
-      "https://powerset-backend.herokuapp.com/students/" +
-      String(id) +
-      "/projects/";
-    //console.log(myurl);
+    let token = localStorage.getItem("token");
+    let id = localStorage.getItem("id");
+     const headers = {
+       'Content-Type': "application/json",
+       Authorization: token,
+     };
+     var request_url = "";
+     if (props.student_id >= 0) {
+       request_url =
+         "https://powerset-backend.herokuapp.com/students/" +
+         props.student_id.toString() +
+         "/projects/";
+     } else {
+       if(id==null){
+         return;
+       }
+       set_student_id(id);
+       request_url =
+         "https://powerset-backend.herokuapp.com/students/" +
+         id.toString() +
+         "/projects/";
+     }
     axios({
       method: "post",
 
-      url: myurl,
+      url: request_url,
       headers: {
         "Content-Type": "application/json",
         Authorization: token,
@@ -281,6 +314,7 @@ export default function Projects(props) {
   };
 
   return (
+    <React.Fragment key={props.student_id}>
     <div id="projects">
       <React.Fragment>
         <Grid container spacing={1}>
@@ -390,5 +424,6 @@ export default function Projects(props) {
         </Button>
       </React.Fragment>
     </div>
+    </React.Fragment>
   );
 }

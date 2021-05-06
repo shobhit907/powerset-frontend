@@ -22,21 +22,38 @@ export default function Courses(props) {
     const [courses, setCourses] = useState([{ code:"",title: "",grade_secured:""}]);
     const [noOfCourses,setNoOfCourses]=useState(1);
     const [errorText,setErrorText]=useState("");
+    const [student_id, set_student_id] = useState();
    // const [id,setId]=useState(0);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
     const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
     const getData =  ()=>{
-      
+      let token = localStorage.getItem("token");
+      let id = localStorage.getItem("id");
       const headers={
         'Authorization':token,
       }
-      
+      var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        props.student_id.toString() +
+        "/courses/";
+    } else {
+      if(id==null){
+        return;
+      }
+      set_student_id(id);
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        id.toString() +
+        "/courses/";
+    }  
         axios({
           method: 'get',
           
-          url:'https://powerset-backend.herokuapp.com/students/'+String(id)+'/courses/',
+          url:request_url,
           headers:{
             'Content-Type':'application/json',
             'Authorization':token,
@@ -67,11 +84,12 @@ export default function Courses(props) {
           console.log(err.response.headers);
         });
      
-    }
+    
+  }
 
     React.useEffect(()=>{
       getData();
-  },[]);
+  },[props.student_id,student_id]);
     
     
     const handleSave=()=>{
@@ -94,10 +112,28 @@ export default function Courses(props) {
             return;
         }
       }
+      let token = localStorage.getItem("token");
+    let id = localStorage.getItem("id");
+    var request_url = "";
+    if (props.student_id >= 0) {
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(props.student_id) +
+        "/work-experiences/";
+    } else {
+      if(id==null){
+        return;
+      }
+      request_url =
+        "https://powerset-backend.herokuapp.com/students/" +
+        String(id) +
+        "/work-experiences/";
+    }
+ 
       axios({
         method: 'post',
         
-        url: 'https://powerset-backend.herokuapp.com/students/'+String(id)+'/courses/',
+        url: request_url,
         headers:{
           'Content-Type':'application/json',
           'Authorization':token,
@@ -114,6 +150,7 @@ export default function Courses(props) {
         console.log(err.response.status);
         console.log(err.response.headers);
       });
+    
     }
 
     const handleInputChange = (e, index,field) => {
@@ -213,6 +250,7 @@ export default function Courses(props) {
 
 
   return (
+    <React.Fragment key={props.student_id}>
     <div id="courses">
     <React.Fragment>
     <Grid container spacing={1}>
@@ -303,5 +341,6 @@ export default function Courses(props) {
       </Button>
     </React.Fragment>
     </div>
+    </React.Fragment>
   );
 }

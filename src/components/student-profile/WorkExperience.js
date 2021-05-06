@@ -96,6 +96,9 @@ export default function WorkExperience(props) {
         props.student_id.toString() +
         "/work-experiences/";
     } else {
+      if(id==null){
+        return;
+      }
       set_student_id(id);
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
@@ -221,6 +224,8 @@ export default function WorkExperience(props) {
         return;
       }
     }
+    let token = localStorage.getItem("token");
+    let id = localStorage.getItem("id");
     var request_url = "";
     if (props.student_id >= 0) {
       request_url =
@@ -228,13 +233,15 @@ export default function WorkExperience(props) {
         String(props.student_id) +
         "/work-experiences/";
     } else {
+      if(id==null){
+        return;
+      }
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         String(id) +
         "/work-experiences/";
     }
-    let token = localStorage.getItem("token");
-  let id = localStorage.getItem("id");
+ 
     axios({
       method: "post",
 

@@ -48,9 +48,7 @@ export default function Projects(props) {
   const [noOfCourses, setNoOfCourses] = useState(1);
   const [errorText, setErrorText] = useState("");
   const [student_id, set_student_id] = useState();
-  // const [id,setId]=useState(0);
-  
-  const [student_id, set_student_id] = useState();
+
   const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
 

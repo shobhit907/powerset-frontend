@@ -23,21 +23,11 @@ export default function Courses(props) {
     const [noOfCourses,setNoOfCourses]=useState(1);
     const [errorText,setErrorText]=useState("");
     const [student_id, set_student_id] = useState();
-   // const [id,setId]=useState(0);
-    const [student_id, set_student_id] = useState();
     const options = ["Verified", "Unverified", "Rejected"];
     const [is_verified,set_is_verified]=useState("Unverified");
   const [verification_message,set_verification_message]=useState("");
   const defaultOption = options[1];
     const getData =  ()=>{
-<<<<<<< HEAD
-      let token = localStorage.getItem("token");
-      let id = localStorage.getItem("id");
-      const headers={
-        'Authorization':token,
-      }
-      var request_url = "";
-=======
       
       let token = localStorage.getItem("token");
    let id = localStorage.getItem("id");
@@ -46,25 +36,20 @@ export default function Courses(props) {
       Authorization: token,
     };
     var request_url = "";
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     if (props.student_id >= 0) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         props.student_id.toString() +
         "/courses/";
     } else {
-<<<<<<< HEAD
       if(id==null){
         return;
       }
-=======
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       set_student_id(id);
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         id.toString() +
         "/courses/";
-<<<<<<< HEAD
     }  
         axios({
           method: 'get',
@@ -75,10 +60,6 @@ export default function Courses(props) {
             'Authorization':token,
           },
         })
-=======
-    }
-        axios.get(request_url, { headers })
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
         .then(function (response) {
           console.log(response);
             console.log(response.data.length);
@@ -113,12 +94,8 @@ export default function Courses(props) {
 
     React.useEffect(() => {
       getData();
-<<<<<<< HEAD
   },[props.student_id,student_id]);
     
-=======
-    }, [props.student_id,student_id]);
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     
     const handleSave=()=>{
         setErrorText("");
@@ -140,22 +117,14 @@ export default function Courses(props) {
             return;
         }
       }
-<<<<<<< HEAD
       let token = localStorage.getItem("token");
     let id = localStorage.getItem("id");
-=======
-
-      let token = localStorage.getItem("token");
-  let id = localStorage.getItem("id");
-    
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     var request_url = "";
     if (props.student_id >= 0) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         String(props.student_id) +
-<<<<<<< HEAD
-        "/work-experiences/";
+        "/courses/";
     } else {
       if(id==null){
         return;
@@ -163,19 +132,9 @@ export default function Courses(props) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         String(id) +
-        "/work-experiences/";
+        "/courses/";
     }
  
-=======
-        "/courses/";
-    } else {
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        String(id) +
-        "/courses/";
-    }
-
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       axios({
         method: 'post',
         

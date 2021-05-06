@@ -26,14 +26,9 @@ export default function PositionOfResponsibility(props) {
    // const [id,setId]=useState(0);
    const [is_verified,set_is_verified]=useState("Unverified");
   const [verification_message,set_verification_message]=useState("");
-   const [student_id, set_student_id] = useState();
     const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
     const getData =  ()=>{
-<<<<<<< HEAD
-=======
-      
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       let token = localStorage.getItem("token");
    let id = localStorage.getItem("id");
     const headers = {
@@ -47,19 +42,15 @@ export default function PositionOfResponsibility(props) {
         props.student_id.toString() +
         "/positions-of-responsibilities/";
     } else {
-<<<<<<< HEAD
       if(id==null){
         return;
       }
-=======
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       set_student_id(id);
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         id.toString() +
         "/positions-of-responsibilities/";
     }
-<<<<<<< HEAD
         axios({
           method: 'get',
           url:request_url,
@@ -68,10 +59,6 @@ export default function PositionOfResponsibility(props) {
             'Authorization':token,
           },
         })
-=======
-        
-        axios.get(request_url, { headers })
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
         .then(function (response) {
           console.log(response);
             console.log(response.data.length);
@@ -106,11 +93,7 @@ export default function PositionOfResponsibility(props) {
 
     React.useEffect(() => {
       getData();
-<<<<<<< HEAD
   },[props.student_id,student_id]);
-=======
-    }, [props.student_id,student_id]);
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
     
     
     const handleSave=()=>{
@@ -139,7 +122,6 @@ export default function PositionOfResponsibility(props) {
         
       }
       let token = localStorage.getItem("token");
-<<<<<<< HEAD
       let id = localStorage.getItem("id");
       var request_url = "";
       if (props.student_id >= 0) {
@@ -157,22 +139,6 @@ export default function PositionOfResponsibility(props) {
           "/positions-of-responsibilities/";
       }
    
-=======
-  let id = localStorage.getItem("id");
-    
-    var request_url = "";
-    if (props.student_id >= 0) {
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        String(props.student_id) +
-        "/positions-of-responsibilities/";
-    } else {
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        String(id) +
-        "/positions-of-responsibilities/";
-    }
->>>>>>> c49d609eff241dd4e56243ed5a58264fb6993cca
       axios({
         method: 'post',
         

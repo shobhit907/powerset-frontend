@@ -120,12 +120,8 @@ export default function Awards(props) {
           set_is_verified(response.data[0].is_verified);
           set_verification_message(response.data[0].verification_message);
         }
-      })
-      .catch(function (err) {
-        // console.log(err.response.data);
-        // console.log(err.response.status);
-        // console.log(err.response.headers);
-      });
+      }
+      
   };
 
   React.useEffect(() => {
@@ -179,23 +175,7 @@ export default function Awards(props) {
         id.toString() +
         "/awards-and-recognitions/";
     }
-      axios({
-        method: 'post',
-        
-        url: request_url,
-        headers:{
-          'Content-Type':'application/json',
-          'Authorization':token,
-
-      if (awards[i].description.length > 500) {
-        setErrorText(
-          "Award " +
-            String(i + 1) +
-            ": Description must be between 30 and 500 characters"
-        );
-        return;
-      }
-    }
+     
     //console.log(id);
     let token = localStorage.getItem("token");
     let id = localStorage.getItem("id");

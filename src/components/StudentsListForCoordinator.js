@@ -434,16 +434,16 @@ export default function StudentsListForCoordinator() {
   }
   const isSelected = (company) => selected.indexOf(company) !== -1;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-  const formatValue = (value) => value.toFixed(1);
+  const formatValue = (value) => value.toFixed(0);
   return (
     
     <div className={classes.root} spacing={"10 px"}>
     <Grid container  alignItems="center"
     justify="center"
     direction="column"
-    spacing={0}>
+    spacing={1}>
     <Grid item sm={12}>
-    <div style={{ fontSize:20}}>Selected = <AnimatedNumber
+    <div style={{ fontSize:20, backgroundColor:'#25db5f'}}>Selected = <AnimatedNumber
           value={selectedStrudents}
           style={{
             transition: '0.8s ease-out',
@@ -455,14 +455,14 @@ export default function StudentsListForCoordinator() {
         frameStyle={perc => (
             perc === 100 ? {} : {backgroundColor: '#25db5f'}
         )}
-        duration={4000}
+        duration={0}
         formatValue={formatValue}
         />
         </div>
         </Grid>
 
         <Grid item sm={12}>
-        <div style={{ fontSize:20}}>Verified = <AnimatedNumber
+        <div style={{ fontSize:20, backgroundColor: '#1682e0'}}>Verified = <AnimatedNumber
         value={verifiedStrudents}
         style={{
           transition: '0.8s ease-out',
@@ -473,7 +473,7 @@ export default function StudentsListForCoordinator() {
       frameStyle={perc => (
           perc === 100 ? {} : {backgroundColor: '#1682e0'}
       )}
-      duration={3000}
+      duration={0}
       formatValue={formatValue}
       />
       </div>
@@ -481,7 +481,8 @@ export default function StudentsListForCoordinator() {
 
 
       <Grid item sm={12}>
-      <div style={{ fontSize:20}}>Total Students = <AnimatedNumber
+      
+      <div style={{ fontSize:20, backgroundColor: '#f0a80c'}}>Total Students = <AnimatedNumber
       value={totalStudents}
       style={{
         transition: '0.8s ease-out',
@@ -492,7 +493,7 @@ export default function StudentsListForCoordinator() {
     frameStyle={perc => (
         perc === 100 ? {} : {backgroundColor: '#f0a80c'}
     )}
-    duration={3000}
+    duration={0}
     formatValue={formatValue}
     />
     </div>

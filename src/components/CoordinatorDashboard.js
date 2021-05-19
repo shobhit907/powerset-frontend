@@ -3,6 +3,7 @@ import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
 import JobsListCoordinator from "./JobsListCoordinator"
 import StudentsListForCoordinator from "./StudentsListForCoordinator"
+import CompaniesList from "./CompaniesList"
 import "./CoordinatorDashboard.css"
 export default function CoordinatorDashBoard() {
     const history = useHistory();
@@ -21,7 +22,11 @@ export default function CoordinatorDashBoard() {
       <h3 style={{textAlign:"center",fontWeight:"lighter",fontSize:40}}>Students List</h3> 
       <p style={{textAlign:"center",fontWeight:"lighter"}}>Click the view profile button to view the student's profile and verify the sections </p>
       <StudentsListForCoordinator/>
-    
+      <br/>
+      <br/>
+      <h3 style={{textAlign:"center",fontWeight:"lighter",fontSize:40}}>List of Companies</h3> 
+      <p style={{textAlign:"center",fontWeight:"lighter"}}>List of companies with their schedule of visiting, along with current status</p>
+      <CompaniesList/>
     </div>
   );
 }

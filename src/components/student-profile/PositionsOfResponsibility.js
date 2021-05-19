@@ -28,6 +28,8 @@ export default function PositionOfResponsibility(props) {
   const [verification_message,set_verification_message]=useState("");
     const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
+
+  
     const getData =  ()=>{
       let token = localStorage.getItem("token");
    let id = localStorage.getItem("id");

@@ -4058,6 +4058,11 @@
     "path-type" "^4.0.0"
     "yaml" "^1.10.0"
 
+"countup.js@^1.9.3":
+  "integrity" "sha1-zj5QzXFgRB5HjwfaMYle3MDxyd0="
+  "resolved" "https://registry.npmjs.org/countup.js/-/countup.js-1.9.3.tgz"
+  "version" "1.9.3"
+
 "crc-32@~1.2.0":
   "integrity" "sha512-1uBwHxF+Y/4yF5G48fwnKq6QsIXheor3ZLPT80yGBV1oEUwpPojlEhQbWKVw1VwcTQyMGHK1/XMmTjmlsmTTGA=="
   "resolved" "https://registry.npmjs.org/crc-32/-/crc-32-1.2.0.tgz"
@@ -10285,7 +10290,7 @@
   "resolved" "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.2.tgz"
   "version" "1.2.2"
 
-"raf@^3.4.1":
+"raf@^3.2.0", "raf@^3.4.1":
   "integrity" "sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA=="
   "resolved" "https://registry.npmjs.org/raf/-/raf-3.4.1.tgz"
   "version" "3.4.1"
@@ -10321,6 +10326,14 @@
     "http-errors" "1.7.2"
     "iconv-lite" "0.4.24"
     "unpipe" "1.0.0"
+
+"react-animated-number@^0.4.4":
+  "integrity" "sha1-zsmGuVqGH5fACrMwN1E1NHmKf18="
+  "resolved" "https://registry.npmjs.org/react-animated-number/-/react-animated-number-0.4.4.tgz"
+  "version" "0.4.4"
+  dependencies:
+    "prop-types" "^15.5.8"
+    "raf" "^3.2.0"
 
 "react-app-polyfill@^2.0.0":
   "integrity" "sha512-0sF4ny9v/B7s6aoehwze9vJNWcmCemAUYBVasscVr92+UYiEqDXOxfKjXN685mDaMRNF3WdhHQs76oTODMocFA=="
@@ -10391,6 +10404,15 @@
   dependencies:
     "copy-to-clipboard" "^3"
     "prop-types" "^15.5.8"
+
+"react-countup@^4.3.3":
+  "integrity" "sha512-pWnxpwdPNRyJFha/YKKbyc4RLAw8PzmULdgCziGIgw6vxhT1VdccrvQgj38HBSoM2qF/MoLmn4M2klvDWVIdaw=="
+  "resolved" "https://registry.npmjs.org/react-countup/-/react-countup-4.3.3.tgz"
+  "version" "4.3.3"
+  dependencies:
+    "countup.js" "^1.9.3"
+    "prop-types" "^15.7.2"
+    "warning" "^4.0.3"
 
 "react-date-picker@^8.0.7":
   "integrity" "sha512-ZuS9NPHUUz0zeeXlYOfq58cteHLRC94NO76ti28aN/Ybi9nugG2SfR46i/5xTL5094rRPiXJveGA1P1cJqQMsg=="
@@ -10818,7 +10840,7 @@
   "resolved" "https://registry.npmjs.org/react-uuid/-/react-uuid-1.0.2.tgz"
   "version" "1.0.2"
 
-"react@^16.14.0", "react@>= 16":
+"react@^0.14.0 || ^15.0.1 || ^16.0.0", "react@^16.14.0", "react@>= 16", "react@>= 16.3.0":
   "integrity" "sha512-0X2CImDkJGApiAlcf0ODKIneSwBPhqJawOa5wCtKbu7ZECrmS26NvtSILynQ66cgkT/RJ4LidJOc3bUESwmU8g=="
   "resolved" "https://registry.npmjs.org/react/-/react-16.14.0.tgz"
   "version" "16.14.0"

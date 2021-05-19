@@ -184,7 +184,7 @@ export default function Awards(props) {
         console.log(err.response.status);
         console.log(err.response.headers);
       });
-  };
+  }
 
   const handleInputChange = (e, index, field) => {
     const { name, value } = e.target;

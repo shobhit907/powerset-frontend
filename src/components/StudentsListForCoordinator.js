@@ -27,6 +27,8 @@ import Navbar from "./navbar/NavBar";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {ExportCSV} from "./ExportButton";
+import CountUp from 'react-countup';
+import AnimatedNumber from 'react-animated-number';
 const axios = require('axios')
 
 
@@ -220,6 +222,9 @@ export default function StudentsListForCoordinator() {
   const [interns,setInterns]=React.useState([]);
   const [placements,setPlacements]=React.useState([]);
   const [selectedTab,setSelectedTab]=React.useState(0);
+  const [selectedStrudents,setSelectedStudents]=React.useState(0);
+  const [verifiedStrudents,setVerifiedStudents]=React.useState(0);
+  const [totalStudents,setTotalStudents]=React.useState(0);
   const [searched, setSearched] = React.useState("");
   const history = useHistory();
 
@@ -245,7 +250,12 @@ export default function StudentsListForCoordinator() {
           console.log(response.data.length);
           var curr_interns=[];
           var curr_placements=[];
+          var total=0;
+          var selected=0;
+          var verified=0;
           for(var i=0;i<response.data.length;i++){
+            
+
             var obj=new Object();
             obj.name=response.data[i].user.name;
             obj.branch=response.data[i].branch;
@@ -253,9 +263,21 @@ export default function StudentsListForCoordinator() {
             obj.cgpa=response.data[i].cgpa;
             obj.student_id=response.data[i].id;
             obj.roll_no=response.data[i].entry_number;
-            obj.is_selected=response.data[i].is_selected;
             obj.is_verified=response.data[i].is_verified;
             obj.placement=response.data[i].placement.name;
+            obj.resume_link=response.data[i].primary_resume.resume;
+            if(obj.placement=="Intern"){
+              total+=1;
+              if(obj.is_verified="Verified"){
+                verified+=1;
+              }
+              if (response.data[i].is_selected==true){
+                obj.is_selected="Selected";
+                selected+=1;
+              } else{
+                obj.is_selected="Not selected";
+              }
+          }
             if(obj.placement=="Intern"){
               curr_interns=[...curr_interns,obj];
             }
@@ -268,6 +290,9 @@ export default function StudentsListForCoordinator() {
           console.log(curr_placements);
           console.log(curr_interns);
           setRows(curr_interns);
+          setSelectedStudents(selected);
+          setTotalStudents(total);
+          setVerifiedStudents(verified);
           
         
   
@@ -314,33 +339,94 @@ export default function StudentsListForCoordinator() {
   
   const handleChangeTab=(event, new_value)=>{
     setSelectedTab(new_value);
+    var total=0;
+    var selected=0;
+    var verified=0;
     if(new_value==0){
       setRows(interns);
-
+      for(var i=0;i<interns.length;i+=1){
+        total+=1;
+        if(interns[i].is_verified=="Verified"){
+          verified+=1;
+        }
+        if(interns[i].is_selected=="Selected"){
+          selected+=1;
+        }
+      }
     }
-    else setRows(placements);
+    else{
+       setRows(placements);
+       for(var i=0;i<placements.length;i+=1){
+        total+=1;
+        if(placements[i].is_verified=="Verified"){
+          verified+=1;
+        }
+        if(placements[i].is_selected=="Selected"){
+          selected+=1;
+        }
+      }
+    }
+    setSelectedStudents(selected);
+    setTotalStudents(total);
+    setVerifiedStudents(verified);
   }
   const requestSearch=(searchVal)=>{
     console.log(searchVal);
+    var count=0;
+    var selected=0;
+    var verified=0;
+    console.log(count);
     if(selectedTab==0){
       const filteredRows=interns.filter((row)=>{
-        return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        
+        if( row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
         row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
         row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
-        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase())
-        ;
+        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.is_selected.toString().includes(searchVal.toString()) ||
+        row.is_verified.toString().includes(searchVal.toString())
+        ==true){
+          count+=1;
+          if(row.is_selected=="Selected"){
+            selected+=1;
+          }
+          if(row.is_verified=="Verified"){
+            verified+=1;
+          }
+          return true;
+        }
+        else return false;
       })
       setRows(filteredRows);
     }
     else if(selectedTab==1){
+      count+=1;
       const filteredRows=placements.filter((row)=>{
-        return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        
+        if (row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
         row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
         row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
-        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ;
+        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.is_selected.toString().includes(searchVal.toString()) ||
+        row.is_verified.toString().includes(searchVal.toString()) ==true){
+          count+=1;
+          if(row.is_selected=="Selected"){
+            selected+=1;
+          }
+          if(row.is_verified=="Verified"){
+            verified+=1;
+          }
+          return true;
+        }
+        else return false;
       })
       setRows(filteredRows);
+      
     }
+    console.log(count);
+    setTotalStudents(count);
+    setSelectedStudents(selected);
+    setVerifiedStudents(verified);
   }
   const cancelSearch=()=>{
     setSearched("");
@@ -348,10 +434,72 @@ export default function StudentsListForCoordinator() {
   }
   const isSelected = (company) => selected.indexOf(company) !== -1;
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
-
+  const formatValue = (value) => value.toFixed(1);
   return (
+    
     <div className={classes.root} spacing={"10 px"}>
-      
+    <Grid container  alignItems="center"
+    justify="center"
+    direction="column"
+    spacing={0}>
+    <Grid item sm={12}>
+    <div style={{ fontSize:20}}>Selected = <AnimatedNumber
+          value={selectedStrudents}
+          style={{
+            transition: '0.8s ease-out',
+            fontSize: 20,
+            transitionProperty:
+                'background-color, color, opacity'
+        }}
+        
+        frameStyle={perc => (
+            perc === 100 ? {} : {backgroundColor: '#25db5f'}
+        )}
+        duration={4000}
+        formatValue={formatValue}
+        />
+        </div>
+        </Grid>
+
+        <Grid item sm={12}>
+        <div style={{ fontSize:20}}>Verified = <AnimatedNumber
+        value={verifiedStrudents}
+        style={{
+          transition: '0.8s ease-out',
+          fontSize: 20,
+          transitionProperty:
+              'background-color, color, opacity'
+      }}
+      frameStyle={perc => (
+          perc === 100 ? {} : {backgroundColor: '#1682e0'}
+      )}
+      duration={3000}
+      formatValue={formatValue}
+      />
+      </div>
+      </Grid>
+
+
+      <Grid item sm={12}>
+      <div style={{ fontSize:20}}>Total Students = <AnimatedNumber
+      value={totalStudents}
+      style={{
+        transition: '0.8s ease-out',
+        fontSize: 20,
+        transitionProperty:
+            'background-color, color, opacity'
+    }}
+    frameStyle={perc => (
+        perc === 100 ? {} : {backgroundColor: '#f0a80c'}
+    )}
+    duration={3000}
+    formatValue={formatValue}
+    />
+    </div>
+    </Grid>
+    </Grid>
+
+
       <Paper className={classes.paper}>
       <SearchBar
       value={searched}
@@ -415,8 +563,8 @@ export default function StudentsListForCoordinator() {
                       <TableCell align="left">{row.batch}</TableCell>
                       <TableCell align="right">{row.cgpa}</TableCell>
                       
-                      <TableCell align="left">{row.is_verified=="V"?"Verified":"Not Verified"}</TableCell>
-                      <TableCell align="left">{row.is_selected=="V"?"Selected":"Not Selected"}</TableCell>
+                      <TableCell align="left">{row.is_verified}</TableCell>
+                      <TableCell align="left">{row.is_selected}</TableCell>
                       <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
                       
                     </TableRow>

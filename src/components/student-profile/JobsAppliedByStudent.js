@@ -352,7 +352,7 @@ export default function JobsAppliedByStudent() {
     console.log("Viewing Job Description");
   };
   const handleCancelJobApplication = (event,job_id) => {
-    handleClickOpen();return;
+    handleClickOpen();
     let token=localStorage.getItem('token');
     let obj=new Object();
     obj.id=job_id;

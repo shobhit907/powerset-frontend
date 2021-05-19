@@ -18,9 +18,6 @@ const NavBar = () => {
 
   return (
     <Container style={{ margin: 0, padding: 0 }} fluid>
-      {/* <nav class="fixed-nav-bar navbar-dark">
-      
-      </nav> */}
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">
           <b>Powerset</b>
@@ -37,7 +34,7 @@ const NavBar = () => {
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse my-powerset-navbar" id="navbarSupportedContent">
           <ul class="navbar-nav">
             <li class="nav-item active">
               <a class="nav-link" href="/">

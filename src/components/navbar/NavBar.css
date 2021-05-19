@@ -11,6 +11,11 @@
     margin-bottom: 20px;
   }
   
+.my-powerset-navbar{
+  display: flex;
+  justify-content: space-between;
+}
+
   .contents{
     /* background-color:#3E414F; */
     padding:15px 30px;

@@ -10,30 +10,51 @@ const axios = require("axios");
 const qs = require("querystring");
 const moment = require("moment");
 export default function Awards(props) {
-    const [dummy,setDummy]=useState(0);
-    const [projects, setProjects] = useState([{ title: "abc", start_date: "2020-05-06",end_date: "2020-05-07",description:"VFDDFV",domain:"abc" }]);
-    const [noOfProjects,setNoOfProjects]=useState(1);
-    const [awards, setAwards] = useState([{ title: "", description: "",issuer: "",issue_date:"" }]);
-    const [noOfAwards,setNoOfAwards]=useState(1);
-    const [work_experience, setWorkExperience] = useState([{ jobTitle: "",company:"",location:"",stipend_date:"", start_date: "",end_date: "",description:"" }]);
-    const [noOfWorkExperience,setNoOfWorkExperience]=useState(1);
-    const [por, setPor] = useState([{ title: "", from: "",to: "",organisation:"",description:"" }]);
-    const [noOfPor,setNoOfPor]=useState(1);
-    const [courses, setCourses] = useState([{ code:"",title: "",grade:""}]);
-    const [noOfCourses,setNoOfCourses]=useState(1);
-    const [errorText,setErrorText]=useState("");
-    const [student_id, set_student_id] = useState();
-   // const [id,setId]=useState(0);
-    let token=localStorage.getItem('token');
-    let id=localStorage.getItem('id');
-
-    const options = ["Verified", "Unverified", "Rejected"];
+  const [dummy, setDummy] = useState(0);
+  const [projects, setProjects] = useState([
+    {
+      title: "abc",
+      start_date: "2020-05-06",
+      end_date: "2020-05-07",
+      description: "VFDDFV",
+      domain: "abc",
+    },
+  ]);
+  const [noOfProjects, setNoOfProjects] = useState(1);
+  const [awards, setAwards] = useState([
+    { title: "", description: "", issuer: "", issue_date: "" },
+  ]);
+  const [noOfAwards, setNoOfAwards] = useState(1);
+  const [work_experience, setWorkExperience] = useState([
+    {
+      jobTitle: "",
+      company: "",
+      location: "",
+      stipend_date: "",
+      start_date: "",
+      end_date: "",
+      description: "",
+    },
+  ]);
+  const [noOfWorkExperience, setNoOfWorkExperience] = useState(1);
+  const [por, setPor] = useState([
+    { title: "", from: "", to: "", organisation: "", description: "" },
+  ]);
+  const [noOfPor, setNoOfPor] = useState(1);
+  const [courses, setCourses] = useState([{ code: "", title: "", grade: "" }]);
+  const [noOfCourses, setNoOfCourses] = useState(1);
+  const [errorText, setErrorText] = useState("");
+  // const [id,setId]=useState(0);
+  const [is_verified, set_is_verified] = useState("Unverified");
+  const [verification_message, set_verification_message] = useState("");
+  const options = ["Verified", "Unverified", "Rejected"];
+  const [student_id, set_student_id] = useState();
   const defaultOption = options[1];
-    const getData =  ()=>{
-      let token = localStorage.getItem("token");
-   let id = localStorage.getItem("id");
+  const getData = () => {
+    let token = localStorage.getItem("token");
+    let id = localStorage.getItem("id");
     const headers = {
-      'Content-Type': "application/json",
+      "Content-Type": "application/json",
       Authorization: token,
     };
     var request_url = "";
@@ -43,67 +64,20 @@ export default function Awards(props) {
         props.student_id.toString() +
         "/awards-and-recognitions/";
     } else {
-      if(id==null){
-        return;
-      }
+      if(id==null)return;
       set_student_id(id);
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         id.toString() +
         "/awards-and-recognitions/";
     }
-        axios({
-          method: 'get',
-          
-          url:request_url,
-          headers:{
-            'Content-Type':'application/json',
-            'Authorization':token,
-  
-          },
-          
-          
-        })
-        .then(function (response) {
-          console.log(response);
-            console.log(response.data.length);
-            var curr_award=[];
-            
-            for(var i=0;i<response.data.length;i++){
-              var obj=new Object();
-              //console.log(response.data[i].title);
-              obj.title=response.data[i].title;
-              obj.issuer=response.data[i].issuer;
-              obj.issue_date=response.data[i].issue_date;
-              obj.description=response.data[i].description;
-              curr_award=[...curr_award,obj];
-            }
-            //console.log(curr_proj);
-            if(curr_award.length!=0)
-            setAwards(curr_award);
-            
 
-        })
-        .catch(function (err) {
-          // console.log(err.response.data);
-          // console.log(err.response.status);
-          // console.log(err.response.headers);
-        });
-        
-      
-      
-    }
-
-    React.useEffect(()=>{
-      getData();
-  },[props.student_id,student_id]);
-    
-    
-    const handleSave=()=>{
-
-        id=localStorage.getItem('id');
-        setErrorText("");
-        var lettersAndSpaces=new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
+    axios
+      .get(request_url, { headers })
+      .then(function (response) {
+        console.log(response);
+        console.log(response.data.length);
+        var curr_award = [];
 
         for (var i = 0; i < response.data.length; i++) {
           var obj = new Object();
@@ -120,8 +94,12 @@ export default function Awards(props) {
           set_is_verified(response.data[0].is_verified);
           set_verification_message(response.data[0].verification_message);
         }
-      }
-      
+      })
+      .catch(function (err) {
+        // console.log(err.response.data);
+        // console.log(err.response.status);
+        // console.log(err.response.headers);
+      });
   };
 
   React.useEffect(() => {
@@ -139,7 +117,7 @@ export default function Awards(props) {
         setErrorText(
           "Award " +
             String(i + 1) +
-            ": Title must only Conatin Letters and Numbers"
+            ": Title must only Contain Letters and Numbers"
         );
         return;
       }
@@ -147,7 +125,7 @@ export default function Awards(props) {
         setErrorText(
           "Award " +
             String(i + 1) +
-            ": Issuer must only Conatin Letters and Numbers"
+            ": Issuer must only Contain Letters and Numbers"
         );
         return;
       }
@@ -159,23 +137,16 @@ export default function Awards(props) {
         );
         return;
       }
-      var request_url = "";
-    if (props.student_id >= 0) {
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        props.student_id.toString() +
-        "/awards-and-recognitions/";
-    } else {
-      if(id==null){
+
+      if (awards[i].description.length > 500) {
+        setErrorText(
+          "Award " +
+            String(i + 1) +
+            ": Description must be between 30 and 500 characters"
+        );
         return;
       }
-      set_student_id(id);
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        id.toString() +
-        "/awards-and-recognitions/";
     }
-     
     //console.log(id);
     let token = localStorage.getItem("token");
     let id = localStorage.getItem("id");
@@ -187,6 +158,9 @@ export default function Awards(props) {
         String(props.student_id) +
         "/awards-and-recognitions/";
     } else {
+      if(id==null){
+        return;
+      }
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
         String(id) +
@@ -362,7 +336,6 @@ export default function Awards(props) {
   };
 
   return (
-    <React.Fragment key={props.student_id}>
     <div id="awards">
       <React.Fragment key={props.student_id}>
         <Grid container spacing={1}>
@@ -474,6 +447,5 @@ export default function Awards(props) {
         </Button>
       </React.Fragment>
     </div>
-    </React.Fragment>
   );
 }

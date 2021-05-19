@@ -20,11 +20,14 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Button } from '@material-ui/core';
+import { Button , Grid} from '@material-ui/core';
 import { Redirect } from 'react-router';
 import { useHistory } from "react-router-dom";
 import NavBar from "./navbar/NavBar";
+import SearchBar from "material-ui-search-bar";
+import {ExportCSV} from "./ExportButton";
 const axios = require('axios')
+
 //let rows=[];
 
 
@@ -240,7 +243,9 @@ export default function AppliedStudentsTable() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
+  const [rows2,setRows2]=React.useState([]);
   const [jobId,setJobId]=React.useState(0);
+  const [searched, setSearched] = React.useState("");
   const history = useHistory();
 
   const getData=(job_id)=>{
@@ -274,6 +279,7 @@ export default function AppliedStudentsTable() {
             obj.student_id=response.data[i].student.id;
             obj.no_of_rounds=response.data[i].job_profile.number_of_rounds;
             obj.is_selected=response.data[i].is_selected;
+            obj.resume_link=response.data[i].student.primary_resume.resume;
             if(obj.round>obj.no_of_rounds){
               obj.round="Selected";
             }
@@ -281,6 +287,7 @@ export default function AppliedStudentsTable() {
             console.log(obj.is_selected);
             curr_rows=[...curr_rows,obj];
           }
+          setRows2(curr_rows);
           setRows(curr_rows);
           console.log(curr_rows);
           
@@ -401,6 +408,26 @@ export default function AppliedStudentsTable() {
         console.log(err);
       });
   }
+  const requestSearch=(searchVal)=>{
+    console.log(searchVal);
+      console.log(rows2);
+      const filteredRows=rows2.filter((row)=>{
+        return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
+        row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.cgpa.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.round.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) 
+        ;
+      })
+      setRows(filteredRows);
+    
+    
+    
+  }
+  const cancelSearch=()=>{
+    setSearched("");
+    requestSearch(searched);
+  }
   const isSelected = (company) => selected.indexOf(company) !== -1;
 
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
@@ -409,7 +436,15 @@ export default function AppliedStudentsTable() {
     <div className={classes.root}>
     <NavBar/>
       <Paper className={classes.paper}>
-      
+      <SearchBar
+      value={searched}
+      onChange={(searchVal) => requestSearch(searchVal)}
+      onCancelSearch={() => cancelSearch()}
+      style={{border:'3px solid rgba(0, 0, 0, 0.05)'}}
+    />
+    <Grid item sm={1}>
+      <ExportCSV csvData={rows} fileName={"students"}/>
+      </Grid>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table

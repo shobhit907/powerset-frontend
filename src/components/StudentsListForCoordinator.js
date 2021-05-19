@@ -253,9 +253,14 @@ export default function StudentsListForCoordinator() {
             obj.cgpa=response.data[i].cgpa;
             obj.student_id=response.data[i].id;
             obj.roll_no=response.data[i].entry_number;
-            obj.is_selected=response.data[i].is_selected;
             obj.is_verified=response.data[i].is_verified;
+            if (response.data[i].is_selected==true){
+              obj.is_selected="Selected";
+            } else{
+              obj.is_selected="Not selected";
+            }
             obj.placement=response.data[i].placement.name;
+            obj.resume_link=response.data[i].primary_resume.resume;
             if(obj.placement=="Intern"){
               curr_interns=[...curr_interns,obj];
             }
@@ -327,7 +332,9 @@ export default function StudentsListForCoordinator() {
         return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
         row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
         row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
-        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase())
+        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.is_selected.toString().includes(searchVal.toString()) ||
+        row.is_verified.toString().includes(searchVal.toString())
         ;
       })
       setRows(filteredRows);
@@ -337,7 +344,9 @@ export default function StudentsListForCoordinator() {
         return row.name.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
         row.branch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) || 
         row.batch.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
-        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ;
+        row.roll_no.toString().toLowerCase().includes(searchVal.toString().toLowerCase()) ||
+        row.is_selected.toString().includes(searchVal.toString()) ||
+        row.is_verified.toString().includes(searchVal.toString()) ;
       })
       setRows(filteredRows);
     }
@@ -415,8 +424,8 @@ export default function StudentsListForCoordinator() {
                       <TableCell align="left">{row.batch}</TableCell>
                       <TableCell align="right">{row.cgpa}</TableCell>
                       
-                      <TableCell align="left">{row.is_verified=="V"?"Verified":"Not Verified"}</TableCell>
-                      <TableCell align="left">{row.is_selected=="V"?"Selected":"Not Selected"}</TableCell>
+                      <TableCell align="left">{row.is_verified}</TableCell>
+                      <TableCell align="left">{row.is_selected}</TableCell>
                       <TableCell align="left"><Button variant="contained" color="primary" onClick={(e)=>handleViewProfile(e,row.student_id)}>View Profile</Button></TableCell>
                       
                     </TableRow>

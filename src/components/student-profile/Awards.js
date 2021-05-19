@@ -23,20 +23,24 @@ export default function Awards(props) {
     const [noOfCourses,setNoOfCourses]=useState(1);
     const [errorText,setErrorText]=useState("");
     const [student_id, set_student_id] = useState();
+    const [is_verified,set_is_verified]=useState("Unverified");
+  const [verification_message,set_verification_message]=useState("");
    // const [id,setId]=useState(0);
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
 
     const options = ["Verified", "Unverified", "Rejected"];
   const defaultOption = options[1];
-    const getData =  ()=>{
+
+
+  const getData =  ()=>{
       let token = localStorage.getItem("token");
-   let id = localStorage.getItem("id");
-    const headers = {
-      'Content-Type': "application/json",
-      Authorization: token,
-    };
-    var request_url = "";
+      let id = localStorage.getItem("id");
+        const headers = {
+          'Content-Type': "application/json",
+          Authorization: token,
+        };
+      var request_url = "";
     if (props.student_id >= 0) {
       request_url =
         "https://powerset-backend.herokuapp.com/students/" +
@@ -81,7 +85,8 @@ export default function Awards(props) {
             //console.log(curr_proj);
             if(curr_award.length!=0)
             setAwards(curr_award);
-            
+            set_is_verified(response.data[0].is_verified);
+          set_verification_message(response.data[0].verification_message);
 
         })
         .catch(function (err) {
@@ -99,35 +104,6 @@ export default function Awards(props) {
   },[props.student_id,student_id]);
     
     
-    const handleSave=()=>{
-
-        id=localStorage.getItem('id');
-        setErrorText("");
-        var lettersAndSpaces=new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
-
-        for (var i = 0; i < response.data.length; i++) {
-          var obj = new Object();
-          //console.log(response.data[i].title);
-          obj.title = response.data[i].title;
-          obj.issuer = response.data[i].issuer;
-          obj.issue_date = response.data[i].issue_date;
-          obj.description = response.data[i].description;
-          curr_award = [...curr_award, obj];
-        }
-        //console.log(curr_proj);
-        if (curr_award.length != 0) {
-          setAwards(curr_award);
-          set_is_verified(response.data[0].is_verified);
-          set_verification_message(response.data[0].verification_message);
-        }
-      }
-      
-  };
-
-  React.useEffect(() => {
-    getData();
-  }, [props.student_id, student_id]);
-
   const handleSave = () => {
     setErrorText("");
     var lettersAndSpaces = new RegExp("^(?:[A-Za-z]+)(?:[A-Za-z0-9 _]*)$");
@@ -159,24 +135,8 @@ export default function Awards(props) {
         );
         return;
       }
-      var request_url = "";
-    if (props.student_id >= 0) {
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        props.student_id.toString() +
-        "/awards-and-recognitions/";
-    } else {
-      if(id==null){
-        return;
-      }
-      set_student_id(id);
-      request_url =
-        "https://powerset-backend.herokuapp.com/students/" +
-        id.toString() +
-        "/awards-and-recognitions/";
     }
-     
-    //console.log(id);
+
     let token = localStorage.getItem("token");
     let id = localStorage.getItem("id");
 
@@ -210,7 +170,7 @@ export default function Awards(props) {
         console.log(err.response.status);
         console.log(err.response.headers);
       });
-  };
+  }
 
   const handleInputChange = (e, index, field) => {
     const { name, value } = e.target;

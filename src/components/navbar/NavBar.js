@@ -36,7 +36,7 @@ const NavBar = () => {
 
         <div class="collapse navbar-collapse my-powerset-navbar" id="navbarSupportedContent">
           <ul class="navbar-nav">
-            <li class="nav-item active">
+            <li class="nav-item">
               <a class="nav-link" href="/">
                 Home <span class="sr-only">(current)</span>
               </a>

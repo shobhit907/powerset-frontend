@@ -17,6 +17,7 @@ import JobsListCoordinator from "./components/JobsListCoordinator";
 import StudentsListForCoordinator from "./components/StudentsListForCoordinator";
 import CoordinatorDashboard from "./components/CoordinatorDashboard";
 import ViewJob from "./components/ViewJob";
+import TeamPage from "./components/TeamPage";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="/register" component={SignUp} />
           <Route path="/testapp" component={TestApp} />
           <PrivateRoute exact path="/" component={StudentDashBoard} />
+          <Route path="/our-team" component={TeamPage}></Route>
           <PrivateRoute path="/profile" component={ProfilePage} student_id={-1}></PrivateRoute>
           <Route path="/auth/activate/" component={ConfirmEmail} />
           <PrivateRoute path="/add-job" component={CreateJob} />

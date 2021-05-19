@@ -10,6 +10,7 @@ import Projects from "./Projects";
 import PositionOfResponsibility from "./PositionsOfResponsibility";
 import Courses from "./Courses";
 import Awards from "./Awards";
+import Resume from "./Resume";
 
 import "./ProfilePage.css";
 
@@ -78,6 +79,7 @@ export default function ProfilePage(props) {
             <Awards {...props}></Awards>
             <br></br>
             <br></br>
+            <Resume {...props}></Resume>
           </div>
         </div>
       </Container>

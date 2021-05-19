@@ -11,9 +11,7 @@ export default function StudentDashBoard() {
       <h3 style={{textAlign:"center",fontWeight:"lighter", fontSize:40}}>Jobs List</h3> 
       <p style={{textAlign:"center",fontWeight:"lighter"}}>Check status of all applications. </p>
       <JobsAppliedByStudent></JobsAppliedByStudent>
-      {/* <div class="flex" id="testapp-body">
-        <div class="contents">Dashboard will be displayed here</div>
-      </div> */}
+      
     </div>
   );
 }

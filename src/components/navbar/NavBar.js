@@ -51,11 +51,11 @@ const NavBar = () => {
                 My Profile
               </a>
             </li>
-            <li class="nav-item">
+            {/* <li class="nav-item">
               <a class="nav-link" href="/interviews">
                 Interviews
               </a>
-            </li>
+            </li> */}
             <li class="nav-item">
               <a class="nav-link" href="/coordinator">
                 Coordinator View

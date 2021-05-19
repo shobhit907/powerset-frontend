@@ -227,7 +227,13 @@ export default function JobsAppliedByStudent() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows,setRows]=React.useState([]);
+  const history = useHistory();
 
+  const handleViewJobDescription = (event,job_id) => {
+    let redirect_url = "/job-profile/"+job_id.toString()
+    history.push(redirect_url);
+    console.log("Viewing Job Description");
+  };
   const getData=()=>{
     let token=localStorage.getItem('token');
     let id=localStorage.getItem('id');
@@ -331,10 +337,7 @@ export default function JobsAppliedByStudent() {
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
-  const handleViewJobDescription = (event,job_id) => {
-
-    console.log("Viewing Job Description");
-  };
+  
   const handleCancel=(event,job_id)=>{
     var choice=window.confirm("Do you want to cancel your application?")
     if(choice==false){

@@ -163,7 +163,7 @@ export default function ViewJob(){
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           <Typography component="h1" variant="h4" align="center">
-            Enter Job Details
+            View Job Detail
           </Typography>
           <Grid container spacing={4} alignContent="center">
 

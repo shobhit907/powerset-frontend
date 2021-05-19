@@ -12,14 +12,12 @@ header h1 {
   font-size: 26px;
   color: #414141;
   font-weight: 1000;
-  font-family: "Acme", sans-serif;
 }
 
 h1 span {
   font-weight: 400;
 }
 body {
-  font-family: "Open Sans", arial;
   /* color: #fff; */
   /* background: #666c82;   */
   margin: 0;
@@ -66,7 +64,6 @@ body {
   padding: 1px;
   background-color: #ccf581;
   color: #07145d;
-  font-family: "Big Shoulders Display", cursive;
   text-align: center;
   line-height: 0.8;
 }
@@ -90,7 +87,6 @@ body {
 .contents h3 {
   border-bottom: 1px solid grey;
   padding-bottom: 10px;
-  font-family: "Shadows Into Light", cursive;
   margin-bottom: 20px;
 }
 

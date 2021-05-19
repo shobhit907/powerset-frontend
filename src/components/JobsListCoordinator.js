@@ -345,7 +345,7 @@ export default function JobsListCoordinator() {
     else setRows(placements);
   }
   const handleEditJob = (event,job_id) => {
-    history.push("/job-profile/"+job_id.toString());
+    history.push("/coordinator-job-profiles/"+job_id.toString());
     console.log("editing job");
   };
   const handleViewApplicants=(event,job_id) => {

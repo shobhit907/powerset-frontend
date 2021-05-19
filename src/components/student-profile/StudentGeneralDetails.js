@@ -67,7 +67,7 @@ export default function StudentGeneralDetails(props) {
     }
     
     
-    if (isNaN(cgpa) || cgpa.toString().indexOf('.') == -1){
+    if (isNaN(cgpa)){
       setErrorText("CGPA should be in the format 9.91")
       return
     }
@@ -540,15 +540,13 @@ export default function StudentGeneralDetails(props) {
                 onChange={(e) => setVolunteerExperience(e.target.value)}
               />
             </Grid>
-            <Grid item sm={12}>
               <p style={{ color: "red" }}> {errorText}</p>
-            </Grid>
             <Button
               variant="contained"
               color="primary"
               onClick={handleStudentCreate}
             >
-              Save and Create Entry
+              Save
             </Button>
           </Grid>
         </React.Fragment>
